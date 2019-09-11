@@ -2,7 +2,8 @@ This is the third part of your first team task on GitHub
 
 First, make sure you are in your branch labeled with your computing ID, not in the master branch.
 
-ai9bf
+rm4mp, my toenails are 14 inches long
+bfb3ab - I have two dogs
 jw2vp, I worked in Richmond over the summer.
 
 
