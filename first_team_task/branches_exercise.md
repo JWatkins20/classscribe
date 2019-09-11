@@ -6,7 +6,6 @@ rm4mp, my toenails are 14 inches long
 bfb3ab - I have two dogs
 jw2vp, I worked in Richmond over the summer.
 
-
 #### This line should stay in the file and nothing should be changed in the section below
 
 After you override the line #5, you should commit it and create a pull request.
