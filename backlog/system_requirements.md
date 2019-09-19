@@ -42,7 +42,7 @@ As a Professor, I will be able to sign into Class Scribe and view my notebook po
 
 As a Professor, I will be able to view attendance logged by the lamps. (desired)
 
-As a Student, I will be able to scrub through the transcription of my lecture audio and have it synced with the audio and page scan. (optional)
+As a Student, I will be able to scrub through the transcription of my lecture audio and have it synced with the audio and page scan, somewhat like karaoke. (optional)
 
 As a Professor, I will be able to label Student notebooks as SDAC-usable. (optional)
 
