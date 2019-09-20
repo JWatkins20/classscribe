@@ -8,7 +8,9 @@ As a Student, I will be able to use the lamp to scan my handwritten notes onto a
 
 As a Student, I will be able to use the lamp to record lecture audio. (minimum)
 
-As a Student, I will be able to view my scanned notes and listen to the recorded lecture audio. (minimum)
+As a Student, I will be able to view my scanned notes in the web app. (minimum)
+
+As a Student I will be able to listen to the recorded lecture audio. (minimum)
 
 As a Student, I will be able to scrub through the history of each page scan and listen to the synced lecture audio throughout time. (minimum)
 
