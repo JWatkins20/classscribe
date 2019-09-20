@@ -12,7 +12,9 @@ As a Student, I will be able to view my scanned notes in the web app. (minimum)
 
 As a Student I will be able to listen to the recorded lecture audio. (minimum)
 
-As a Student, I will be able to scrub through the history of each page scan and listen to the synced lecture audio throughout time. (minimum)
+As a Student, I will be able to scrub through the history of each page scan. (minimum)
+
+As a Student, I will be able to listen to the synced lecture audio throughout time. (minimum)
 
 As a Student, I will be able to read the transcription of my lecture audio. (minimum)
 
