@@ -1,8 +1,8 @@
 from django.db import models
-from .models import File
 
 
+# Followed tutorial here: https://blog.vivekshukla.xyz/uploading-file-using-api-django-rest-framework/
 class File(models.Model):
-    file = models.ImageField(blank=False, null=False)
-    def __str__(selfself):
-        return self.file.name
+    file = models.FileField(blank=False, null=False)
+    remark = models.CharField(max_length = 20)
+    timestamp = models.DateTimeField(auto_now_add=True)
