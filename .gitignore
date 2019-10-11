@@ -3,9 +3,10 @@ db.sqlite3
 venv
 *.log
 **/migrations/*
+**/media/*
 
 # Pycharm Stuff # 
-.idea/*
+**/.idea/*
 .idea/**/workspace.xml 
 .idea/**/tasks.xml 
 .idea/dictionaries 

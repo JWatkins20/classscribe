@@ -3,7 +3,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
+from django.http import HttpResponse
+
 from .serializers import FileSerializer
+from .models import File
 
 
 class FileUploadView(APIView):
@@ -18,6 +21,7 @@ class FileUploadView(APIView):
             return Response(file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # Use the following code to POST from python
 # import requests
@@ -35,3 +39,6 @@ class FileUploadView(APIView):
 # response = requests.request("POST", url, data=data, files=files)
 #
 # print(response.text)
+
+# File objects can be searched based on their remark like so:
+# image = File.objects.get(remark="python test")

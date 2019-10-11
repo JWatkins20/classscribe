@@ -19,8 +19,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('', include('imageupload.urls')),
     path('admin/', admin.site.urls),
-    path('upload/', include('imageupload.urls')),
+    path('upload/', include('imageupload.urls'))
 ]
 
 if settings.DEBUG:
