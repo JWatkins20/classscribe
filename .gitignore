@@ -1,4 +1,6 @@
-
-*.pyc
-*.pyc
-*.pyc
+__init__.py
+venv
+db.sqlite3
+*.log
+**/migrations/*
+.idea
