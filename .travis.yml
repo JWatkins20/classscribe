@@ -4,7 +4,7 @@ python:
 install:
   - pip install -r travis-requirements.txt
 script:
-  - cd Class-Scribe/src/classscribe
+  - cd src/classscribe
   - python manage.py makemigrations
   - python manage.py migrate
   - python manage.py test
