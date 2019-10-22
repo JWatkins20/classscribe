@@ -14,13 +14,13 @@ constructor(props){
     password:''
   }
  }
-login = (event) =>{
-    console.log(this.state.username)
+login = async (event) =>{
     var payload = {
         "username": this.state.username,
         "password": this.state.password
     }
-    Axios.post("http://localhost:8000/login/", payload)
+    //TODO: save token in cookies
+    await Axios.post("http://localhost:8000/login/", payload)
 }
 render() {
 
