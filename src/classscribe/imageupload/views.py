@@ -24,9 +24,9 @@ class FileUploadView(APIView):
 
 
 def scan_view(request):
-    obj = File.objects.get(remark="test123")
-    print(obj.file.name)
-    return render_to_response('image_test.html', {"image_name":obj.file.name})
+    obj = File.objects.filter(remark="hank", class_name="test")
+    print(obj.count(), "matches.")
+    return render_to_response('image_test.html', {"images": obj})
 
 # Use the following code to POST from python
 # import requests

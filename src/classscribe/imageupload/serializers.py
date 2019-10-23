@@ -6,5 +6,5 @@ class FileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = File
-        fields = ('file', 'remark', 'timestamp')
+        fields = ('file', 'remark', 'class_name', 'page_num', 'timestamp')
 
