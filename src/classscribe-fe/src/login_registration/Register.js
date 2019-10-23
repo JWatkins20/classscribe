@@ -11,9 +11,7 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
 
 class Register extends Component {
-
-
-
+  
   constructor(props){
     super(props);
     this.state={
@@ -48,7 +46,7 @@ class Register extends Component {
         "type": this.state.type
     }
     //TODO: save token in cookies
-    await Axios.post("http://localhost:8000/registration/", payload)
+    await Axios.post("http://localhost:8000/api/registration/", payload)
   }
   
   designation = (event) => {

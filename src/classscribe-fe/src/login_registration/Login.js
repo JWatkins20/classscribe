@@ -20,7 +20,7 @@ login = async (event) =>{
         "password": this.state.password
     }
     //TODO: save token in cookies
-    await Axios.post("http://localhost:8000/login/", payload)
+    await Axios.post("http://localhost:8000/api/login/", payload)
 }
 render() {
 
