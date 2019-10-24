@@ -14,13 +14,12 @@ jobs:
     - stage: test
       language: node_js
       node_js:
-        - '10'
+        - 'stable'
       before_install:
         - cd src/classscribe-fe
-      install:
+      script:
         - npm install react-dom 
         - npm ci
         - npm run build
-      script:
         - npm run test
   
