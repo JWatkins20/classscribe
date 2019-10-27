@@ -16,13 +16,13 @@ def waitingForID(): #loop till ID is presented
         #ID received, time to encrypt
 
 
-def printOutIP(): #for debugging, prints out wlan0 IP of$
+def printOutIP(): #for debugging, prints out wlan0 IP of Pi to screen
         out = subprocess.Popen(['hostname', '-I'],
            stdout=subprocess.PIPE,
            stderr=subprocess.STDOUT)
 
 
-        img = Image.new("P", (inkyphat.WIDTH, inkyphat.H$
+        img = Image.new("P", (inkyphat.WIDTH, inkyphat.HEIGHT))
         draw = ImageDraw.Draw(img)
 
         message = str(out.communicate()[0])
