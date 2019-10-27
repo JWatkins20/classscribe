@@ -24,9 +24,10 @@ login = async (event) =>{
     }
     //TODO: save token in cookies
     await Axios.post("http://localhost:8000/api/login/", payload).then(
-      function(res){
+      async function(res){
         if(res.status == '200'){
           Cookies.set('user-key', res.data.key)
+          await Axios.get("http://localhost:8000/api/login/")
           history.pushState({},"", "dashboard");
           window.location.reload(false);
           history.go(1);
