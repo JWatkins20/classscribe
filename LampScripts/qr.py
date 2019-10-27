@@ -5,24 +5,6 @@ import sys
 import qrcode
 import inkyphat
 
-# Max length is 152
-text = "Custom URL with ID number preinserted, prompt for edu email"
-
-
-colour = sys.argv[1]
-
-try:
-    inkyphat.set_colour(colour)
-except ValueError:
-    print('Invalid colour "{}" for V{}\n'.format(colour, inkyphat.get_version()))
-    if inkyphat.get_version() == 2:
-        sys.exit(1)
-    print('Defaulting to "red"')
-
-if len(sys.argv) > 2:
-    text = sys.argv[2]
-
-
 class InkyQR(qrcode.image.base.BaseImage):
     def new_image(self, **kwargs):
         self.offset_x = kwargs.get("offset_x", None)
@@ -54,12 +36,12 @@ class InkyQR(qrcode.image.base.BaseImage):
 qr = qrcode.QRCode(
     version=1,
     box_size=2,
-    border=2,
+    border=1,
     image_factory=InkyQR
 )
 
-qr.add_data(text)
-qr.make(fit=True)
-qr.make_image()
-
-inkyphat.show()
+def printQRcode(text):
+        qr.add_data("http://http://128.143.67.97:44104/linkID/"+text)
+        qr.make(fit=True)
+        qr.make_image()
+        inkyphat.show()
