@@ -24,9 +24,11 @@ jobs:
         directories:
           - ~/.cache
       before_install:
+        - cd src/classscribe
+        - python manage.py runserver 127.0.0.1:8000
         - cd src/classscribe-fe
       install:
-        npm ci
+        - npm ci
       script:
         - npm install react-dom 
         - npm run build
