@@ -1,21 +1,8 @@
-from Crypto import Random
-from Crypto.Cipher import AES
-import base64
+from cryptography.fernet import Fernet
 
-BLOCK_SIZE=16
-
-def encrypt(message, passphrase):
-    IV = Random.new().read(BLOCK_SIZE)
-    aes = AES.new(passphrase, AES.MODE_CFB, IV)
-    return base64.b64encode(aes.encrypt(message))
-
-def decrypt(encrypted, passphrase):
-    IV = Random.new().read(BLOCK_SIZE)
-    aes = AES.new(passphrase, AES.MODE_CFB, IV)
-    return aes.decrypt(base64.b64decode(encrypted))
-
-salt_bytes = 16
-salt = Random.new().read(salt_bytes)
-
-print ("ID Number: 123456")
-print ("Encrypted ID: ",encrypt("123456",salt))
+def encryptID(idNumber):
+        # hide this key= line in published source code
+        key = "BrefO7pJTG2SRyg0PfaOCrz63vZBffGq9Iw-ftNmxFo="
+        f = Fernet(key)
+        encrypt_value = f.encrypt(str(idNumber))
+        return (encrypt_value)
