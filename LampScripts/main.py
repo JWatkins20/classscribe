@@ -6,7 +6,7 @@ import keybdStream as kbd
 
 
 inkyphat.set_colour("black")
-font = ImageFont.truetype(inkyphat.fonts.AmaticSCBold, 3$
+font = ImageFont.truetype(inkyphat.fonts.AmaticSCBold, 38)
 
 def waitingForID(): #loop till ID is presented
         flag = 1
