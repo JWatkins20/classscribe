@@ -3,7 +3,7 @@ import main
 
 class TestStringMethods(unittest.TestCase):
     
-    # Tapping Ben's ID should return this
+    # Tapping Ben's ID should return this string
     def test_Ben_ID(self):
         self.assertEqual("['2', '1', '5', '3', '4', '4', '3', '2', '1', '8', 'X']",main.waitingForID())
 
