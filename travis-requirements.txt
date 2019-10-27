@@ -1,0 +1,5 @@
+Django==2.1.2
+djangorestframework==3.10.3
+django-allauth
+django_rest_auth
+django-cors-headers
