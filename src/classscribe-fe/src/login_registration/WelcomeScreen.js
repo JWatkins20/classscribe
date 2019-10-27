@@ -1,7 +1,6 @@
+import React, {Component} from 'react';
 
-
-
-class WelcomeScreen extends Component{
+export default class WelcomeScreen extends Component{
     render(){
         return(
             <div> Hello User 😎! </div>

@@ -6,8 +6,9 @@ import TextField from 'material-ui/TextField';
 import Axios from 'axios';
 import {Radio, RadioGroup, FormHelperText, FormControlLabel, FormControl, FormLabel} from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import Cookies from 'js-cookie';
 
-
+const history = window.history
 
 
 class Register extends Component {
@@ -46,7 +47,19 @@ class Register extends Component {
         "type": this.state.type
     }
     //TODO: save token in cookies
-    await Axios.post("http://localhost:8000/api/registration/", payload)
+    await Axios.post("http://localhost:8000/api/registration/", payload).then(
+      function(res){
+        if(res.status == '201'){
+          Cookies.set('user-key', res.data.key)
+          history.pushState({},"", "dashboard");
+          window.location.reload(false);
+          history.go(1);
+        }else{
+          alert('Error!')
+        }
+      }
+    )
+
   }
   
   designation = (event) => {

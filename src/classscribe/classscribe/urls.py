@@ -18,7 +18,7 @@ from django.urls import path, include, re_path
 from classscribe.views import index
 
 urlpatterns = [
-	path('api', include('api.urls')),
+	path('api/', include('api.urls')),
     path('backend/admin', admin.site.urls),
 	re_path(r'^', index, name="index"),
 ]
