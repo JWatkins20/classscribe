@@ -4,10 +4,11 @@ venv
 *.log
 **/migrations/*
 **/media/*
+**/staticfiles/**
 
 # Pycharm Stuff # 
 **/.idea/*
-.idea/**/workspace.xml 
+**/.idea/**/workspace.xml 
 .idea/**/tasks.xml 
 .idea/dictionaries 
 .idea/**/dataSources/ 
