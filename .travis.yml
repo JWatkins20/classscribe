@@ -15,11 +15,20 @@ jobs:
       language: node_js
       node_js:
         - 'stable'
+      addons:
+        apt:
+          packages:
+            - libgconf-2-4
+      cache:
+        npm: true
+        directories:
+          - ~/.cache
       before_install:
         - cd src/classscribe-fe
+      install:
+        npm ci
       script:
         - npm install react-dom 
-        - npm ci
         - npm run build
-        - npm run test
+        - $(npm bin)/cypress run --record
   

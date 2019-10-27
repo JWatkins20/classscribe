@@ -20,7 +20,7 @@
     "test": "cypress open",
     "eject": "react-scripts eject",
     "flush": "pipenv run python ./Class-Scribe/src/classscribe/manage.py flush --no-input",
-    "e2e":  "cypress open --project ./Class-Scribe/src/classscribe-fe/"
+    "e2e": "cypress open --project ./Class-Scribe/src/classscribe-fe/"
   },
   "eslintConfig": {
     "extends": "react-app"
