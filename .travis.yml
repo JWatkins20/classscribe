@@ -27,9 +27,9 @@ jobs:
         - cd src/classscribe-fe
         - npm start -- --silent &
       install:
-        - npm ci
+        - npm install ci
       script:
         - npm install react-dom 
         - npm run build
-        - npm run cypress:run
+        - cypress run --record
   
