@@ -5,6 +5,9 @@ import TextField from 'material-ui/TextField';
 import React, {Component} from 'react';
 import {Button} from 'react-bootstrap';
 import Axios from 'axios';
+import Cookies from 'js-cookie';
+
+const history = window.history;
 
 class Login extends Component {
 constructor(props){
@@ -20,7 +23,19 @@ login = async (event) =>{
         "password": this.state.password
     }
     //TODO: save token in cookies
-    await Axios.post("http://localhost:8000/api/login/", payload)
+    await Axios.post("http://localhost:8000/api/login/", payload).then(
+      function(res){
+        if(res.status == '200'){
+          Cookies.set('user-key', res.data.key)
+          history.pushState({},"", "dashboard");
+          window.location.reload(false);
+          history.go(1);
+        }else{
+          alert('Error! Registration failed!')
+        }
+      }
+    )
+
 }
 render() {
 
