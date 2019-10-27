@@ -25,6 +25,7 @@ jobs:
           - ~/.cache
       before_install:
         - cd src/classscribe-fe
+        - npm start -- --silent &
       install:
         - npm ci
       script:
