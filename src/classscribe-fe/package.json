@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.5.1",
     "axios": "^0.19.0",
+    "jest": "^24.9.0",
     "js-cookie": "^2.2.1",
     "material-ui": "^0.20.2",
     "react": "^16.11.0",
@@ -12,12 +13,16 @@
     "react-dom": "^16.11.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.2.0",
-    "react-tap-event-plugin": "^3.0.3"
+    "react-tap-event-plugin": "^3.0.3",
+    "yarn": "^1.19.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "cypress open",
+    "start:ci": "serve --no-clipboard --listen 8000",
+    "dev": "npm start",
+    "tests": "cypress open",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "flush": "pipenv run python ./Class-Scribe/src/classscribe/manage.py flush --no-input",
     "e2e": "cypress open --project ./Class-Scribe/src/classscribe-fe/"
