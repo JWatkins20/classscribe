@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from allauth.account.adapter import get_adapter
-from allauth.account.utils import setup_user_email
+from users.models import User
 
 from rest_auth.registration.serializers import RegisterSerializer as DefaultRegisterSerializer
 
@@ -20,3 +19,12 @@ class RegisterSerializer(DefaultRegisterSerializer):
 		data_dict['type'] = self.validated_data.get('type', '')
 		data_dict['university'] = self.validated_data.get('university', '')
 		return data_dict
+
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+	"""
+	User model w/o password
+	"""
+	class Meta:
+		model = User
+		fields = ('username', 'email', 'first_name', 'last_name', 'type', 'university')
