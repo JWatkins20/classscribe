@@ -32,5 +32,5 @@ jobs:
         - npm install react-dom 
         - npm run start:ci &
         - npm run test
-        - cypress run --record
+        - npm run tests
         - kill $(jobs -p) || true

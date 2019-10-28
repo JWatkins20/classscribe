@@ -19,9 +19,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "start:ci": "serve --no-clipboard --listen 8000",
+    "start:ci": "serve --no-clipboard --listen ${PORT:-8000"},
     "dev": "npm start",
-    "tests": "cypress open",
+    "tests": "npm start & cypress run",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "flush": "pipenv run python ./Class-Scribe/src/classscribe/manage.py flush --no-input",
