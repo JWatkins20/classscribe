@@ -19,7 +19,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "start:ci": "serve --no-clipboard --listen ${PORT:-8000"},
+    "start:ci": "serve --no-clipboard --listen ${PORT:-8000}",
     "dev": "npm start",
     "tests": "npm start & cypress run",
     "test": "react-scripts test",
