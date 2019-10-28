@@ -26,8 +26,6 @@ jobs:
       before_install:
         - cd src/classscribe-fe
         - npm start -- --silent &
-      install:
-        - npm install ci
       script:
         - npm install react-dom 
         - npm run start:ci &
