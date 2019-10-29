@@ -1,4 +1,6 @@
-Hank is working on editing existing course entries for admins and being able to export a notebook as pdf for students.
-Johnny is working on listening to recorded lecture audio in the web app and scrubbing through the history of each page scan.
-Ben is working on navigating notebooks and seeing all pages in the notebooks.
-Rahat is picking up some of Adam's previous work, recording lecture audio, and signing into a lamp with student ID.
+Adam has abandoned us.  
+Rahat will finish what he started.  
+Rahat will also do lamp audio recording (need to add endpoint for verification and account linking).  
+Johnny will start issue #39 and #17.  
+Hank will start issue #32 and #27.  
+Ben will start issue #25
