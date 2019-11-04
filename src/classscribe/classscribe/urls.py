@@ -17,11 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from api.views import book
 
 urlpatterns = [
     path('', include('imageupload.urls')),
     path('admin/', admin.site.urls),
-    path('upload/', include('imageupload.urls'))
+    path('upload/', include('imageupload.urls')),
+    path("book/", book, name="book")
 ]
 
 if settings.DEBUG:
