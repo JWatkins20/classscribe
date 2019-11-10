@@ -25,11 +25,10 @@ jobs:
           - ~/.cache
       before_install:
         - cd src/classscribe-fe
-        - npm start -- --silent &
-      install:
-        - npm install ci
-      script:
+        - npm start --silent &
         - npm install react-dom 
-        - npm run build
-        - cypress run --record
-  
+      script:
+        - npm run start:ci &
+        - npm run test
+        - npm run tests
+        - kill $(jobs -p) || true

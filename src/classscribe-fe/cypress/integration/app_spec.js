@@ -15,6 +15,9 @@ describe("Test React form", () => {
         username: "bfb3ab1",
         password: "B123F763$$",
     };
+    before(() => {
+        cy.exec("npm run dev");
+      });
     it("can visit react login form", ()=> {
         cy.visit("/login");
     })
