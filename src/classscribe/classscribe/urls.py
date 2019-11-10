@@ -20,7 +20,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('upload/', include('imageupload.urls'))
+    path('upload/', include('imageupload.urls')),
+    path('courses/', include('custom_admin.urls'))
 ]
 
 if settings.DEBUG:
