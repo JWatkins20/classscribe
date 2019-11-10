@@ -2,6 +2,7 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.decorators import api_view
 
 from django.shortcuts import render_to_response
 
@@ -23,9 +24,13 @@ class FileUploadView(APIView):
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(["GET"])
 def scan_view(request):
-    obj = File.objects.filter(remark="hank", class_name="test2")
-    return render_to_response('image_test.html', {"images": obj})
+    obj = File.objects.filter(remark="hank", class_name="test_num")
+    names = []
+    for image in obj:
+        names.append(image.file.name)
+    return Response(status=status.HTTP_200_OK, data={"data": names})
 
 # Use the following code to POST from python
 # import requests

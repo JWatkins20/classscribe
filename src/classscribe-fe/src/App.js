@@ -3,13 +3,13 @@ import './App.css';
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import Book from "./components/ImageUpload/index";
+import ImageCarousel from "./components/ImageUpload/index";
 
 class App extends Component {
   render() {
     return (
       <Router>
-        <Route path="/" exact component={Book} />
+        <Route path="/" exact component={ImageCarousel} />
     </Router>
     );
   }
