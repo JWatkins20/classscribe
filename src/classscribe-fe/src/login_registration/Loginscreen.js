@@ -15,7 +15,7 @@ class Loginscreen extends Component {
       password:'',
       loginscreen:[],
       loginmessage:'',
-      buttonLabel:'Register',
+      buttonLabel:"Click here to Register",
       isLogin:true
     }
   }

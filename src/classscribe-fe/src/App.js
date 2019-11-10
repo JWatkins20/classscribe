@@ -5,6 +5,8 @@ import Register from './login_registration/Register';
 import Loginscreen from './login_registration/Loginscreen';
 import WelcomeScreen from './login_registration/WelcomeScreen';
 
+export const url = "http://localhost:8000/api/"
+
 const App = () =>{
   return(
     <Router>

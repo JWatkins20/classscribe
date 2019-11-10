@@ -24,7 +24,7 @@ SECRET_KEY = 'p!ty#bo(h+_a410c1e@$s3e!f89lgm8xlmt!j)@xe(9d=++i9-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['128.143.67.97', '127.0.0.1']
+ALLOWED_HOSTS = ['128.143.67.97', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -150,6 +150,10 @@ REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.RegisterSerializer',
 }
 
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserDetailsSerializer'
+}
+
 AUTH_USER_MODEL = 'users.User'
 
 ACCOUNT_ADAPTER = 'users.adapter.AccountAdapter'
@@ -157,3 +161,5 @@ ACCOUNT_ADAPTER = 'users.adapter.AccountAdapter'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
+

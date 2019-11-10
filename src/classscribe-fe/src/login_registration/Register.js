@@ -7,6 +7,8 @@ import Axios from 'axios';
 import {Radio, RadioGroup, FormHelperText, FormControlLabel, FormControl, FormLabel} from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Cookies from 'js-cookie';
+import { url } from '../App';
+
 
 const history = window.history
 
@@ -23,6 +25,8 @@ class Register extends Component {
       password2:'',
       type: '',
       university: '',
+      special_password: '',
+      admin: false,
       useStyles:
         makeStyles((theme) =>
           createStyles({
@@ -35,19 +39,25 @@ class Register extends Component {
     
   }
 
-  register = async (event) =>{
+  register = async () =>{
     var payload = {
         "username": this.state.email,
         "email": this.state.email,
         "password1": this.state.password,
         "password2": this.state.password,
+        "special_password": this.state.special_password,
         "first_name": this.state.first_name,
         "last_name": this.state.last_name,
         "university": this.state.university,
         "type": this.state.type
     }
-    //TODO: save token in cookies
-    await Axios.post("http://localhost:8000/api/registration/", payload).then(
+    var endpoint = url + "registration/"
+    if(this.state.admin){
+      endpoint = url + "adminregistration/"
+    }
+    console.log(this.state.admin)
+
+    await Axios.post(endpoint, payload).then(
       function(res){
         if(res.status == '201'){
           Cookies.set('user-key', res.data.key)
@@ -63,6 +73,11 @@ class Register extends Component {
   }
   
   designation = (event) => {
+    if(event.target.value === "admin"){
+      this.setState({admin:true})
+    }else{
+      this.setState({admin:false})
+    }
     this.setState({type:event.target.value})  
   };
   
@@ -103,6 +118,15 @@ class Register extends Component {
              floatingLabelText="Password"
              onChange = {(event) => this.setState({password:event.target.value})}
              />
+            <br/> 
+            { this.state.admin ?         
+              <TextField
+                type = "password"
+                hintText="Enter your Special Password"
+                floatingLabelText="Special Password"
+                onChange = {(event) => this.setState({special_password:event.target.value})}
+              />
+            : null }
            <br/>
             <div>
               <FormControl component="fieldset" className={this.state.useStyles}>
@@ -110,6 +134,7 @@ class Register extends Component {
                     <RadioGroup aria-label="Designation" name="designation" value={this.state.designation} onChange={this.designation}>
                         <FormControlLabel value="student" control={<Radio />} label="Student" />
                         <FormControlLabel value="teacher" control={<Radio />} label="Teacher" />
+                        <FormControlLabel value="admin" control={<Radio />} label="Admin" />
                     </RadioGroup>
                 </FormControl>
                 <br/>

@@ -6,6 +6,7 @@ import React, {Component} from 'react';
 import {Button} from 'react-bootstrap';
 import Axios from 'axios';
 import Cookies from 'js-cookie';
+import { url } from '../App';
 
 const history = window.history;
 
@@ -17,18 +18,18 @@ constructor(props){
     password:''
   }
  }
-login = async (event) =>{
+login = async () =>{
     var payload = {
         "username": this.state.username,
         "password": this.state.password
     }
-    //TODO: save token in cookies
-    await Axios.post("http://localhost:8000/api/login/", payload).then(
+    console.log(url +"login/")
+    await Axios.post(url +"login/", payload).then(
       async function(res){
         if(res.status == '200'){
           Cookies.set('user-key', res.data.key)
-          await Axios.get("http://localhost:8000/api/login/")
-          history.pushState({},"", "dashboard");
+          const user = (await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})).data
+          history.pushState(user,"", "dashboard");
           window.location.reload(false);
           history.go(1);
         }else{
@@ -60,7 +61,7 @@ render() {
                     onChange = {(event) => this.setState({password:event.target.value})}
                 />
                 <br/>
-                <RaisedButton label="Submit" primary={true} style={style} onClick={(event) => this.login(event)}/>
+                <RaisedButton label="Login" primary={true} style={style} onClick={(event) => this.login(event)}/>
 
             </div>
          </MuiThemeProvider>

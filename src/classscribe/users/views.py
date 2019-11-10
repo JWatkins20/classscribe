@@ -1,18 +1,16 @@
-from django.shortcuts import render
 from rest_framework.authtoken.models import Token
-
 from rest_framework.generics import RetrieveUpdateAPIView
-from users.serializers import UserDetailsSerializer
+
+from users.models import *
+from rest_framework.permissions import IsAuthenticated
+from users.serializers import AdminRegisterSerializer
+from rest_auth.registration.views import RegisterView
+
+class AdminRegisterView(RegisterView):
+	serializer_class = AdminRegisterSerializer
 
 
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#
-#     def get_object(self):
-#         pk = self.kwargs.get('pk')
-#
-#         if pk == "current":
-#             return self.request.user
-#
-#         return super(UserViewSet, self).get_object()
+
+
+
+
