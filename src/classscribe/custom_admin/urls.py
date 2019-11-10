@@ -3,5 +3,5 @@ from .views import *
 from .models import Course
 
 urlpatterns = [
-    path('create', PersonCreateView.as_view(model=Course, success_url="/admin"))
+    path('create', submit_course, name="submit_course")
 ]
