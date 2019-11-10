@@ -39,9 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
-MIDDLEWARE = [
-
   'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -49,8 +46,6 @@ MIDDLEWARE = [
     'rest_auth',
     'imageupload',
     'custom_admin',
-    'crispy_forms
-  
 
   'django.contrib.sites',
   'allauth',
@@ -59,7 +54,7 @@ MIDDLEWARE = [
   'allauth.socialaccount',
 
   'users',
-  'api',
+  'api'
 ]
 
 SITE_ID = 1

@@ -5,6 +5,7 @@ const history = window.history;
 export default class WelcomeScreen extends Component{
 
     render(){
+        console.log(history.state.type)
         if(history.state.type === "teacher"){
             return(
                 <div> 

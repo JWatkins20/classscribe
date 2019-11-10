@@ -23,7 +23,7 @@ urlpatterns = [
 	path('api/', include('api.urls')),
   path('backend/admin/', admin.site.urls),
   path('upload/', include('imageupload.urls')),
-  path('courses/', include('custom_admin.urls'))
+  path('courses/', include('custom_admin.urls')),
 	re_path(r'^', index, name="index"),
 ]
 
