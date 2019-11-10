@@ -1,5 +1,7 @@
 # Class-Scribe
 
+Travis CI status: [![Build Status](https://travis-ci.com/uva-cp-1920/Class-Scribe.svg?token=cGxp1gfy2o1s1zWvCFoZ&branch=master)](https://travis-ci.com/uva-cp-1920/Class-Scribe)
+
 Currently there are 3 major ways of note taking in lecture halls: classic pencil and paper, laptop, or tablet with a stylus. Countless studies have assessed the ineffectiveness of typed notes for retention of material, and even more have laid out the distractibility of tablets (such as iPads) where notifications fight for your attention. Pencil and paper is an optimal writing experience that lacks the modern touch that makes digital note taking so lucrative (cloud syncing, search, no weight of books). Class Scribe is a project that aims to bring the best of modern digital note taking to traditional paper and pencil, with minimal management. Class Scribe consists of 2 products:
 • A physical lamp, containing a Raspberry Pi, camera, and microphone
 • A web app for students and admins to access
