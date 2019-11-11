@@ -25,10 +25,10 @@ jobs:
           - ~/.cache
       before_install:
         - cd src/classscribe-fe
-        - npm start --silent &
+#         - npm start --silent &
         - npm install react-dom 
       script:
-        - npm run start:ci &
+#         - npm run start:ci &
         - npm run test
-        - npm run tests
-        - kill $(jobs -p) || true
+#         - npm run tests
+#         - kill $(jobs -p) || true
