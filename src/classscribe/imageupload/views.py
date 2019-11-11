@@ -28,8 +28,8 @@ class FileUploadView(APIView):
 
 
 @api_view(["GET"])
-def scan_view(request):
-    obj = File.objects.filter(remark="hank", class_name="test_num")
+def scan_view(request, user="", class_name="", date=""):
+    obj = File.objects.filter(remark=user, class_name=class_name, timestamp__contains=date)
     names = []
     for image in obj:
         names.append(image.file.name)
