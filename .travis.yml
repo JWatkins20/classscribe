@@ -7,7 +7,10 @@ jobs:
       install:
         - pip install -r travis-requirements.txt
       script:
-        - cd src/classscribe
+        - cd src/classscribe-fe
+        - npm run build
+        - cd ..
+        - cd classscribe
         - python manage.py makemigrations
         - python manage.py migrate
         - python manage.py test
@@ -25,6 +28,7 @@ jobs:
           - ~/.cache
       before_install:
         - cd src/classscribe-fe
+        - npm run build
 #         - npm start --silent &
         - npm install react-dom 
       script:
