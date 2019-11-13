@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-
+import { base_url } from '../../App';
 import axios from "axios";
 
 export default class CourseEdit extends Component {
@@ -23,7 +23,7 @@ export default class CourseEdit extends Component {
 
   getValues() {
     var that = this;
-    const getUrl = `http://localhost:8000/courses/edit/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
+    const getUrl = base_url + `'courses/edit/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
     axios.get(getUrl)
         .then(function (response) {
             that.setState({
@@ -43,7 +43,7 @@ export default class CourseEdit extends Component {
   handleSubmit(event) {
       event.preventDefault();
       const data = new FormData(event.target);
-      const putUrl = `http://localhost:8000/courses/edit/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
+      const putUrl = base_url + `courses/edit/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
       axios.post(putUrl, data)
         .then(function (response) {
             if (response.status === 200) {
