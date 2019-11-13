@@ -8,6 +8,7 @@ jobs:
         - pip install -r travis-requirements.txt
       script:
         - cd src/classscribe-fe
+        - npm install react-scripts
         - npm run build
         - cd ..
         - cd classscribe
@@ -28,11 +29,12 @@ jobs:
           - ~/.cache
       before_install:
         - cd src/classscribe-fe
+        - npm install react-scripts
         - npm run build
 #         - npm start --silent &
         - npm install react-dom 
       script:
-#         - npm run start:ci &
+        - npm run start
         - npm run test
 #         - npm run tests
 #         - kill $(jobs -p) || true
