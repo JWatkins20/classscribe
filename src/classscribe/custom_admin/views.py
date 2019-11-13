@@ -30,10 +30,8 @@ def submit_course(request):
 
 
 @api_view(["POST", "GET"])
-def edit_course(request, course_name="", building="", room="", time=""):
-    if course_name == "" or building == "" or room == "" or time == "":
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={})
-
+def edit_course(request, course_name=None, building=None, room=None, time=None):
+    print('EDIT COURSE REQUEST METHOD:', request.method)
     cur_entry = Course.objects.filter(name=course_name,
                                       building=building,
                                       room=room,
@@ -41,7 +39,6 @@ def edit_course(request, course_name="", building="", room="", time=""):
                                       )
     if len(cur_entry) != 1:
         print("FOUND", len(cur_entry), "courses for the provided parameters.")
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 
     if request.method == "GET":
         return Response(status=status.HTTP_200_OK, data={
