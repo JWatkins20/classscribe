@@ -47,3 +47,8 @@ class CourseTests(TestCase):
         c = Client()
         response = c.get('/courses/edit/testName/testBuilding/testRoom1/testTime')
         self.assertEqual(response.status_code, 400)
+
+    def test_edit_course_succeeds_on_empty_param(self):
+        c = Client()
+        response = c.get('/courses/edit/testName//testRoom1/testTime')
+        self.assertEqual(response.status_code, 200)

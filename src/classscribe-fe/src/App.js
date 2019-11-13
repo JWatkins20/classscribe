@@ -10,9 +10,8 @@ import CourseForm from "./components/customAdmin/index";
 import ImageCarousel from "./components/ImageUpload/index";
 import NotebookDownload from "./components/ImageUpload/download";
 
-export const base_url = "http://128.143.67.97:44104/"
-export const url = "http://128.143.67.97:44104/api/"
-// for testng: "http://localhost:8000/api/"
+
+export const url = "http://localhost:8000/api/"
 
 const App = () =>{
   return(
