@@ -4,5 +4,6 @@ from .models import Course
 
 urlpatterns = [
     path('create', submit_course, name="submit_course"),
-    path('edit/<str:course_name>/<str:building>/<str:room>/<str:time>', edit_course, name="edit")  # used to view/edit the existing course with the provided parameters
+    path('edit/<str:course_name>/<str:building>/<str:room>/<str:time>', edit_course, name="edit"),  # used to view/edit the existing course with the provided parameters
+    path('edit/<int:pk>', edit_course, name="edit")  # used to view/edit the existing course with the provided parameters
 ]

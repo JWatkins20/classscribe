@@ -1,28 +1,30 @@
 import React, { Component } from "react";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import axios from "axios";
+
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 
 export default class CourseEdit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        name: props.match.params.course_name,
+        name:  '',
         professorId: '',
-        building: props.match.params.building,
-        room: props.match.params.room,
-        time: props.match.params.time,
+        building:  '',
+        room:  '',
+        time:  '',
         serial: '',
+        pk: 0
     };
 
     this.getValues();
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.getValues = this.getValues.bind(this);
   }
 
   getValues() {
     var that = this;
-    const getUrl = `http://localhost:8000/courses/edit/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
+    const getUrl = `http://localhost:8000/courses/edit/${this.props.match.params.course_name}/${this.props.match.params.building}/${this.props.match.params.room}/${this.props.match.params.time}`;
     axios.get(getUrl)
         .then(function (response) {
             that.setState({
@@ -31,7 +33,8 @@ export default class CourseEdit extends Component {
                 building: response.data["building"],
                 room: response.data["room"],
                 time: response.data["time"],
-                serial: response.data["lamp_serial"]
+                serial: response.data["lamp_serial"],
+                pk: response.data["pk"]
             });
         })
         .catch(function (error) {
@@ -39,10 +42,15 @@ export default class CourseEdit extends Component {
         });
   }
   
-  handleSubmit(event) {
-      event.preventDefault();
-      const data = new FormData(event.target);
-      const putUrl = `http://localhost:8000/courses/edit/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
+  handleSubmit() {
+      const data = new FormData();
+      data.append("courseName", this.state.name);
+      data.append("professorId", this.state.professorId);
+      data.append("building", this.state.building);
+      data.append("room", this.state.room);
+      data.append("time", this.state.time);
+      data.append("lamp_serial", this.state.serial);
+      const putUrl = `http://localhost:8000/courses/edit/${this.state.pk}`;
       axios.post(putUrl, data)
         .then(function (response) {
             if (response.status === 200) {
@@ -51,47 +59,77 @@ export default class CourseEdit extends Component {
             else {
                 alert("Edits were not saved!");
             }
+        })
+        .catch(function (error) {
+            alert("Edits were not saved. Check the console for the error!");
+            console.log(error);
         });
   }
 
   render() {
     return (
-        <Form onSubmit={this.handleSubmit}>
-            <Form.Group controlId="formCourseName">
-                <Form.Label>Course Name</Form.Label>
-                <Form.Control name="courseName" type="text" defaultValue={this.state.name}/>
-            </Form.Group>
+        <div style={{textAlign: "center"}}>
+            <MuiThemeProvider>
+                <div>
+                    <TextField
+                        id="courseName"
+                        floatingLabelText="Course Name"
+                        floatingLabelFixed={true}
+                        defaultValue={this.state.name}
+                        onChange = {(event) => this.setState({name: event.target.value})}
+                    />
+                    <br/>
 
-            <Form.Group controlId="formProfessor">
-                <Form.Label>Professor Computing ID</Form.Label>
-                <Form.Control name="professorId" type="text" defaultValue={this.state.professorId}/>
-            </Form.Group>
+                    <TextField
+                        id="professorId"
+                        floatingLabelText="Professor ID"
+                        floatingLabelFixed={true}
+                        defaultValue={this.state.professorId}
+                        onChange = {(event) => this.setState({professorId: event.target.value})}
+                    />
+                    <br/>
 
-            <Form.Group controlId="formBuilding">
-                <Form.Label>Building</Form.Label>
-                <Form.Control name="building" type="text" defaultValue={this.state.building}/>
-            </Form.Group>
+                    <TextField
+                        id="building"
+                        floatingLabelText="Building Name"
+                        floatingLabelFixed={true}
+                        defaultValue={this.state.building}
+                        onChange = {(event) => this.setState({building: event.target.value})}
+                    />
+                    <br/>
 
-            <Form.Group controlId="formRoom">
-                <Form.Label>Room</Form.Label>
-                <Form.Control name="room" type="text" defaultValue={this.state.room}/>
-            </Form.Group>
+                    <TextField
+                        id="room"
+                        floatingLabelText="Room Number/Name"
+                        floatingLabelFixed={true}
+                        defaultValue={this.state.room}
+                        onChange = {(event) => this.setState({room: event.target.value})}
+                    />
+                    <br/>
 
-            <Form.Group controlId="formTime">
-                <Form.Label>Time</Form.Label>
-                <Form.Control name="time" type="text" defaultValue={this.state.time}/>
-                <Form.Text className="text-muted>">
-                    Please enter the meeting day in following this format: MWF 12pm-12:50pm. 
-                    This class would meet Monday, Wednesday, Friday from 12pm to 12:50pm.
-                </Form.Text>
-            </Form.Group>
+                    <TextField
+                        id="time"
+                        floatingLabelText="Meeting Times"
+                        floatingLabelFixed={true}
+                        defaultValue={this.state.time}
+                        onChange = {(event) => this.setState({time: event.target.value})}
+                        helperText="Please enter the meeting day in following this format: MWF 12pm-12:50pm. This class would meet Monday, Wednesday, Friday from 12pm to 12:50pm."
+                    />
+                    <br/>
 
-            <Form.Group controlId="formSerial">
-                <Form.Label>Lamp Serial</Form.Label>
-                <Form.Control name="lamp_serial" type="text" defaultValue={this.state.serial}/>
-            </Form.Group>
-            <Button variant="primary" type="submit">Submit</Button>
-        </Form>
+                    <TextField
+                        id="serial"
+                        floatingLabelText="Lamp Serial Number"
+                        floatingLabelFixed={true}
+                        defaultValue={this.state.serial}
+                        onChange = {(event) => this.setState({serial: event.target.value})}
+                    />
+                    <br/>
+
+                    <RaisedButton label="Submit" primary={true} onClick={(event) => this.handleSubmit()}/>
+                </div>
+            </MuiThemeProvider>
+        </div>
     );
   }
 }
