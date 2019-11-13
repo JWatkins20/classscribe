@@ -34,7 +34,7 @@ jobs:
 #         - npm start --silent &
         - npm install react-dom 
       script:
-        - npm run start
+        #- npm run start
         - npm run test
 #         - npm run tests
 #         - kill $(jobs -p) || true
