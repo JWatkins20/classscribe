@@ -16,6 +16,12 @@ export default class CourseForm extends Component {
         time: '',
         serial: '',
     };
+
+    if (props != null) {
+        alert("props is not null");
+        console.log(props);
+        this.setState({time: props});
+    }
   }
   
   handleSubmit(event) {
