@@ -9,7 +9,7 @@ jobs:
       script:
         - cd src/classscribe-fe
         - npm install
-        - npm run build
+        #- npm run build
         - cd ..
         - cd classscribe
         - python manage.py makemigrations
@@ -30,7 +30,7 @@ jobs:
       before_install:
         - cd src/classscribe-fe
         - npm install
-        - npm run build
+        #- npm run build
 #         - npm start --silent &
         - npm install react-dom 
       script:
