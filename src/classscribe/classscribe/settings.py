@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'imageupload',
     'custom_admin',
+    'Student',
 
   'django.contrib.sites',
   'allauth',
