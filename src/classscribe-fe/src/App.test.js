@@ -4,6 +4,16 @@ import App from './App';
 import Axios from 'axios';
 import { url } from './App';
 
+function makeId(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
@@ -12,9 +22,10 @@ it('renders without crashing', () => {
 });
 
 it('register student', async () => {
+  const email = makeId(10) + '@gmail.com';
   var payload = {
-    "username": 'testing122@gmail.com',
-    "email": 'testing122@gmail.com',
+    "username": email,
+    "email": email,
     "password1": 'passw0rd1',
     "password2": 'passw0rd1',
     "first_name": 'Rahat',
@@ -31,9 +42,10 @@ it('register student', async () => {
 });
 
 it('register teacher', async () => {
+  const email = makeId(10) + '@gmail.com';
   var payload = {
-    "username": 'testing127@gmail.com',
-    "email": 'testing127@gmail.com',
+    "username": email,
+    "email": email,
     "password1": 'passw0rd1',
     "password2": 'passw0rd1',
     "first_name": 'Rahat',
@@ -51,9 +63,10 @@ it('register teacher', async () => {
 
 
 it('register admin', async () => {
+  const email = makeId(10) + '@gmail.com';
   var payload = {
-    "username": 'testing128@gmail.com',
-    "email": 'testing128@gmail.com',
+    "username": email,
+    "email": email,
     "password1": 'passw0rd1',
     "password2": 'passw0rd1',
     "first_name": 'Rahat',
@@ -71,8 +84,26 @@ it('register admin', async () => {
 });
 
 it('login student', async () => {
+  const email = makeId(10) + '@gmail.com';
   var payload = {
-    "username": 'testing123@gmail.com',
+    "username": email,
+    "email": email,
+    "password1": 'passw0rd1',
+    "password2": 'passw0rd1',
+    "first_name": 'Rahat',
+    "last_name": 'Maini',
+    "university": 'University of Virginia',
+    "type": 'student'
+  }
+  var endpoint = url + "registration/"
+  await Axios.post(endpoint, payload).then(
+    function(res){
+      expect(res.data.token).not.toBe(null);
+    }
+  )
+
+  var payload = {
+    "username": email,
     "password": 'passw0rd1'
   }
   var endpoint = url + "login/"
@@ -85,8 +116,26 @@ it('login student', async () => {
 
 
 it('login teacher', async () => {
+  const email = makeId(10) + '@gmail.com';
   var payload = {
-    "username": 'testing124@gmail.com',
+    "username": email,
+    "email": email,
+    "password1": 'passw0rd1',
+    "password2": 'passw0rd1',
+    "first_name": 'Rahat',
+    "last_name": 'Maini',
+    "university": 'University of Virginia',
+    "type": 'student'
+  }
+  var endpoint = url + "registration/"
+  await Axios.post(endpoint, payload).then(
+    function(res){
+      expect(res.data.token).not.toBe(null);
+    }
+  )
+
+  var payload = {
+    "username": email,
     "password": 'passw0rd1'
   }
   var endpoint = url + "login/"
