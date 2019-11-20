@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-
+import { base_url } from '../../App';
 import axios from "axios";
 
 export default class CourseForm extends Component {
@@ -21,7 +21,7 @@ export default class CourseForm extends Component {
       alert("in handle submit");
       const data = new FormData(event.target);
       axios.post(
-          "http://localhost:8000/courses/create",
+          base_url + "courses/create",
           data
       );
   }

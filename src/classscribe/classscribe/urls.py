@@ -1,8 +1,6 @@
 """classscribe URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.1/topics/http/urls/
-
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -22,11 +20,11 @@ from classscribe.views import index
 
 urlpatterns = [
 	path('api/', include('api.urls')),
+  path('api/retrieveStudentIDs', include('Student.urls')),
   path('backend/admin/', admin.site.urls),
   path('upload/', include('imageupload.urls')),
-  path('notebook/', include('notebooks.urls')),
   path('courses/', include('custom_admin.urls')),
-	re_path(r'^', index, name="index"),
+  re_path(r'^', index, name="index"),
 ]
 
 if settings.DEBUG:

@@ -5,4 +5,3 @@ django-crispy-forms==1.8.0
 django-allauth
 django_rest_auth
 django-cors-headers
-

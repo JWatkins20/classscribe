@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import { base_url } from '../../App';
 import axios from "axios";
 
 export default class NotebookDownload extends Component {
@@ -11,7 +11,7 @@ export default class NotebookDownload extends Component {
   async downloadImages()
   {
     alert("downloading images");
-    const promise = await axios.get("http://localhost:8000/upload/download/");
+    const promise = await axios.get(base_url + "upload/download/");
     const status = promise.status;
     if(status===200)
     {
@@ -22,7 +22,10 @@ export default class NotebookDownload extends Component {
 
   render() {
     return (
-      <a href="http://localhost:8000/upload/download/">Download</a>
+      <div>
+        {document.write('<a href="' + base_url + "upload/download/" + '">Download</a>')}
+      </div>
+      
     );
   }
 }

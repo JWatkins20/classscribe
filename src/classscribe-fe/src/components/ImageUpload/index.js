@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-
+import { base_url } from "../../App"
 import axios from "axios";
 
 export default class ImageCarousel extends Component {
@@ -19,7 +19,7 @@ export default class ImageCarousel extends Component {
 
   async loadImages()
   {
-    const promise = await axios.get("http://localhost:8000/upload/get/");
+    const promise = await axios.get(base_url + "upload/get/");
     const status = promise.status;
     if(status===200)
     {
@@ -29,7 +29,7 @@ export default class ImageCarousel extends Component {
   }
 
   getImgSrc = (imageName) => {
-    return `http://localhost:8000/media/${imageName}`;
+    return base_url + `/media/${imageName}`;
   }
 
   createCarousel = () => {

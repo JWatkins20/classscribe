@@ -55,13 +55,13 @@ class Register extends Component {
     if(this.state.admin){
       endpoint = url + "adminregistration/"
     }
-    console.log(this.state.admin)
 
     await Axios.post(endpoint, payload).then(
-      function(res){
+      async function(res){
         if(res.status == '201'){
           Cookies.set('user-key', res.data.key)
-          history.pushState({},"", "dashboard");
+          const user = (await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})).data
+          history.pushState(user,"", "dashboard");
           window.location.reload(false);
           history.go(1);
         }else{

@@ -54,9 +54,6 @@ def download_notebook(request):
     classes = class_to_last_scan.keys()
     files = class_to_last_scan.values()
 
-    print("Classes = ", classes)
-    print("Files = ", files)
-
     zip_subdir = "notebooks"
     zip_filename = "%s.zip" % zip_subdir
 
