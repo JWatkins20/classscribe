@@ -33,7 +33,7 @@ jobs:
         - cd ..  
         - cd src/classscribe-fe
         - npm install
-        #- npm run build
+
 #         - npm start --silent &
         - npm install react-dom 
       script:
