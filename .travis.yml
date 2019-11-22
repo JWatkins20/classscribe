@@ -27,7 +27,7 @@ jobs:
         npm: true
         directories:
           - ~/.cache
-      before_install:
+      before_script:
         - cd src/classscribe
         - python manage.py runserver &
         - cd ..  
