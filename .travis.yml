@@ -28,6 +28,9 @@ jobs:
         directories:
           - ~/.cache
       before_install:
+        - cd src/classcribe
+        - python manage.py runserver &
+        - cd ..  
         - cd src/classscribe-fe
         - npm install
         #- npm run build
