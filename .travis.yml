@@ -31,7 +31,7 @@ jobs:
         - cd src/classscribe
         - python manage.py runserver &
         - cd ..  
-        - cd src/classscribe-fe
+        - cd classscribe-fe
         - npm install
 
 #         - npm start --silent &
