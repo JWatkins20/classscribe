@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.core import serializers
 from django.views.generic import CreateView
 
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+import json
 
 from .models import Course
 
@@ -64,6 +66,49 @@ def edit_course(request, course_name=None, building=None, room=None, time=None, 
         except Exception as e:
             print(e.message)
             return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+
+
+@api_view(["GET"])
+def get_buildings(request):
+    buildingMap = {}
+    buildingList = []
+    courses = Course.objects.all()
+
+    for course in courses:
+        if course.building not in buildingMap:
+            buildingMap[course.building] = True
+            buildingList.append(course.building)
+
+    buildingList.sort()
+    return Response(status=status.HTTP_200_OK, data={"buildings": buildingList})
+
+
+@api_view(["GET"])
+def get_rooms(request, building=None):
+    roomMap = {}
+    roomList = []
+    courses = Course.objects.filter(building=building)
+
+    for course in courses:
+        if course.room not in roomMap:
+            roomMap[course.room] = True
+            roomList.append(course.room)
+
+    roomList.sort()
+    return Response(status=status.HTTP_200_OK, data={"rooms": roomList})
+
+
+@api_view(["GET"])
+def get_courses(request, building=None, room=None):
+    courses = serializers.serialize("json",
+                                    Course.objects.filter(building=building, room=room),
+                                    fields=('room', 'name', 'building', 'time', 'professorID', 'lamp_serial'))
+    courses_object = json.loads(courses)
+    return Response(status=status.HTTP_200_OK, data={"courses": courses_object})
+
+
+
+
 
 
 
