@@ -19,12 +19,7 @@ jobs:
       language: node_js
       node_js:
         - 'stable'
-      addons:
-        apt:
-          packages:
-            - libgconf-2-4
       cache:
-        npm: true
         directories:
           - node_modules
       before_script:
@@ -32,12 +27,7 @@ jobs:
         - python manage.py runserver 8000 &
         - cd ..  
         - cd classscribe-fe
-        #- npm install
-
-#         - npm start --silent &
-        #- npm install react-dom 
+        - npm install react-scripts
       script:
-        #- npm run start
         - npm run test
-#         - npm run tests
-#         - kill $(jobs -p) || true
+
