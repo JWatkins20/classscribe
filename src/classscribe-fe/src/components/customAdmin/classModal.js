@@ -16,7 +16,7 @@ class classModal extends React.Component {
             building:  $('#building-select')[0].innerText,
             room:  $('#room-select')[0].innerText,
             time:  (props.days || "") + " " + props.start.format('H:mm') + "-" + props.end.format('H:mm'),
-            serial: props.lamp,
+            serial: props.lamp || $('#lamp-serial')[0].value,
             pk: 0
         };
 

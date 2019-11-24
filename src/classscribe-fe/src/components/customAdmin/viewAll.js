@@ -6,7 +6,7 @@ import classModal from './classModal';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import * as $ from 'jquery';
+import TextField from 'material-ui/TextField';
 
 import 'react-week-calendar/dist/style.less';
 import Axios from 'axios';
@@ -29,7 +29,8 @@ export default class CourseCalendar extends React.Component {
             buildings: [],
             building: "",
             rooms: [],
-            room: ""
+            room: "",
+            serial: ""
         }
 
         this.loadBuildings = this.loadBuildings.bind(this);
@@ -40,7 +41,8 @@ export default class CourseCalendar extends React.Component {
         this.setState({
             building: value,
             room: "",
-            selectedIntervals: []
+            selectedIntervals: [],
+            serial: ""
         });
         this.loadRooms(value);
     }
@@ -113,11 +115,21 @@ export default class CourseCalendar extends React.Component {
         let courses = [];
         let intervals = [];
         let finalIntervals = [];
+        let curSerial = "";
+        let allMatch = true;
         const getUrl = `http://localhost:8000/courses/${curBuilding}/${room}/classes`;
         Axios.get(getUrl)
             .then(function (response) {
                 courses = response.data["courses"]
                 for (let i = 0; i < courses.length; i++) {
+                    if (allMatch && curSerial === "") {
+                        curSerial = courses[i].fields["lamp_serial"];
+                    }
+                    else if (curSerial !== courses[i].fields["lamp_serial"]) {
+                        curSerial = "";
+                        allMatch = false;
+                    }
+
                     intervals = that.getIntervals(courses[i].fields["time"]);
                     for (let j = 0; j < intervals.length; j++) {
                         intervals[j]["name"] = courses[i].fields["name"];
@@ -130,7 +142,8 @@ export default class CourseCalendar extends React.Component {
                 }
 
                 that.setState({
-                    selectedIntervals: finalIntervals
+                    selectedIntervals: finalIntervals,
+                    serial: curSerial
                 });
             })
             .catch(function (error) {
@@ -190,9 +203,17 @@ export default class CourseCalendar extends React.Component {
                         onFocus={this.loadRooms}>
                         {this.state.rooms.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
                     </SelectField>
+                    <br/>
+                    <TextField
+                        id="lamp-serial"
+                        floatingLabelText="Lamp Serial Number"
+                        floatingLabelFixed={true}
+                        value = {this.state.serial}
+                        onChange = {(event) => this.setState({serial: event.target.value})}
+                    />
                 </MuiThemeProvider>
                 <WeekCalendar
-                    firstDay = {moment("2019-11-18")}
+                    firstDay = {moment().day(1)}
                     startTime = {moment({h:7, m:0})}
                     endTime = {moment({h:19, m:0})}
                     numberOfDays = {5}
