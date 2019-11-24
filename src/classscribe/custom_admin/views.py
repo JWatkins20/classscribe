@@ -39,8 +39,9 @@ def edit_course(request, course_name=None, building=None, room=None, time=None, 
                                           room=room,
                                           time=time
                                           )
-        if len(cur_entry) != 1:
-            print("FOUND", len(cur_entry), "courses for the provided parameters.")
+
+        if len(cur_entry) == 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 
         return Response(status=status.HTTP_200_OK, data={
             "course_name": cur_entry[0].name,
