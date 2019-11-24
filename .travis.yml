@@ -26,6 +26,7 @@ jobs:
         - cd ..  
         - cd classscribe-fe
         - npm install
-        - npm run build
+        - npm install wait-on
+        - npm run build & wait-on http://localhost:8000
       script:
         - npm run test
