@@ -38,3 +38,5 @@ class UserDetailsSerializer(DefaultUserDetailsSerializer):
 	class Meta:
 		model = User
 		fields = DefaultUserDetailsSerializer.Meta.fields + ('type', 'university')
+
+
