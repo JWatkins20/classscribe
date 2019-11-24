@@ -24,10 +24,10 @@ jobs:
           - node_modules
       before_script:
         - cd src/classscribe
-        - python manage.py runserver 8000 &
+        - python3 manage.py runserver 8000 &
         - cd ..  
         - cd classscribe-fe
-        - npm install react-scripts
+        - npm install
       script:
         - npm run test
 
