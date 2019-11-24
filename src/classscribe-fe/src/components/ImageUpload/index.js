@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-
+import { base_url } from "../../App"
 import axios from "axios";
 
 export default class ImageCarousel extends Component {
@@ -33,12 +33,12 @@ export default class ImageCarousel extends Component {
   }
 
   getImgSrc = (imageName) => {
-    return `http://localhost:8000/media/${imageName}`;
+    return base_url + `media/${imageName}`;
   }
 
   createCarousel = () => {
     let htmlImages = [];
-
+    alert("number of images = " + this.state.images.length);
     for (let i = 0; i < this.state.images.length; i++) {
       htmlImages.push(
         <div>
