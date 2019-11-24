@@ -1,7 +1,16 @@
 from django.test import TestCase
 from notebooks.models import Notebook
-from .models import File
+from users.models import User
+from imageupload.models import File
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse, reverse_lazy
+from django.test.client import Client
+from rest_framework import status
+from rest_framework.test import APITestCase
+import json
+
+
+
 
 class NotebookTests(TestCase):
     def setUp(self):
@@ -38,4 +47,23 @@ class NotebookTests(TestCase):
         pages = []
         pages = File.objects.filter(class_name="Prcticum")
         self.assertTrue(len(pages) == 0)
-     
+class NotebookGetViewTests(APITestCase):
+    def setUp(self):
+        user1 = User.objects.create(username='username134', password='pa$$word12466')
+        user1.save()
+        notebook1 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes1")
+        notebook2 = Notebook.objects.create(Private=False, class_name="Class2", name="bfb3ab_notes2")
+        notebook3 = Notebook.objects.create(Private=False, class_name="Class3", name="bfb3ab_notes3")
+        notebook1.owner = user1
+        notebook2.owner = user1  
+
+    def testgetnoparam(self):
+        client = Client()
+        response = client.get('/notebooks/get/90/')
+        self.assertTrue(response.status_code!=200)
+
+    def testgetuser1(self):
+        user = User.objects.get(username='username134')
+        response = self.client.get('/notebooks/get/'+str(user.pk)+'/')
+        self.assertTrue(response.status_code==200)
+        self.assertTrue(len(response.context["data"]["pages"])==2, msg=str(len(response.context["data"]["pages"]))) 

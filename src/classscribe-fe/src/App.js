@@ -8,6 +8,7 @@ import WelcomeScreen from './login_registration/WelcomeScreen';
 import CourseEdit from "./components/customAdmin/edit";
 import CourseForm from "./components/customAdmin/index";
 import ImageCarousel from "./components/ImageUpload/index";
+import NotebookViewer from "./components/notebooks/index"
 import NotebookDownload from "./components/ImageUpload/download";
 
 export const base_url = "http://localhost:8000/"
@@ -35,6 +36,7 @@ const Routes =  () => {
         <Route path="/download-notebooks" exact component={NotebookDownload} />
         <Route path="/edit-course/:course_name/:building/:room/:time" exact component={CourseEdit} />
         <Route path="/notebook-carousel" exact component={ImageCarousel} />
+        <Route path="/notebook-list" exact component={NotebookViewer} />
     </Switch>
   );
 }

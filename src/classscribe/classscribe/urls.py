@@ -24,9 +24,9 @@ urlpatterns = [
   path('backend/admin/', admin.site.urls),
   path('upload/', include('imageupload.urls')),
   path('courses/', include('custom_admin.urls')),
+  path('notebooks/', include('notebooks.urls')),
   re_path(r'^', index, name="index"),
 ]
 
 if settings.DEBUG:
-  urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+  urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

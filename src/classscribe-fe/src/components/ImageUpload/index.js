@@ -41,8 +41,7 @@ export default class ImageCarousel extends Component {
           <img src={this.getImgSrc(this.state.images[i])} alt=""/>
         </div>
       );
-    }
-
+    } 
     return htmlImages;
   }
 
