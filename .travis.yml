@@ -29,4 +29,3 @@ jobs:
         - npm run build
       script:
         - npm run test
-
