@@ -24,7 +24,7 @@ jobs:
           - node_modules
       before_script:
         - cd src/classscribe
-        - python3 manage.py runserver 8000 &
+        - python manage.py runserver 8000 &
         - cd ..  
         - cd classscribe-fe
         - npm install
