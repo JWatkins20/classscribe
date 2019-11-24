@@ -29,7 +29,7 @@ jobs:
           - ~/.cache
       before_script:
         - cd src/classscribe
-        - python manage.py runserver &
+        - python manage.py runserver 8000 &
         - cd ..  
         - cd classscribe-fe
         - npm install
