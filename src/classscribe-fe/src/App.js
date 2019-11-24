@@ -37,7 +37,7 @@ const Routes =  () => {
         <Route path="/view-all-courses" exact component={CourseCalendar} />
         <Route path="/download-notebooks" exact component={NotebookDownload} />
         <Route path="/edit-course/:course_name/:building/:room/:time" exact component={CourseEdit} />
-        <Route path="/notebook-carousel" exact component={ImageCarousel} />
+        <Route path="/notebook-carousel/:user/:class_name/:date" exact component={ImageCarousel} />
     </Switch>
   );
 }
