@@ -11,7 +11,7 @@ import CourseForm from "./components/customAdmin/index";
 import CourseCalendar from "./components/customAdmin/viewAll";
 import ImageCarousel from "./components/ImageUpload/index";
 import NotebookDownload from "./components/ImageUpload/download";
-
+import CardIDRegistration from "./login_registration/CardIDRegistration";
 export const base_url = "http://localhost:8000/"
 export const url = "http://localhost:8000/api/"
 // for testng: http://localhost:8000/api/
@@ -29,6 +29,7 @@ const App = () =>{
 const Routes =  () => { 
   return (
     <Switch>
+        <Route path="/link_your_id/:user_id" component = {CardIDRegistration} />
         <Route exact path="/" component={() => <Redirect to="/login" />} />
         <Route path="/login" component={Loginscreen} />
         <Route path="/registration" component={Register} />

@@ -20,17 +20,17 @@ from classscribe.views import index
 
 urlpatterns = [
   path('api/', include('api.urls')),
-  path('api/retrieveStudentIDs', include('Student.urls')),
+  path('api/retrieveStudentIDs/', include('Student.urls')),
   path('backend/admin/', admin.site.urls),
   path('upload/', include('imageupload.urls')),
   path('courses/', include('custom_admin.urls')),
 ]
 
 if settings.DEBUG:
-  urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-  urlpatterns.append(re_path(r'^', index, name="index"))
+	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+	urlpatterns.append(re_path(r'^', index, name="index"))
 else:
-  urlpatterns.append(re_path(r'^', index, name="index"))
+	urlpatterns.append(re_path(r'^', index, name="index"))
 
 
 
