@@ -12,9 +12,9 @@ import CourseCalendar from "./components/customAdmin/viewAll";
 import ImageCarousel from "./components/ImageUpload/index";
 import NotebookViewer from "./components/notebooks/index"
 import NotebookDownload from "./components/ImageUpload/download";
-
-export const base_url = "http://localhost:8000/"
-export const url = "http://localhost:8000/api/"
+import CardIDRegistration from "./login_registration/CardIDRegistration";
+export const base_url = "http://128.143.67.97:44104/"
+export const url = "http://128.143.67.97:44104/"
 // for testng: http://localhost:8000/api/
 // for server: http://128.143.67.97:44104/
 
@@ -30,6 +30,7 @@ const App = () =>{
 const Routes =  () => { 
   return (
     <Switch>
+        <Route path="/link_your_id/:user_id" component = {CardIDRegistration} />
         <Route exact path="/" component={() => <Redirect to="/login" />} />
         <Route path="/login" component={Loginscreen} />
         <Route path="/registration" component={Register} />
