@@ -22,7 +22,10 @@ class NotebookViewer extends Component{
         super(props);
         this.state = {
             items: [],
+            pages: [],
             user: {},
+            page: 0,
+            notebook: 0,
         }
         this.loadUser = this.loadUser.bind(this);
     }
@@ -45,12 +48,19 @@ class NotebookViewer extends Component{
 
     async loadNotes()
   {
-    const res = await Axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/");
+    const res = await Axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/").then((res) =>{
     
     if(res.status===200){
       const data = res.data.data;
+      //console.log(data[1].pages[0].snapshots[1].file);
       this.setState({items:data});
+      if(!data[this.state.notebook].pages === undefined && !data[this.state.notebook].pages.length == 0){
+      for(var i = 0; i<data[this.state.notebook].pages[this.state.page].snapshots.length; i++){
+          this.state.pages.push(data[this.state.notebook].pages[this.state.page].snapshots[i].file);
+      }
     }
+    }
+})
   }
 
 
@@ -86,7 +96,7 @@ class NotebookViewer extends Component{
         <AppBar title="Notebooks"/>
         <div>{this.state.user.username}</div>
         <div>
-        <div><ImageCarousel /></div>
+        
         <div>{notelist}</div>
         </div>
         </MuiThemeProvider>
@@ -94,4 +104,4 @@ class NotebookViewer extends Component{
 }
 }
 export default NotebookViewer;
-
+// <div><ImageCarousel /></div>
