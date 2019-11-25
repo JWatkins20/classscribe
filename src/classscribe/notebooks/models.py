@@ -5,7 +5,7 @@ from imageupload.models import File
 class Page(models.Model):
     snapshots = models.ManyToManyField(File, null=True, blank=True)
     audio = models.ForeignKey(File, on_delete=models.CASCADE, null=True, related_name="audio", blank=True)
-    name = models.CharField(max_length = 20)
+    name = models.CharField(max_length = 50)
     transcript = models.CharField(max_length=20000, blank=True)
 
 

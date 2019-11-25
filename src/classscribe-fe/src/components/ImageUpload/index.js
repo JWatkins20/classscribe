@@ -8,9 +8,9 @@ export default class ImageCarousel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: props.match.params.user,
-      class_name: props.match.params.class_name,
-      date: props.match.params.date,
+      user: '',
+      class_name: '',
+      date: '',
       images:[],
     };
     this.loadImages = this.loadImages.bind(this);
@@ -22,6 +22,13 @@ export default class ImageCarousel extends Component {
 
   async loadImages()
   {
+    if(params.user != undefined){
+      user = props.match.params.user;
+      class_name = props.match.params.class_name,
+    }
+    
+      
+      date: props.match.params.date,
     const url = `http://localhost:8000/upload/get/${this.state.user}/${this.state.class_name}/${this.state.date}`
     const promise = await axios.get(url);
     const status = promise.status;
