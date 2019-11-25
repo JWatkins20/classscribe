@@ -12,8 +12,8 @@ import CourseCalendar from "./components/customAdmin/viewAll";
 import ImageCarousel from "./components/ImageUpload/index";
 import NotebookDownload from "./components/ImageUpload/download";
 import CardIDRegistration from "./login_registration/CardIDRegistration";
-export const base_url = "http://localhost:8000/"
-export const url = "http://localhost:8000/api/"
+export const base_url = "http://128.143.67.97:44104/"
+export const url = "http://128.143.67.97:44104/"
 // for testng: http://localhost:8000/api/
 // for server: http://128.143.67.97:44104/
 
