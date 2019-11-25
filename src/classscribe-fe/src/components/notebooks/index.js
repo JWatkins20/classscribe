@@ -25,7 +25,7 @@ class NotebookViewer extends Component{
             pages: [],
             user: {},
             page: 0,
-            notebook: 0,
+            notebook: 1,
         }
         this.loadUser = this.loadUser.bind(this);
     }
@@ -54,10 +54,12 @@ class NotebookViewer extends Component{
       const data = res.data.data;
       //console.log(data[1].pages[0].snapshots[1].file);
       this.setState({items:data});
-      if(!data[this.state.notebook].pages === undefined && !data[this.state.notebook].pages.length == 0){
-      for(var i = 0; i<data[this.state.notebook].pages[this.state.page].snapshots.length; i++){
-          this.state.pages.push(data[this.state.notebook].pages[this.state.page].snapshots[i].file);
+      if(!data[this.state.notebook].pages.length == 0){
+          var ps = []
+      for(var i = 0; i<data[this.state.notebook].pages.length; i++){
+          ps.push(data[this.state.notebook].pages[i]);
       }
+      this.setState({pages:ps});
     }
     }
 })
@@ -67,7 +69,25 @@ class NotebookViewer extends Component{
     render(){
         
         var notes = this.state.items;
+        var pages = this.state.pages;
+        var notebook = this.state.notebook;
         if(notes != undefined){
+            var pagelist = pages.map(function(page){
+                return(
+                    
+                    <div>
+                <Card style={{"height": "5rem"}, {"width": "13rem"}}>
+                    <CardContent><Typography>
+                        {page.name}
+                    </Typography>
+                    <Typography>         
+                                Page Number: {pages.indexOf(page)}       
+                                </Typography>     
+                            </CardContent>
+                    </Card>
+                    </div>
+                )
+            })
             var notelist = notes.map(function(note){
                 return (
                     <div>  
@@ -83,13 +103,14 @@ class NotebookViewer extends Component{
                                     </Typography>     
                                 </CardContent>
                         </Card>
+                        {notes.indexOf(note) === notebook ? pagelist : null}
                         </div>
                 )
                 })}
+                
         else{
             return(<div>Unable to display notebooks</div>);
         }
-
 
     return (
         <MuiThemeProvider>
