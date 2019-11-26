@@ -1,7 +1,6 @@
 jobs:
   include:
-    - stage: test
-      language: python
+    - language: python
       python:
         - "3.7"
       install:
@@ -15,26 +14,17 @@ jobs:
         - python manage.py makemigrations
         - python manage.py migrate
         - python manage.py test
-    - stage: test
-      language: node_js
+    - language: node_js
       node_js:
         - 'stable'
-      addons:
-        apt:
-          packages:
-            - libgconf-2-4
       cache:
-        npm: true
         directories:
-          - ~/.cache
-      before_install:
-        - cd src/classscribe-fe
+          - node_modules
+      before_script:
+        - cd src/classscribe
+        - python manage.py runserver 127.0.0.1:8000 &
+        - cd ..  
+        - cd classscribe-fe
         - npm install
-        #- npm run build
-#         - npm start --silent &
-        - npm install react-dom 
       script:
-        #- npm run start
         - npm run test
-#         - npm run tests
-#         - kill $(jobs -p) || true
