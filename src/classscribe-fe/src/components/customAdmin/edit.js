@@ -5,6 +5,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 
+import { url } from "../../App";
+
 export default class CourseEdit extends Component {
   constructor(props) {
     super(props);
@@ -24,7 +26,7 @@ export default class CourseEdit extends Component {
 
   getValues() {
     var that = this;
-    const getUrl = `http://localhost:8000/courses/edit/${this.props.match.params.course_name}/${this.props.match.params.building}/${this.props.match.params.room}/${this.props.match.params.time}`;
+    const getUrl = `${url}courses/edit/${this.props.match.params.course_name}/${this.props.match.params.building}/${this.props.match.params.room}/${this.props.match.params.time}`;
     axios.get(getUrl)
         .then(function (response) {
             that.setState({
@@ -50,7 +52,7 @@ export default class CourseEdit extends Component {
       data.append("room", this.state.room);
       data.append("time", this.state.time);
       data.append("lamp_serial", this.state.serial);
-      const putUrl = `http://localhost:8000/courses/edit/${this.state.pk}`;
+      const putUrl = `${url}courses/edit/${this.state.pk}`;
       axios.post(putUrl, data)
         .then(function (response) {
             if (response.status === 200) {
