@@ -14,7 +14,7 @@ import NotebookViewer from "./components/notebooks/index"
 import NotebookDownload from "./components/ImageUpload/download";
 import CardIDRegistration from "./login_registration/CardIDRegistration";
 export const base_url = "http://128.143.67.97:44104/"
-export const url = "http://128.143.67.97:44104/"
+export const url = "http://128.143.67.97:44104/api/"
 // for testng: http://localhost:8000/api/
 // for server: http://128.143.67.97:44104/
 

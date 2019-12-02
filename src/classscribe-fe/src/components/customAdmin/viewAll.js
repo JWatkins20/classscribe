@@ -10,7 +10,7 @@ import TextField from 'material-ui/TextField';
 
 import 'react-week-calendar/dist/style.less';
 import Axios from 'axios';
-import { url } from "../../App";
+import { base_url } from "../../App";
 
 import Cookies from 'js-cookie';
 
@@ -82,7 +82,7 @@ export default class CourseCalendar extends React.Component {
 
     loadBuildings = () => {
         let that = this;
-        const getUrl = `${url}courses/buildings`;
+        const getUrl = `${base_url}courses/buildings`;
         Axios.get(getUrl)
             .then(function (response) {
                 that.setState({
@@ -97,7 +97,7 @@ export default class CourseCalendar extends React.Component {
     loadRooms = (name) => {
         let curName = name || this.state.building;
         let that = this;
-        const getUrl = `${url}courses/${curName}/rooms`;
+        const getUrl = `${base_url}courses/${curName}/rooms`;
         Axios.get(getUrl)
             .then(function (response) {
                 that.setState({
@@ -142,7 +142,7 @@ export default class CourseCalendar extends React.Component {
         let finalIntervals = [];
         let curSerial = "";
         let allMatch = true;
-        const getUrl = `${url}courses/${curBuilding}/${room}/classes`;
+        const getUrl = `${base_url}courses/${curBuilding}/${room}/classes`;
         Axios.get(getUrl)
             .then(function (response) {
                 courses = response.data["courses"]
