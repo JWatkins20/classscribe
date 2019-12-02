@@ -39,4 +39,3 @@ class UserDetailsSerializer(DefaultUserDetailsSerializer):
 		model = User
 		fields = DefaultUserDetailsSerializer.Meta.fields + ('type', 'university', 'verification_password', 'verified', 'type_object')
 
-

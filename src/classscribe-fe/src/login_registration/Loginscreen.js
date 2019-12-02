@@ -26,7 +26,7 @@ class Loginscreen extends Component {
     history.go(1);
   }
 
-  componentWillMount(){
+  componentDidMount(){
     var loginscreen=[];
     loginscreen.push(<Login parentContext={this} appContext={this.props.parentContext}/>);
     this.setState({

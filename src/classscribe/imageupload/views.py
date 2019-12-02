@@ -2,6 +2,7 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from notebooks.models import Page
 from rest_framework.decorators import api_view
 from django.conf import settings
 import os
@@ -28,8 +29,10 @@ class FileUploadView(APIView):
 
 
 @api_view(["GET"])
-def scan_view(request, user="", class_name="", date=""):
-    obj = File.objects.filter(remark=user, class_name=class_name, timestamp__contains=date)
+def scan_view(request, page_name=""):
+    page = Page.objects.get(name=page_name)
+    obj = page.snapshots.all()
+    #obj = File.objects.filter(remark=user, class_name=class_name, timestamp__contains=date)
     names = []
     for image in obj:
         names.append(image.file.name)

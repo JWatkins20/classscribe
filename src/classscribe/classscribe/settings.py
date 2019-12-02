@@ -11,12 +11,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
-
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'p!ty#bo(h+_a410c1e@$s3e!f89lgm8xlmt!j)@xe(9d=++i9-'
-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -40,6 +38,7 @@ INSTALLED_APPS = [
     'imageupload',
     'custom_admin',
     'Student',
+    'notebooks',
 
   'django.contrib.sites',
   'allauth',
@@ -55,7 +54,6 @@ SITE_ID = 1
 
 MIDDLEWARE = [
 	'corsheaders.middleware.CorsMiddleware',
-
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

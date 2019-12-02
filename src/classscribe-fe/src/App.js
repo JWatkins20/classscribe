@@ -10,6 +10,7 @@ import CourseEdit from "./components/customAdmin/edit";
 import CourseForm from "./components/customAdmin/index";
 import CourseCalendar from "./components/customAdmin/viewAll";
 import ImageCarousel from "./components/ImageUpload/index";
+import NotebookViewer from "./components/notebooks/index"
 import NotebookDownload from "./components/ImageUpload/download";
 import CardIDRegistration from "./login_registration/CardIDRegistration";
 import { is } from '@babel/types';
@@ -42,7 +43,8 @@ const Routes =  () => {
         <Route path="/view-all-courses" exact component={CourseCalendar} />
         <Route path="/download-notebooks" exact component={NotebookDownload} />
         <Route path="/edit-course/:course_name/:building/:room/:time" exact component={CourseEdit} />
-        <Route path="/notebook-carousel/:user/:class_name/:date" exact component={ImageCarousel} />
+        <Route path="/notebook-list" exact component={NotebookViewer} />
+        <Route path="/notebook-carousel/" exact component={ImageCarousel} />
     </Switch>
   );
 }

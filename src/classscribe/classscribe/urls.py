@@ -24,6 +24,7 @@ urlpatterns = [
   path('backend/admin/', admin.site.urls),
   path('upload/', include('imageupload.urls')),
   path('courses/', include('custom_admin.urls')),
+  path('notebooks/', include('notebooks.urls')),
 ]
 
 if settings.DEBUG:
