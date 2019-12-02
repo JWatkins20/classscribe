@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { base_url } from "../../App"
-import axios from "axios";
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
@@ -11,7 +10,6 @@ import AppBar from 'material-ui/AppBar';
 import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
-import RaisedButton from 'material-ui/RaisedButton';
 
 
 const carstyle = {
