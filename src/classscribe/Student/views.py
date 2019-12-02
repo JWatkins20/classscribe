@@ -7,8 +7,7 @@ from .models import Student
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-import logging
-logger = logging.getLogger("myLogger")
+from users.models import User
 
 class StudentViewSet(viewsets.ModelViewSet):
 	queryset = Student.objects.all().order_by('idNumber')
@@ -17,9 +16,11 @@ class StudentViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 def link_studentID(request, email=None, idNumber=None):
 	try:
-		student = Student.objects.get(email=email)
-		student.idNumber = idNumber
+		user = User.objects.get(email=email)
+		student = Student.objects.create(email=email, idNumber=idNumber)
 		student.save()
+		user.type_object = student
+		user.save()
 		return Response(status=status.HTTP_200_OK, data={})
 	except Exception:
 		return Response(status=status.HTTP_400_BAD_REQUEST, data={})

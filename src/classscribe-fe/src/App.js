@@ -12,9 +12,12 @@ import CourseCalendar from "./components/customAdmin/viewAll";
 import ImageCarousel from "./components/ImageUpload/index";
 import NotebookDownload from "./components/ImageUpload/download";
 import CardIDRegistration from "./login_registration/CardIDRegistration";
-export const base_url = "http://128.143.67.97:44104/"
-export const url = "http://128.143.67.97:44104/"
-// for testng: http://localhost:8000/api/
+import { is } from '@babel/types';
+import Cookie from "js-cookie"
+import EmailVerification from './login_registration/EmailVerification';
+export const base_url = "http://localhost:8000/"
+export const url = "http://localhost:8000/api/"
+// for testng: http://localhost:8000/
 // for server: http://128.143.67.97:44104/
 
 const App = () =>{
@@ -25,15 +28,16 @@ const App = () =>{
   );
 }
 
-
 const Routes =  () => { 
   return (
     <Switch>
         <Route path="/link_your_id/:user_id" component = {CardIDRegistration} />
         <Route exact path="/" component={() => <Redirect to="/login" />} />
         <Route path="/login" component={Loginscreen} />
+        <Route path="/emailverification/:email/:verification_password" component={EmailVerification}/>
+        <Route path="/logout" component={Logout} />
         <Route path="/registration" component={Register} />
-        <Route path="/dashboard" component={WelcomeScreen} />
+        <PrivateRoute path="/dashboard" component={WelcomeScreen} />
         <Route path="/create-course" exact component={CourseForm} />
         <Route path="/view-all-courses" exact component={CourseCalendar} />
         <Route path="/download-notebooks" exact component={NotebookDownload} />
@@ -41,6 +45,30 @@ const Routes =  () => {
         <Route path="/notebook-carousel/:user/:class_name/:date" exact component={ImageCarousel} />
     </Switch>
   );
+}
+
+const Logout = () => {
+  Cookie.remove('user-key');
+  return <Redirect to="/login" />
+}
+
+const validToken = () =>{
+  return Cookie.get('user-key') !== undefined
+}
+
+const PrivateRoute = ({component: Component, ...rest}) => {
+  return(
+    <Route 
+      {...rest}
+      render = {props =>
+        validToken() ? (
+          Component && <Component {...props}/>
+        ) : (
+          <Redirect to={"/login"}/>
+        )
+      }
+    />
+  )
 }
 export default App;
 

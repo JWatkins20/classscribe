@@ -187,7 +187,13 @@ AUTH_USER_MODEL = 'users.User'
 
 ACCOUNT_ADAPTER = 'users.adapter.AccountAdapter'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'class.scribe.co@gmail.com'
+EMAIL_HOST_PASSWORD = 'lamp2020'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False

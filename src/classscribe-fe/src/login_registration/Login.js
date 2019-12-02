@@ -33,7 +33,7 @@ login = async () =>{
           window.location.reload(false);
           history.go(1);
         }else{
-          alert('Error! Registration failed!')
+          alert('Error! Login failed!')
         }
       }
     )

@@ -37,6 +37,6 @@ class AdminRegisterSerializer(RegisterSerializer): #for admin user, not for djan
 class UserDetailsSerializer(DefaultUserDetailsSerializer):
 	class Meta:
 		model = User
-		fields = DefaultUserDetailsSerializer.Meta.fields + ('type', 'university')
+		fields = DefaultUserDetailsSerializer.Meta.fields + ('type', 'university', 'verification_password', 'verified', 'type_object')
 
 
