@@ -206,7 +206,7 @@ export default class CourseCalendar extends React.Component {
     }
 
     render() {
-        if (this.state.user.type === "admin") {
+        if (this.state.user && this.state.user.type === "admin") {
             return (
                 <>
                     <MuiThemeProvider>
