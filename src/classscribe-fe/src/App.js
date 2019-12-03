@@ -41,10 +41,8 @@ const Routes =  () => {
         <Route path="/logout" component={Logout} />
         <Route path="/registration" component={Register} />
         <PrivateRoute path="/dashboard" component={WelcomeScreen} />
-        <Route path="/create-course" exact component={CourseForm} />
         <Route path="/view-all-courses" exact component={CourseCalendar} />
         <Route path="/download-notebooks" exact component={NotebookDownload} />
-        <Route path="/edit-course/:course_name/:building/:room/:time" exact component={CourseEdit} />
         <Route path="/notebook-list" exact component={NotebookViewer} />
         <Route path="/notebook-carousel/" exact component={ImageCarousel} />
     </Switch>
