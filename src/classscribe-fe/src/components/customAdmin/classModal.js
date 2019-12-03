@@ -82,8 +82,7 @@ class classModal extends React.Component {
                 });
             })
             .catch(function (error) {
-                alert("Edits were not saved. There might be a conflicting class!");
-                console.log(error);
+                alert("Edits were not saved! " + error.response.data["message"]);
             });
     }
 
