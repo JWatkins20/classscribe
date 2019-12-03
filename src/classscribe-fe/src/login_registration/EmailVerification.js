@@ -6,7 +6,7 @@ const history = window.history
 
 const verify = async (email, password) => {
     await Axios.post(url + 'verifyemail/' + email + '/' + password)
-    history.pushState({},"", "login");
+    history.pushState({},"", "/login");
     window.location.reload(false);
     history.go(1)
 }

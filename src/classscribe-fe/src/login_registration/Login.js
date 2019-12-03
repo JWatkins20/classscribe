@@ -23,7 +23,6 @@ login = async () =>{
         "username": this.state.username,
         "password": this.state.password
     }
-    console.log(url +"login/")
     await Axios.post(url +"login/", payload).then(
       async function(res){
         if(res.status == '200'){

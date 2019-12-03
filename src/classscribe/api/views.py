@@ -1,11 +1,9 @@
-from django.shortcuts import render
 from django.core.mail import send_mail
 from rest_framework.response import Response
 from rest_framework import status
 from users.models import User
 import string
 import random
-from django.shortcuts import redirect
 from rest_framework.decorators import api_view
 
 @api_view(['POST'])
@@ -40,6 +38,5 @@ def verify(request, email, verification_password):
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={})
 	except Exception:
 		return Response(status=status.HTTP_400_BAD_REQUEST, data={})
-
 
 
