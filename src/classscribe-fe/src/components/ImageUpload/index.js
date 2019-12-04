@@ -14,15 +14,20 @@ import Card from '@material-ui/core/Card';
 
 const carstyle = {
     width: '750px',
-    height: '790px',
+    height: '890px',
     float: 'left',
     overflow: 'auto',
     paddingLeft: "0px"
 };
 
-
-
-
+const transcriptStyle = {
+    width: '300px',
+    height: '890px',
+    float: 'left',
+    overflow: 'auto',
+    paddingLeft: "0px",
+    border: "2px solid black"
+};
 
 export default class ImageCarousel extends Component {
   constructor(props) {
@@ -39,6 +44,7 @@ export default class ImageCarousel extends Component {
       user: {},
       page: 0,
       notebook: 0,
+      transcript: ""
     };
     this.loadNotes = this.loadNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
@@ -69,18 +75,23 @@ async loadNotes()
       //console.log(data[1].pages[0].snapshots[1].file);
       this.setState({items:data});
       if(!data[this.state.notebook].pages.length == 0){
-          var ps = []
-          var is = []
+          var ps = [];
+          var is = [];
       for(var i = 0; i<data[this.state.notebook].pages.length; i++){
           ps.push(data[this.state.notebook].pages[i]);
+          this.setState({
+            transcript: data[this.state.notebook].pages[i].transcript
+          });
           if(!data[this.state.notebook].pages[this.state.page].snapshots.length == 0){
             for (var j = 0; j < data[this.state.notebook].pages[this.state.page].snapshots.length; j++) {
               is.push(data[this.state.notebook].pages[this.state.page].snapshots[j].file);
             }
           }
       }
-      this.setState({images:is});
-      this.setState({pages:ps});
+      this.setState({
+        images:is,
+        pages:ps
+      });
       this.setState({state:this.state});
     }
     }
@@ -89,7 +100,10 @@ async loadNotes()
 
   switchPage = (index) =>{
     console.log("hello");
-    this.setState({page:index})
+    this.setState({
+      page:index,
+      transcript: this.state.items[this.state.notebook].pages[index].transcript
+    });
     var is = [];
       if(!this.state.items[this.state.notebook].pages[index].snapshots.length == 0){
         for(var i = 0; i<this.state.items[this.state.notebook].pages[index].snapshots.length; i++){
@@ -212,6 +226,9 @@ async loadNotes()
         <div style={{"padding-right": '10px'}, {"width": '16rem'}, {float: 'left'}}>{notelist}</div>
         <div style={carstyle}>
           {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
+        </div>
+        <div style={transcriptStyle}>
+          <p>{this.state.transcript}</p>
         </div>
       </div>
       </MuiThemeProvider>
