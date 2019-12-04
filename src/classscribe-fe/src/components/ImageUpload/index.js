@@ -90,7 +90,9 @@ async loadNotes()
       for(var i = 0; i<data[this.state.notebook].pages.length; i++){
           ps.push(data[this.state.notebook].pages[i]);
           if(!data[this.state.notebook].pages[this.state.page].snapshots.length == 0){
-            is.push(data[this.state.notebook].pages[this.state.page].snapshots[i].file)
+            for (var j = 0; j < data[this.state.notebook].pages[this.state.page].snapshots.length; j++) {
+              is.push(data[this.state.notebook].pages[this.state.page].snapshots[j].file);
+            }
           }
       }
       this.setState({images:is});
