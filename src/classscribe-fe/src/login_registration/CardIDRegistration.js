@@ -17,7 +17,6 @@ const sendID = async (email, user_id) => {
           }else{
             alert('ID successfully linked!')
           }
-            console.log(res.status)
         }
       )
 }

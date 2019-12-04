@@ -3,7 +3,7 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import React, {Component} from 'react';
-import {Button} from 'react-bootstrap';
+import { withRouter } from 'react-router-dom';
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../App';
@@ -23,22 +23,28 @@ login = async () =>{
         "username": this.state.username,
         "password": this.state.password
     }
-    await Axios.post(url +"login/", payload).then(
-      async function(res){
-        if(res.status == '200'){
-          Cookies.set('user-key', res.data.key)
-          const user = (await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})).data
-          history.pushState(user,"", "dashboard");
-          window.location.reload(false);
-          history.go(1);
-        }else{
-          alert('Error! Login failed!')
+    try{
+      await Axios.post(url +"login/", payload).then(
+        async function(res){
+            Cookies.set('user-key', res.data.key)
+            const user = (await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})).data
+            history.pushState(user,"", "dashboard");
+            window.location.reload(false);
+            history.go(1);
         }
-      }
-    )
+      )
+    } catch(e){
+      alert(e.response.request.response)
+    }
 
 }
+componentDidMount() {
+  if (this.props.location.state !== undefined){
+    alert(this.props.location.state.incomingMessage);
+  }
+}
 render() {
+
 
     return (
       <div>
@@ -71,4 +77,4 @@ render() {
 const style = {
  margin: 15,
 };
-export default Login;
+export default withRouter(Login);
