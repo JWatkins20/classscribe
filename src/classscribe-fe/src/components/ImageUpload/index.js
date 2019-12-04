@@ -207,10 +207,10 @@ async loadNotes()
       <MuiThemeProvider>
       <AppBar title= {"Hello, "+this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
-      <div style={{"padding-right": '10px'}, {"width": '16rem'}, {float: 'left'}}>{notelist}</div>
-      <div style={carstyle}>
-      {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
-      </div>
+        <div style={{"padding-right": '10px'}, {"width": '16rem'}, {float: 'left'}}>{notelist}</div>
+        <div style={carstyle}>
+          {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
+        </div>
       </div>
       </MuiThemeProvider>
     );
