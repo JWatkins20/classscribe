@@ -10,6 +10,9 @@ import TextField from 'material-ui/TextField';
 
 import 'react-week-calendar/dist/style.less';
 import Axios from 'axios';
+import { base_url, url } from "../../App";
+
+import Cookies from 'js-cookie';
 
 const dayMap = {
     "M": 1,
@@ -30,11 +33,33 @@ export default class CourseCalendar extends React.Component {
             building: "",
             rooms: [],
             room: "",
-            serial: ""
+            serial: "",
+            user: null
         }
+
+        this.loadUser();
 
         this.loadBuildings = this.loadBuildings.bind(this);
         this.loadBuildings();
+    }
+
+    loadUser() {
+        const that = this;
+        Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})
+            .then(function (response) {
+                if (response.status === 200) {
+                    const user = response.data;
+                    console.log(response);
+                    console.log(user.username);
+                    that.setState({user});
+                }
+                else {
+                    alert("Something went wrong with call");
+                }
+            })
+            .catch(function (error) {
+                alert(error);
+            });
     }
 
     handleBuildingChange = (event, index, value) => {
@@ -57,7 +82,7 @@ export default class CourseCalendar extends React.Component {
 
     loadBuildings = () => {
         let that = this;
-        const getUrl = `http://localhost:8000/courses/buildings`;
+        const getUrl = `${base_url}courses/buildings`;
         Axios.get(getUrl)
             .then(function (response) {
                 that.setState({
@@ -72,7 +97,7 @@ export default class CourseCalendar extends React.Component {
     loadRooms = (name) => {
         let curName = name || this.state.building;
         let that = this;
-        const getUrl = `http://localhost:8000/courses/${curName}/rooms`;
+        const getUrl = `${base_url}courses/${curName}/rooms`;
         Axios.get(getUrl)
             .then(function (response) {
                 that.setState({
@@ -117,7 +142,7 @@ export default class CourseCalendar extends React.Component {
         let finalIntervals = [];
         let curSerial = "";
         let allMatch = true;
-        const getUrl = `http://localhost:8000/courses/${curBuilding}/${room}/classes`;
+        const getUrl = `${base_url}courses/${curBuilding}/${room}/classes`;
         Axios.get(getUrl)
             .then(function (response) {
                 courses = response.data["courses"]
@@ -181,52 +206,60 @@ export default class CourseCalendar extends React.Component {
     }
 
     render() {
-
-        return (
-            <>
-                <MuiThemeProvider>
-                    <SelectField
-                        id="building-select"
-                        floatingLabelText="Building"
-                        floatingLabelFixed={true}
-                        value = {this.state.building}
-                        onChange={this.handleBuildingChange}
-                        onFocus={this.loadBuildings}>
-                        {this.state.buildings.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
-                    </SelectField>
-                    <SelectField
-                        id="room-select"
-                        floatingLabelText="Room"
-                        floatingLabelFixed={true}
-                        value = {this.state.room}
-                        onChange={this.handleRoomChange}
-                        onFocus={this.loadRooms}>
-                        {this.state.rooms.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
-                    </SelectField>
-                    <br/>
-                    <TextField
-                        id="lamp-serial"
-                        floatingLabelText="Lamp Serial Number"
-                        floatingLabelFixed={true}
-                        value = {this.state.serial}
-                        onChange = {(event) => this.setState({serial: event.target.value})}
+        if (this.state.user && this.state.user.type === "admin") {
+            return (
+                <>
+                    <MuiThemeProvider>
+                        <SelectField
+                            id="building-select"
+                            floatingLabelText="Building"
+                            floatingLabelFixed={true}
+                            value = {this.state.building}
+                            onChange={this.handleBuildingChange}
+                            onFocus={this.loadBuildings}>
+                            {this.state.buildings.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
+                        </SelectField>
+                        <SelectField
+                            id="room-select"
+                            floatingLabelText="Room"
+                            floatingLabelFixed={true}
+                            value = {this.state.room}
+                            onChange={this.handleRoomChange}
+                            onFocus={this.loadRooms}>
+                            {this.state.rooms.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
+                        </SelectField>
+                        <br/>
+                        <TextField
+                            id="lamp-serial"
+                            floatingLabelText="Lamp Serial Number"
+                            floatingLabelFixed={true}
+                            value = {this.state.serial}
+                            onChange = {(event) => this.setState({serial: event.target.value})}
+                        />
+                    </MuiThemeProvider>
+                    <WeekCalendar
+                        firstDay = {moment().day(1)}
+                        startTime = {moment({h:7, m:0})}
+                        endTime = {moment({h:19, m:0})}
+                        numberOfDays = {5}
+                        dayFormat = {'dd.'}
+                        cellHeight = {20}
+                        selectedIntervals = {this.state.selectedIntervals}
+                        onIntervalSelect = {this.handleSelect}
+                        onIntervalUpdate = {this.handleEventUpdate}
+                        onIntervalRemove = {this.handleEventRemove}
+                        modalComponent = {classModal}
+                        eventComponent = {classEvent}
                     />
-                </MuiThemeProvider>
-                <WeekCalendar
-                    firstDay = {moment().day(1)}
-                    startTime = {moment({h:7, m:0})}
-                    endTime = {moment({h:19, m:0})}
-                    numberOfDays = {5}
-                    dayFormat = {'dd.'}
-                    cellHeight = {20}
-                    selectedIntervals = {this.state.selectedIntervals}
-                    onIntervalSelect = {this.handleSelect}
-                    onIntervalUpdate = {this.handleEventUpdate}
-                    onIntervalRemove = {this.handleEventRemove}
-                    modalComponent = {classModal}
-                    eventComponent = {classEvent}
-                />
-            </>
-        );
+                </>
+            );
+        }
+        else {
+            return (
+                <div>
+                    You must be logged in as an admin to view this page!
+                </div>
+            )
+        }
     }
 }

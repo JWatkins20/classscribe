@@ -1,3 +1,5 @@
+import datetime
+
 from django.core import serializers
 from django.views.generic import CreateView
 
@@ -18,7 +20,52 @@ class PersonCreateView(CreateView):
 
 @api_view(["POST"])
 def submit_course(request):
+    all_courses = Course.objects.all()
+    serial_to_building = {}
+
+    for course in all_courses:
+        if course.lamp_serial not in serial_to_building:
+            serial_to_building[course.lamp_serial] = course.building
+        else:
+            if course.building != serial_to_building[course.lamp_serial]:
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Old courses have conflicting SNs!'})
+
+    if request.data.get("lamp_serial") in serial_to_building and request.data.get("building") != serial_to_building[request.data.get("lamp_serial")]:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'The lamp youre using already is being used in a different room!'})
+
     try:
+        conflicting_courses = Course.objects.filter(building=request.data.get("building"),
+                                                    room=request.data.get("room"))
+
+        if len(conflicting_courses) > 0:
+            try:
+                days = request.data.get("time").split(" ")[0]
+                days = list(days.replace("Thu", "!"))
+                start = request.data.get("time").split(" ")[1].split("-")[0]
+                end = request.data.get("time").split(" ")[1].split("-")[1]
+                start_time = datetime.time(int(start.split(":")[0]), int(start.split(":")[1]))
+                end_time = datetime.time(int(end.split(":")[0]), int(end.split(":")[1]))
+
+                for course in conflicting_courses:
+                    days2 = course.time.split(" ")[0]
+                    days2 = list(days2.replace("Thu", "!"))
+                    possible_conflict = False
+                    for day in days2:
+                        if day in days:
+                            possible_conflict = True
+                            break
+                    start = course.time.split(" ")[1].split("-")[0]
+                    end = course.time.split(" ")[1].split("-")[1]
+                    start_time_2 = datetime.time(int(start.split(":")[0]), int(start.split(":")[1]))
+                    end_time_2 = datetime.time(int(end.split(":")[0]), int(end.split(":")[1]))
+
+                    if possible_conflict and ((start_time_2 >= start_time and start_time_2 <= end_time) or (
+                            end_time_2 >= start_time and end_time_2 <= end_time)):
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Conflicting Times!'})
+            except Exception as e:
+                print(e)
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+
         Course.objects.create(name=request.data.get("courseName"),
                               professorID=request.data.get("professorId"),
                               building=request.data.get("building"),
@@ -61,6 +108,54 @@ def edit_course(request, course_name=None, building=None, room=None, time=None, 
         to_edit.room = request.data.get("room")
         to_edit.time = request.data.get("time")
         to_edit.lamp_serial = request.data.get("lamp_serial")
+
+        all_courses = Course.objects.all()
+        serial_to_building = {}
+
+        for course in all_courses:
+            if course.lamp_serial not in serial_to_building:
+                serial_to_building[course.lamp_serial] = course.building
+            else:
+                if course.building != serial_to_building[course.lamp_serial]:
+                    return Response(status=status.HTTP_400_BAD_REQUEST,
+                                    data={'message': 'Old courses have conflicting SNs!'})
+
+        if to_edit.lamp_serial in serial_to_building and to_edit.building != serial_to_building[to_edit.lamp_serial]:
+            return Response(status=status.HTTP_400_BAD_REQUEST,
+                            data={'message': 'The lamp youre using already is being used in a different room!'})
+
+        conflicting_courses = Course.objects.filter(building=to_edit.building,
+                                                    room=to_edit.room)
+
+        if len(conflicting_courses) > 0:
+            try:
+                days = to_edit.time.split(" ")[0]
+                days = list(days.replace("Thu", "!"))
+                start = to_edit.time.split(" ")[1].split("-")[0]
+                end = to_edit.time.split(" ")[1].split("-")[1]
+                start_time = datetime.time(int(start.split(":")[0]), int(start.split(":")[1]))
+                end_time = datetime.time(int(end.split(":")[0]), int(end.split(":")[1]))
+
+                for course in conflicting_courses:
+                    days2 = course.time.split(" ")[0]
+                    days2 = list(days2.replace("Thu", "!"))
+                    possible_conflict = False
+                    for day in days2:
+                        if day in days:
+                            possible_conflict = True
+                            break
+                    start = course.time.split(" ")[1].split("-")[0]
+                    end = course.time.split(" ")[1].split("-")[1]
+                    start_time_2 = datetime.time(int(start.split(":")[0]), int(start.split(":")[1]))
+                    end_time_2 = datetime.time(int(end.split(":")[0]), int(end.split(":")[1]))
+                    
+                    if pk != course.pk and possible_conflict and ((start_time_2 >= start_time and start_time_2 <= end_time) or (
+                            end_time_2 >= start_time and end_time_2 <= end_time)):
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Conflicting Times!'})
+            except Exception as e:
+                print(e)
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+
         try:
             to_edit.save()
             return Response(status=status.HTTP_200_OK, data={})

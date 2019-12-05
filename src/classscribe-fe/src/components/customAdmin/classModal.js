@@ -7,6 +7,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 
+import { base_url } from "../../App";
+
 class classModal extends React.Component {
     constructor(props) {
         super(props);
@@ -27,7 +29,7 @@ class classModal extends React.Component {
     getValues() {
         var that = this;
         if (this.state.name !== "") {
-            const getUrl = `http://localhost:8000/courses/edit/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
+            const getUrl = `${base_url}courses/edit/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
             axios.get(getUrl)
                 .then(function (response) {
                     that.setState({
@@ -58,10 +60,10 @@ class classModal extends React.Component {
         data.append("lamp_serial", this.state.serial);
         var putUrl;
         if (this.state.pk !== 0) {
-            putUrl = `http://localhost:8000/courses/edit/${this.state.pk}`;
+            putUrl = `${base_url}courses/edit/${this.state.pk}`;
         }
         else {
-            putUrl = `http://localhost:8000/courses/create`;
+            putUrl = `${base_url}courses/create`;
         }
         
         axios.post(putUrl, data)
@@ -80,8 +82,7 @@ class classModal extends React.Component {
                 });
             })
             .catch(function (error) {
-                alert("Edits were not saved. Check the console for the error!");
-                console.log(error);
+                alert("Edits were not saved! " + error.response.data["message"]);
             });
     }
 

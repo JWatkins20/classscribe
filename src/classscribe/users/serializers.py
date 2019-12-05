@@ -2,8 +2,19 @@ from rest_framework import serializers
 from rest_auth.serializers import UserDetailsSerializer as DefaultUserDetailsSerializer
 from django.utils.translation import ugettext_lazy as _
 from rest_auth.registration.serializers import RegisterSerializer as DefaultRegisterSerializer
+from rest_auth.serializers import LoginSerializer as DefaultLoginSerializer
 from .models import User
+
 SPECIAL_PASSWORDS = ["7'c$DP$f"]
+
+
+class LoginSerializer(DefaultLoginSerializer):
+	def validate(self, data):
+		super(LoginSerializer, self).validate(data)
+		user = User.objects.get(username=data['username'])
+		if not user.verified:
+			raise serializers.ValidationError(_("Email has not been validated."))
+		return data
 
 
 class RegisterSerializer(DefaultRegisterSerializer):
@@ -20,7 +31,8 @@ class RegisterSerializer(DefaultRegisterSerializer):
 		data_dict['university'] = self.validated_data.get('university', '')
 		return data_dict
 
-class AdminRegisterSerializer(RegisterSerializer): #for admin user, not for django admin
+
+class AdminRegisterSerializer(RegisterSerializer):  # for admin user, not for django admin
 	special_password = serializers.CharField(max_length=256)
 
 	def validate(self, data):
@@ -37,5 +49,5 @@ class AdminRegisterSerializer(RegisterSerializer): #for admin user, not for djan
 class UserDetailsSerializer(DefaultUserDetailsSerializer):
 	class Meta:
 		model = User
-
-		fields = DefaultUserDetailsSerializer.Meta.fields + ('id', 'pk', 'type', 'university')
+		fields = DefaultUserDetailsSerializer.Meta.fields + (
+		'type', 'university', 'verification_password', 'verified', 'type_object')

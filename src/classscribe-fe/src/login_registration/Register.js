@@ -59,9 +59,8 @@ class Register extends Component {
     await Axios.post(endpoint, payload).then(
       async function(res){
         if(res.status == '201'){
-          Cookies.set('user-key', res.data.key)
-          const user = (await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})).data
-          history.pushState(user,"", "dashboard");
+          res = await Axios.post(url + 'emailverification/' + payload.email)
+          history.pushState({},"", "login");
           window.location.reload(false);
           history.go(1);
         }else{
@@ -106,11 +105,12 @@ class Register extends Component {
              />
            <br/>
            <TextField
-             hintText="Enter your Email/Username"
+             hintText="Enter your Email"
              type="email"
-             floatingLabelText="Email"
+             floatingLabelText="Enter Email"
              onChange = {(event) => this.setState({email:event.target.value})}
              />
+            
            <br/>
            <TextField
              type = "password"

@@ -10,7 +10,7 @@ class CourseTests(TestCase):
             name="testName",
             building="testBuilding",
             professorID="testProfessorID",
-            lamp_serial="testLamp_serial"
+            lamp_serial="testLamp_serial123"
         )
         Course.objects.create(
             room="testRoom1",
@@ -29,7 +29,7 @@ class CourseTests(TestCase):
             name="testName",
             building="testBuilding",
             professorID="testProfessorID",
-            lamp_serial="testLamp_serial"
+            lamp_serial="testLamp_serial123"
         )
         self.assertNotEqual(found_course, None)
 
@@ -47,3 +47,29 @@ class CourseTests(TestCase):
         c = Client()
         response = c.get('/courses/edit/testName/testBuilding/testRoom1/testTime')
         self.assertEqual(response.status_code, 400)
+
+    def test_find_buildings_returns_right_num(self):
+        c = Client()
+        response = c.get('/courses/buildings')
+        self.assertEqual(1, len(response.data["buildings"]))
+
+    def test_find_building_matches_name(self):
+        c = Client()
+        response = c.get('/courses/buildings')
+        self.assertEqual('testBuilding', response.data["buildings"][0])
+
+    def test_find_rooms_returns_right_num(self):
+        c = Client()
+        response = c.get('/courses/testBuilding/rooms')
+        self.assertEqual(2, len(response.data["rooms"]))
+
+    def test_find_rooms_returns_right_names(self):
+        c = Client()
+        response = c.get('/courses/testBuilding/rooms')
+        expected = ["testRoom", "testRoom1"]
+        self.assertEqual(expected, response.data["rooms"])
+
+    def test_find_courses_returns_rigt_course(self):
+        c = Client()
+        response = c.get('/courses/testBuilding/testRoom/classes')
+        self.assertEqual("testLamp_serial123", response.data["courses"][0]["fields"]["lamp_serial"])

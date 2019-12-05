@@ -5,6 +5,7 @@ venv
 **/migrations/*
 **/media/*
 **/staticfiles/**
+*.pyc
 
 # Pycharm Stuff # 
 **/.idea/*
