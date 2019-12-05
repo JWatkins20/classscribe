@@ -82,8 +82,8 @@ def add_file_view(request):
 @api_view(["POST"])
 def add_audio_and_transcript_view(request):
     data = request.data
-    page = Page.objects.get(pk=data["pk"])
-    files = File.objects.get(remark=data["remark"])
+    page = Page.objects.get(pk=data["pk_page"])
+    files = AudioFile.objects.get(pk=data["pk_audio"])
     page.audio = files
     page.transcript = data["transcript"]
     page.save()
