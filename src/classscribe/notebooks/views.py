@@ -60,7 +60,7 @@ class PageCreateView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 '''
 @params: name, remark
-name: name of page
+pk: pk of page object
 remark: remark field of corresponding file
 adds file with remark (remark) to notebook with name (name)
 '''

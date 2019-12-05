@@ -1,10 +1,11 @@
 from django.db import models
 from users.models import User
 from imageupload.models import File
+from .models import AudioFile
 
 class Page(models.Model):
     snapshots = models.ManyToManyField(File, null=True, blank=True)
-    audio = models.ForeignKey(File, on_delete=models.CASCADE, null=True, related_name="audio", blank=True)
+    audio = models.ForeignKey(AudioFile, on_delete=models.CASCADE, null=True, related_name="audio", blank=True)
     name = models.CharField(max_length = 50)
     transcript = models.CharField(max_length=20000, blank=True)
 
