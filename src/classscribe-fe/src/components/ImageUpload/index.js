@@ -39,7 +39,6 @@ const notestyle = {
   "padding-bottom": "5px"
  }
 
- const headerstyle
 export default class ImageCarousel extends Component {
   constructor(props) {
     super(props);
