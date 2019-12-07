@@ -150,7 +150,7 @@ async loadNotes()
   // }
 
   getImgSrc = (imageName) => {
-    return 'http://128.143.67.97:44104' + imageName;
+    return 'http://localhost:8000' + imageName;
   }
 
   createCarousel = () => {
