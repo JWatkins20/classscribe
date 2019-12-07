@@ -12,6 +12,7 @@ import ImageCarousel from "../ImageUpload/index";
 import { url } from '../../App';
 import { base_url } from "../../App"
 import { mergeClasses } from '@material-ui/styles';
+import AudioPlayer from '../../student/AudioPlayer'
 
 var history = window.history;
 
@@ -46,7 +47,7 @@ class NotebookViewer extends Component{
 
     }
 
-    async loadNotes()
+async loadNotes()
   {
     const res = await Axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/").then((res) =>{
     
@@ -117,7 +118,7 @@ class NotebookViewer extends Component{
         <AppBar title="Notebooks"/>
         <div>{this.state.user.username}</div>
         <div>
-        
+        <AudioPlayer/>
         <div>{notelist}</div>
         </div>
         </MuiThemeProvider>

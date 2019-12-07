@@ -40,34 +40,37 @@ class Register extends Component {
   }
 
   register = async () =>{
-    var payload = {
-        "username": this.state.email,
-        "email": this.state.email,
-        "password1": this.state.password,
-        "password2": this.state.password,
-        "special_password": this.state.special_password,
-        "first_name": this.state.first_name,
-        "last_name": this.state.last_name,
-        "university": this.state.university,
-        "type": this.state.type
-    }
-    var endpoint = url + "registration/"
-    if(this.state.admin){
-      endpoint = url + "adminregistration/"
-    }
-
-    await Axios.post(endpoint, payload).then(
-      async function(res){
-        if(res.status == '201'){
-          res = await Axios.post(url + 'emailverification/' + payload.email)
-          history.pushState({},"", "login");
-          window.location.reload(false);
-          history.go(1);
-        }else{
-          alert('Error!')
-        }
+    if(this.state.email.substring(this.state.email.length-3) !== 'edu'){
+      alert("Please enter a valid edu email address.")
+    }else{
+      var payload = {
+          "username": this.state.email,
+          "email": this.state.email,
+          "password1": this.state.password,
+          "password2": this.state.password,
+          "special_password": this.state.special_password,
+          "first_name": this.state.first_name,
+          "last_name": this.state.last_name,
+          "university": this.state.university,
+          "type": this.state.type
       }
-    )
+      var endpoint = url + "registration/"
+      if(this.state.admin){
+        endpoint = url + "adminregistration/"
+      }
+      await Axios.post(endpoint, payload).then(
+        async function(res){
+          if(res.status == '201'){
+            res = await Axios.post(url + 'emailverification/' + payload.email)
+            history.pushState({},"", "/login");
+            window.location.reload(false);
+            history.go(1);
+          }else{
+            alert('Error!')
+          }
+        }
+      )
+    }
 
   }
   
@@ -110,8 +113,8 @@ class Register extends Component {
              floatingLabelText="Enter Email"
              onChange = {(event) => this.setState({email:event.target.value})}
              />
+            <br/>
             
-           <br/>
            <TextField
              type = "password"
              hintText="Enter your Password"
@@ -146,6 +149,7 @@ class Register extends Component {
                     </RadioGroup>
                 </FormControl>
               </div>
+              <p class="text-uppercase">Remember to verify your email before trying to login.</p>
               <RaisedButton label="Submit" primary={true} style={style} onClick={(event) => this.register(event)}/>
 
            </div>

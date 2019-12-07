@@ -24,6 +24,7 @@ export const url = "http://localhost:8000/api/"
 // for testng: http://localhost:8000/api/
 // for server: http://128.143.67.97:44104/
 
+
 const App = () =>{
   return(
     <Router>
@@ -70,5 +71,8 @@ const PrivateRoute = ({component: Component, ...rest}) => {
     />
   )
 }
+
+
+
 export default App;
 
