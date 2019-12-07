@@ -9,7 +9,8 @@ const propTypes = {
   lamp: PropTypes.string.isRequired,
   days: PropTypes.string.isRequired,
   building: PropTypes.string.isRequired,
-  room: PropTypes.string.isRequired
+  room: PropTypes.string.isRequired,
+  semester: PropTypes.string.isRequired
 };
 
 

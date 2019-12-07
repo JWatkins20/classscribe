@@ -19,6 +19,7 @@ class classModal extends React.Component {
             room:  $('#room-select')[0].innerText,
             time:  (props.days || "") + " " + props.start.format('H:mm') + "-" + props.end.format('H:mm'),
             serial: props.lamp || $('#lamp-serial')[0].value,
+            semester: props.semester || $('#semester-select')[0].innerText,
             pk: 0
         };
 
@@ -29,7 +30,7 @@ class classModal extends React.Component {
     getValues() {
         var that = this;
         if (this.state.name !== "") {
-            const getUrl = `${base_url}courses/edit/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
+            const getUrl = `${base_url}courses/edit/${this.state.semester}/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
             axios.get(getUrl)
                 .then(function (response) {
                     that.setState({
@@ -39,6 +40,7 @@ class classModal extends React.Component {
                         room: response.data["room"],
                         time: response.data["time"],
                         serial: response.data["lamp_serial"],
+                        semester: response.data["semester"],
                         pk: response.data["pk"] || 0
                     });
                 });
@@ -58,6 +60,7 @@ class classModal extends React.Component {
         data.append("room", this.state.room);
         data.append("time", this.state.time);
         data.append("lamp_serial", this.state.serial);
+        data.append("semester", this.state.semester);
         var putUrl;
         if (this.state.pk !== 0) {
             putUrl = `${base_url}courses/edit/${this.state.pk}`;
@@ -78,7 +81,8 @@ class classModal extends React.Component {
                     "name": that.state.name,
                     "professor": that.state.professorId,
                     "building": that.state.building,
-                    "room": that.state.room
+                    "room": that.state.room,
+                    "semester": that.state.semester
                 });
             })
             .catch(function (error) {
@@ -91,6 +95,15 @@ class classModal extends React.Component {
             <div style={{textAlign: "center"}}>
                 <MuiThemeProvider>
                     <div>
+                        <TextField
+                            id="courseSemester"
+                            floatingLabelText="Semester"
+                            floatingLabelFixed={true}
+                            defaultValue={this.state.semester}
+                            onChange = {(event) => this.setState({semester: event.target.value})}
+                        />
+                        <br/>
+
                         <TextField
                             id="courseName"
                             floatingLabelText="Course Name"
