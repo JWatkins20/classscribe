@@ -5,4 +5,4 @@ class AudioFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AudioFile
-        fields = ('file', 'remark', 'class_name', 'length', 'timestamp')
+        fields = ('file', 'remark', 'class_name', 'length', 'timestamp', 'pk')

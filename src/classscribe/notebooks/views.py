@@ -9,6 +9,7 @@ from django.shortcuts import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from datetime import date
 
 # Create your views here.
 
@@ -60,7 +61,7 @@ class PageCreateView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 '''
 @params: name, remark
-name: name of page
+pk: pk of page object
 remark: remark field of corresponding file
 adds file with remark (remark) to notebook with name (name)
 '''
@@ -69,7 +70,8 @@ def add_file_view(request):
     data = request.data
     added_files = []
     page = Page.objects.get(id=data["pk"])
-    files = File.objects.filter(remark=data["remark"])
+    today = date.today()
+    files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
     for f in files:
         page.snapshots.add(f)
         added_files.append(f)
@@ -82,8 +84,8 @@ def add_file_view(request):
 @api_view(["POST"])
 def add_audio_and_transcript_view(request):
     data = request.data
-    page = Page.objects.get(pk=data["pk"])
-    files = File.objects.get(remark=data["remark"])
+    page = Page.objects.get(pk=data["pk_page"])
+    files = AudioFile.objects.get(pk=data["pk_audio"])
     page.audio = files
     page.transcript = data["transcript"]
     page.save()

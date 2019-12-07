@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from imageupload.serializers import FileSerializer
+from audioupload.serializers import AudioFileSerializer
 from users.serializers import UserDetailsSerializer
 
 from .models import Notebook, Page
@@ -8,11 +9,11 @@ from .models import User
 
 class PageSerializer(serializers.ModelSerializer):
     snapshots = FileSerializer(many=True, read_only=True)
-    audio = FileSerializer(read_only=True)
+    audio = AudioFileSerializer(read_only=True)
 
     class Meta:
         model = Page
-        fields = ('snapshots', 'audio', 'name', 'transcript')
+        fields = ('time', 'snapshots', 'audio', 'name', 'transcript', 'pk')
 
 
 class NotebookSerializer(serializers.ModelSerializer):

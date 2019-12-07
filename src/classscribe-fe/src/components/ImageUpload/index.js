@@ -11,26 +11,41 @@ import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
 
-
 const carstyle = {
-    width: '750px',
-    height: '790px',
-    float: 'left',
-    overflow: 'auto',
-    paddingLeft: "0px"
+  width: '650px',
+  height: '90%',
+  float: 'left',
+  overflow: 'auto',
+  paddingLeft: "5px"
 };
 
+const divstyle = {
+  'padding-right': '20px',
+  'padding-left': '20px',
+  'width': '16rem',
+  'float': 'left'
+}
+const pagestyle = {
+  "padding-top": "10px",
+  "padding-bottom": "10px",
+  "padding-left": "20px",
+  "padding-right":"20px",
+  "width": "11rem"
+}
+const notestyle = {
+  width: '14rem',
+  "padding-top": "5px",
+  "padding-bottom": "5px",
+ }
 
-
-
+ const headerstyle = {
+   "font-size": "30px"
+ }
 
 export default class ImageCarousel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // user: props.match.params.user,
-      // class_name: props.match.params.class_name,
-      // date: props.match.params.date,
       pagename: props.match.params.page_name,
       loaded: false,
       images:[],
@@ -38,7 +53,7 @@ export default class ImageCarousel extends Component {
       pages: [],
       user: {},
       page: 0,
-      notebook: 1,
+      notebook: 0,
     };
     this.loadNotes = this.loadNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
@@ -56,7 +71,9 @@ export default class ImageCarousel extends Component {
         console.log(user.username);
         this.setState({user:user});
     }
-    this.loadNotes();
+    if(this.state.user.type == "student"){
+      this.loadNotes();
+    }
 
 }
 
@@ -66,7 +83,6 @@ async loadNotes()
     
     if(res.status===200){
       const data = res.data.data;
-      //console.log(data[1].pages[0].snapshots[1].file);
       this.setState({items:data});
       if(!data[this.state.notebook].pages.length == 0){
           var ps = []
@@ -74,7 +90,9 @@ async loadNotes()
       for(var i = 0; i<data[this.state.notebook].pages.length; i++){
           ps.push(data[this.state.notebook].pages[i]);
           if(!data[this.state.notebook].pages[this.state.page].snapshots.length == 0){
-            is.push(data[this.state.notebook].pages[this.state.page].snapshots[i].file)
+            for (var j = 0; j < data[this.state.notebook].pages[this.state.page].snapshots.length; j++) {
+              is.push(data[this.state.notebook].pages[this.state.page].snapshots[j].file);
+            }
           }
       }
       this.setState({images:is});
@@ -86,7 +104,6 @@ async loadNotes()
   }
 
   switchPage = (index) =>{
-    console.log("hello");
     this.setState({page:index})
     var is = [];
       if(!this.state.items[this.state.notebook].pages[index].snapshots.length == 0){
@@ -100,7 +117,6 @@ async loadNotes()
   }
 
   switchNote = (index) => {
-    console.log("hello");
     this.setState({notebook:index});
     this.setState({page:0});
     var is = [];
@@ -134,7 +150,7 @@ async loadNotes()
   // }
 
   getImgSrc = (imageName) => {
-    return "http://128.143.67.97:44104" + imageName;
+    return 'http://128.143.67.97:44104' + imageName;
   }
 
   createCarousel = () => {
@@ -162,14 +178,11 @@ async loadNotes()
             var pagelist = pages.map(function(page){
                 return(
                     
-                    <div style={{"padding-top": "5px"}, {"padding-bottom": "5px"}, {"padding-left": "20px"}, {"padding-right":"20px"}, {"height": "5rem"}, {"width": "13rem"}}>
+                    <div style={pagestyle}>
                 <Card onClick={() => self.switchPage(pages.indexOf(page))}>
                     <CardContent><Typography>
-                        {page.name}
+                    Page Number: {pages.indexOf(page)}
                     </Typography>
-                    <Typography>         
-                                Page Number: {pages.indexOf(page)}       
-                                </Typography>    
                             </CardContent>
                     </Card>
                     </div>
@@ -179,16 +192,13 @@ async loadNotes()
               
                 return (
                   <div>
-                    <div style={{width: '9rem'}, {"padding-top": "5px"}, {"padding-bottom": "5px"} }>  
+                    <div style={notestyle}>  
                     <Card onClick={() => self.switchNote(notes.indexOf(note))}>
                         <CardContent><Typography>
                             {note.name}
                         </Typography>
                         <Typography>         
-                                    Created by: {note.owner}<br/>
-                                    Number of pages: {note.pages.length}<br/>
-                                    Course: {note.class_name}
-        
+                                    Number of pages: {note.pages.length}<br/>       
                                     </Typography>      
                                 </CardContent>
                         </Card>
@@ -205,11 +215,12 @@ async loadNotes()
         }
     return (
       <MuiThemeProvider>
-      <AppBar title= {"Hello, "+this.state.user.username}/>
+      <AppBar title= {"Hello, "+this.state.user.username} style={{"padding-bottom": '20px'}}/>
       <div style={{"display": "inline-block"}}>
-      <div style={{"padding-right": '10px'}, {"width": '16rem'}, {float: 'left'}}>{notelist}</div>
+    <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}</div>
       <div style={carstyle}>
-      {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
+      {this.state.user.type!="student" ? <div>User is not a student</div> : <div></div>}
+      {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div></div>}
       </div>
       </div>
       </MuiThemeProvider>
