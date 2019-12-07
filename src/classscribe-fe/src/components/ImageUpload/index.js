@@ -11,13 +11,12 @@ import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
 
-
 const carstyle = {
-  width: '750px',
-  height: '790px',
+  width: '650px',
+  height: '90%',
   float: 'left',
   overflow: 'auto',
-  paddingLeft: "15px"
+  paddingLeft: "5px"
 };
 
 const divstyle = {
@@ -36,7 +35,11 @@ const pagestyle = {
 const notestyle = {
   width: '14rem',
   "padding-top": "5px",
-  "padding-bottom": "5px"
+  "padding-bottom": "5px",
+ }
+
+ const headerstyle = {
+   "font-size": "30px"
  }
 
 export default class ImageCarousel extends Component {
@@ -104,7 +107,6 @@ async loadNotes()
   }
 
   switchPage = (index) =>{
-    console.log("hello");
     this.setState({page:index})
     var is = [];
       if(!this.state.items[this.state.notebook].pages[index].snapshots.length == 0){
@@ -118,7 +120,6 @@ async loadNotes()
   }
 
   switchNote = (index) => {
-    console.log("hello");
     this.setState({notebook:index});
     this.setState({page:0});
     var is = [];
@@ -219,7 +220,7 @@ async loadNotes()
       <MuiThemeProvider>
       <AppBar title= {"Hello, "+this.state.user.username} style={{"padding-bottom": '20px'}}/>
       <div style={{"display": "inline-block"}}>
-    <div style={divstyle}><p style={header-style}>Notebooks{'\n'}</p>{notelist}</div>
+    <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}</div>
       <div style={carstyle}>
       {this.state.user.type!="student" ? <div>User is not a student</div> : <div></div>}
       {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div></div>}

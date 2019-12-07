@@ -13,7 +13,7 @@ class PageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        fields = ('snapshots', 'audio', 'name', 'transcript', 'pk')
+        fields = ('time', 'snapshots', 'audio', 'name', 'transcript', 'pk')
 
 
 class NotebookSerializer(serializers.ModelSerializer):

@@ -9,6 +9,7 @@ from django.shortcuts import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from datetime import date
 
 # Create your views here.
 
@@ -69,7 +70,8 @@ def add_file_view(request):
     data = request.data
     added_files = []
     page = Page.objects.get(id=data["pk"])
-    files = File.objects.filter(remark=data["remark"])
+    today = date.today()
+    files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
     for f in files:
         page.snapshots.add(f)
         added_files.append(f)
