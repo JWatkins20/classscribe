@@ -8,6 +8,8 @@ import MenuItem from 'material-ui/MenuItem';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 
+import Navbar from '../Navbar';
+
 import 'react-week-calendar/dist/style.less';
 import Axios from 'axios';
 import { base_url, url } from "../../App";
@@ -34,12 +36,16 @@ export default class CourseCalendar extends React.Component {
             rooms: [],
             room: "",
             serial: "",
+            semesters: [],
+            semester: "",
             user: null
         }
 
         this.loadUser();
 
         this.loadBuildings = this.loadBuildings.bind(this);
+        this.loadSemesters = this.loadSemesters.bind(this);
+        this.loadSemesters();
         this.loadBuildings();
     }
 
@@ -80,6 +86,30 @@ export default class CourseCalendar extends React.Component {
         this.loadClasses(value);
     }
 
+    handleSemesterChange = (event, index, value) => {
+        this.setState({
+            semester: value,
+            selectedIntervals: []
+        });
+        this.loadBuildings();
+    }
+
+    loadSemesters = () => {
+        let that = this;
+        const getUrl = `${base_url}courses/semesters`;
+        Axios.get(getUrl)
+            .then(function (response) {
+                console.log("semesters");
+                console.log(response.data["semesters"]);
+                that.setState({
+                    semesters: response.data["semesters"]
+                });
+            })
+            .catch(function (error) {
+                alert(error);
+            })
+    }
+
     loadBuildings = () => {
         let that = this;
         const getUrl = `${base_url}courses/buildings`;
@@ -97,12 +127,12 @@ export default class CourseCalendar extends React.Component {
     loadRooms = (name) => {
         let curName = name || this.state.building;
         let that = this;
-        const getUrl = `${base_url}courses/${curName}/rooms`;
+        const getUrl = `${base_url}courses/${this.state.semester}/${curName}/rooms`;
         Axios.get(getUrl)
             .then(function (response) {
                 that.setState({
                     rooms: response.data["rooms"]
-                })
+                });
             })
             .catch(function (error) {
                 alert(error);
@@ -142,7 +172,7 @@ export default class CourseCalendar extends React.Component {
         let finalIntervals = [];
         let curSerial = "";
         let allMatch = true;
-        const getUrl = `${base_url}courses/${curBuilding}/${room}/classes`;
+        const getUrl = `${base_url}courses/${this.state.semester}/${curBuilding}/${room}/classes`;
         Axios.get(getUrl)
             .then(function (response) {
                 courses = response.data["courses"]
@@ -187,9 +217,11 @@ export default class CourseCalendar extends React.Component {
 
     handleEventUpdate = (event) => {
         this.setState({
+            semester: event.semester,
             room: event.room,
             building: event.building
         })
+        this.loadSemesters();
         this.loadBuildings();
         this.loadRooms();
         this.loadClasses(this.state.room);
@@ -197,9 +229,11 @@ export default class CourseCalendar extends React.Component {
 
     handleSelect = (newIntervals) => {
         this.setState({
+            semester: newIntervals[0].semester,
             room: newIntervals[0].room,
             building: newIntervals[0].building
         })
+        this.loadSemesters();
         this.loadBuildings();
         this.loadRooms();
         this.loadClasses(this.state.room);
@@ -209,7 +243,17 @@ export default class CourseCalendar extends React.Component {
         if (this.state.user && this.state.user.type === "admin") {
             return (
                 <>
+                    <Navbar username={this.state.user.username}></Navbar>
                     <MuiThemeProvider>
+                        <SelectField
+                            id="semester-select"
+                            floatingLabelText="Semester"
+                            floatingLabelFixed={true}
+                            value = {this.state.semester}
+                            onChange={this.handleSemesterChange}
+                            onFocus={this.loadSemesters}>
+                            {this.state.semesters && this.state.semesters.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
+                        </SelectField>
                         <SelectField
                             id="building-select"
                             floatingLabelText="Building"

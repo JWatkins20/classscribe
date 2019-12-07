@@ -20,7 +20,7 @@ class PersonCreateView(CreateView):
 
 @api_view(["POST"])
 def submit_course(request):
-    all_courses = Course.objects.all()
+    all_courses = Course.objects.filter(semester=request.data.get("semester"))
     serial_to_building = {}
 
     for course in all_courses:
@@ -34,7 +34,8 @@ def submit_course(request):
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'The lamp youre using already is being used in a different room!'})
 
     try:
-        conflicting_courses = Course.objects.filter(building=request.data.get("building"),
+        conflicting_courses = Course.objects.filter(semester=request.data.get("semester"),
+                                                    building=request.data.get("building"),
                                                     room=request.data.get("room"))
 
         if len(conflicting_courses) > 0:
@@ -71,7 +72,8 @@ def submit_course(request):
                               building=request.data.get("building"),
                               room=request.data.get("room"),
                               time=request.data.get("time"),
-                              lamp_serial=request.data.get("lamp_serial"))
+                              lamp_serial=request.data.get("lamp_serial"),
+                              semester=request.data.get("semester"))
         return Response(status=status.HTTP_200_OK, data={})
     except Exception as e:
         print(e)
@@ -79,9 +81,10 @@ def submit_course(request):
 
 
 @api_view(["POST", "GET"])
-def edit_course(request, course_name=None, building=None, room=None, time=None, pk=None):
+def edit_course(request, semester=None, course_name=None, building=None, room=None, time=None, pk=None):
     if request.method == "GET":
-        cur_entry = Course.objects.filter(name=course_name,
+        cur_entry = Course.objects.filter(semester=semester,
+                                          name=course_name,
                                           building=building,
                                           room=room,
                                           time=time
@@ -97,6 +100,7 @@ def edit_course(request, course_name=None, building=None, room=None, time=None, 
             "room": cur_entry[0].room,
             "time": cur_entry[0].time,
             "lamp_serial": cur_entry[0].lamp_serial,
+            "semester": cur_entry[0].semester,
             "pk": cur_entry[0].pk
         })
 
@@ -108,8 +112,9 @@ def edit_course(request, course_name=None, building=None, room=None, time=None, 
         to_edit.room = request.data.get("room")
         to_edit.time = request.data.get("time")
         to_edit.lamp_serial = request.data.get("lamp_serial")
+        to_edit.semester = request.data.get("semester")
 
-        all_courses = Course.objects.all()
+        all_courses = Course.objects.filter(semester=to_edit.semester)
         serial_to_building = {}
 
         for course in all_courses:
@@ -124,7 +129,8 @@ def edit_course(request, course_name=None, building=None, room=None, time=None, 
             return Response(status=status.HTTP_400_BAD_REQUEST,
                             data={'message': 'The lamp youre using already is being used in a different room!'})
 
-        conflicting_courses = Course.objects.filter(building=to_edit.building,
+        conflicting_courses = Course.objects.filter(semester=to_edit.semester,
+                                                    building=to_edit.building,
                                                     room=to_edit.room)
 
         if len(conflicting_courses) > 0:
@@ -180,10 +186,11 @@ def get_buildings(request):
 
 
 @api_view(["GET"])
-def get_rooms(request, building=None):
+def get_rooms(request, semester=None, building=None):
     roomMap = {}
     roomList = []
-    courses = Course.objects.filter(building=building)
+    courses = Course.objects.filter(semester=semester,
+                                    building=building)
 
     for course in courses:
         if course.room not in roomMap:
@@ -195,12 +202,25 @@ def get_rooms(request, building=None):
 
 
 @api_view(["GET"])
-def get_courses(request, building=None, room=None):
+def get_courses(request, semester=None, building=None, room=None):
     courses = serializers.serialize("json",
-                                    Course.objects.filter(building=building, room=room),
+                                    Course.objects.filter(semester=semester, building=building, room=room),
                                     fields=('room', 'name', 'building', 'time', 'professorID', 'lamp_serial'))
     courses_object = json.loads(courses)
     return Response(status=status.HTTP_200_OK, data={"courses": courses_object})
+
+@api_view(["GET"])
+def get_semesters(request):
+    unique_semesters = []
+    courses = Course.objects.all()
+
+    for course in courses:
+        if course.semester not in unique_semesters:
+            unique_semesters.append(course.semester)
+
+    unique_semesters.sort()
+
+    return Response(status=status.HTTP_200_OK, data={"semesters": unique_semesters})
 
 
 
