@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import User
 from imageupload.models import File
-from .models import AudioFile
+from audioupload.models import AudioFile
 
 class Page(models.Model):
     snapshots = models.ManyToManyField(File, null=True, blank=True)

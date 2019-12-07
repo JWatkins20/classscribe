@@ -53,7 +53,7 @@ export default class ImageCarousel extends Component {
       pages: [],
       user: {},
       page: 0,
-      notebook: 1,
+      notebook: 0,
     };
     this.loadNotes = this.loadNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
@@ -71,7 +71,9 @@ export default class ImageCarousel extends Component {
         console.log(user.username);
         this.setState({user:user});
     }
-    this.loadNotes();
+    if(this.state.user.type == "student"){
+      this.loadNotes();
+    }
 
 }
 
@@ -81,7 +83,6 @@ async loadNotes()
     
     if(res.status===200){
       const data = res.data.data;
-      //console.log(data[1].pages[0].snapshots[1].file);
       this.setState({items:data});
       if(!data[this.state.notebook].pages.length == 0){
           var ps = []
@@ -218,6 +219,7 @@ async loadNotes()
       <div style={{"display": "inline-block"}}>
     <div style={divstyle}><p style={header-style}>Notebooks{'\n'}</p>{notelist}</div>
       <div style={carstyle}>
+      {this.state.user.type!="student" ? <div>User is not a student</div> : <div></div>}
       {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div></div>}
       </div>
       </div>

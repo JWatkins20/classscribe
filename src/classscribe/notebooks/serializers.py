@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from imageupload.serializers import FileSerializer
-from .serializrs import AudioFileSerializer
+from audioupload.serializers import AudioFileSerializer
 from users.serializers import UserDetailsSerializer
 
 from .models import Notebook, Page
