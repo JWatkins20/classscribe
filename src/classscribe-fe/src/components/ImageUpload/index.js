@@ -11,13 +11,12 @@ import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
 
-
 const carstyle = {
-    width: '750px',
-    height: '890px',
-    float: 'left',
-    overflow: 'auto',
-    paddingLeft: "0px"
+  width: '650px',
+  height: '90%',
+  float: 'left',
+  overflow: 'auto',
+  paddingLeft: "5px"
 };
 
 const transcriptStyle = {
@@ -29,13 +28,33 @@ const transcriptStyle = {
     border: "2px solid black"
 };
 
+const divstyle = {
+  'padding-right': '20px',
+  'padding-left': '20px',
+  'width': '16rem',
+  'float': 'left'
+}
+const pagestyle = {
+  "padding-top": "10px",
+  "padding-bottom": "10px",
+  "padding-left": "20px",
+  "padding-right":"20px",
+  "width": "11rem"
+}
+const notestyle = {
+  width: '14rem',
+  "padding-top": "5px",
+  "padding-bottom": "5px",
+ }
+
+ const headerstyle = {
+   "font-size": "30px"
+ }
+
 export default class ImageCarousel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // user: props.match.params.user,
-      // class_name: props.match.params.class_name,
-      // date: props.match.params.date,
       pagename: props.match.params.page_name,
       loaded: false,
       images:[],
@@ -62,7 +81,9 @@ export default class ImageCarousel extends Component {
         console.log(user.username);
         this.setState({user:user});
     }
-    this.loadNotes();
+    if(this.state.user.type == "student"){
+      this.loadNotes();
+    }
 
 }
 
@@ -72,7 +93,6 @@ async loadNotes()
     
     if(res.status===200){
       const data = res.data.data;
-      //console.log(data[1].pages[0].snapshots[1].file);
       this.setState({items:data});
       if(!data[this.state.notebook].pages.length == 0){
           var ps = [];
@@ -116,7 +136,6 @@ async loadNotes()
   }
 
   switchNote = (index) => {
-    console.log("hello");
     this.setState({notebook:index});
     this.setState({page:0});
     var is = [];
@@ -150,7 +169,7 @@ async loadNotes()
   // }
 
   getImgSrc = (imageName) => {
-    return "http://128.143.67.97:44104" + imageName;
+    return 'http://128.143.67.97:44104' + imageName;
   }
 
   createCarousel = () => {
@@ -178,14 +197,11 @@ async loadNotes()
             var pagelist = pages.map(function(page){
                 return(
                     
-                    <div style={{"padding-top": "5px"}, {"padding-bottom": "5px"}, {"padding-left": "20px"}, {"padding-right":"20px"}, {"height": "5rem"}, {"width": "13rem"}}>
+                    <div style={pagestyle}>
                 <Card onClick={() => self.switchPage(pages.indexOf(page))}>
                     <CardContent><Typography>
-                        {page.name}
+                    Page Number: {pages.indexOf(page)}
                     </Typography>
-                    <Typography>         
-                                Page Number: {pages.indexOf(page)}       
-                                </Typography>    
                             </CardContent>
                     </Card>
                     </div>
@@ -195,16 +211,13 @@ async loadNotes()
               
                 return (
                   <div>
-                    <div style={{width: '9rem'}, {"padding-top": "5px"}, {"padding-bottom": "5px"} }>  
+                    <div style={notestyle}>  
                     <Card onClick={() => self.switchNote(notes.indexOf(note))}>
                         <CardContent><Typography>
                             {note.name}
                         </Typography>
                         <Typography>         
-                                    Created by: {note.owner}<br/>
-                                    Number of pages: {note.pages.length}<br/>
-                                    Course: {note.class_name}
-        
+                                    Number of pages: {note.pages.length}<br/>       
                                     </Typography>      
                                 </CardContent>
                         </Card>
@@ -221,9 +234,9 @@ async loadNotes()
         }
     return (
       <MuiThemeProvider>
-      <AppBar title= {"Hello, "+this.state.user.username}/>
+      <AppBar title= {"Hello, "+this.state.user.username} style={{"padding-bottom": '20px'}}/>
       <div style={{"display": "inline-block"}}>
-        <div style={{"padding-right": '10px'}, {"width": '16rem'}, {float: 'left'}}>{notelist}</div>
+        <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}</div>
         <div style={carstyle}>
           {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
         </div>

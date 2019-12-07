@@ -6,5 +6,5 @@ class Student(models.Model):
 	email = models.CharField(max_length=60)
 
 	def __str__(self):
-		return self.idNumber
+		return self.email
 

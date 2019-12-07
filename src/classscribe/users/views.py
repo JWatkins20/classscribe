@@ -7,17 +7,11 @@ from users.serializers import AdminRegisterSerializer
 from rest_auth.registration.views import RegisterView
 from rest_auth.views import UserDetailsView as DefaultUserDetailsView
 from .serializers import UserDetailsSerializer
+from rest_auth.views import *
 
 class AdminRegisterView(RegisterView):
 	serializer_class = AdminRegisterSerializer
 
 class UserDetailsView(DefaultUserDetailsView):
 	serializer_class = UserDetailsSerializer
-
-
-
-
-
-
-
 

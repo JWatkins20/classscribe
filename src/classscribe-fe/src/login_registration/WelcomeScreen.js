@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-
+import StudentDashboard from '../student/Dashboard'
 const history = window.history;
 
 export default class WelcomeScreen extends Component{
 
     render(){
-        console.log(history.state.type)
         if(history.state.type === "teacher"){
             return(
                 <div> 
@@ -15,7 +14,7 @@ export default class WelcomeScreen extends Component{
         }else if(history.state.type === "student"){
             return (
                 <div>
-                    Hello student!
+                    <StudentDashboard/>
                 </div>
             )
         }else{
