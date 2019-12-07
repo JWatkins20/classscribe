@@ -13,7 +13,6 @@ class Page(models.Model):
 
 
 class Notebook(models.Model):
-    time = models.DateField(default=datetime.now)
     Private = models.BooleanField(blank=False)
     class_name = models.CharField(max_length=50)
     name = models.CharField(max_length = 100)

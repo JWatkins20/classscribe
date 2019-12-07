@@ -46,9 +46,6 @@ export default class ImageCarousel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // user: props.match.params.user,
-      // class_name: props.match.params.class_name,
-      // date: props.match.params.date,
       pagename: props.match.params.page_name,
       loaded: false,
       images:[],
