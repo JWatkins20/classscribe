@@ -6,7 +6,9 @@ import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom';
 import Axios from 'axios';
 import Cookies from 'js-cookie';
-import { url } from '../App';
+import { base_url, url } from '../App';
+
+import { Toolbar, Button} from '@material-ui/core';
 
 const history = window.history;
 
@@ -50,9 +52,13 @@ render() {
       <div>
         <MuiThemeProvider>
             <div>
-                <AppBar
-                    title="Login"
-                />
+                <AppBar title="Login">
+                  <Toolbar>
+                      <Button color="inherit" href={base_url}>Home</Button>
+                      <Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
+                      <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>
+                  </Toolbar>
+                </AppBar>
                 <TextField
                     hintText="Enter your Username"
                     floatingLabelText="Username"

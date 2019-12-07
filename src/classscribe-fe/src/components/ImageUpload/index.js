@@ -5,11 +5,11 @@ import { base_url } from "../../App"
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
-import Typography from '@material-ui/core/Typography';
-import AppBar from 'material-ui/AppBar';
 import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
+
+import { AppBar, Typography, Toolbar, Button} from '@material-ui/core';
 
 const carstyle = {
   width: '650px',
@@ -234,7 +234,14 @@ async loadNotes()
         }
     return (
       <MuiThemeProvider>
-      <AppBar title= {"Hello, "+this.state.user.username} style={{"padding-bottom": '20px'}}/>
+      <AppBar position="static">
+          <Toolbar>
+              <Typography variant="h6">Hello {this.state.user.username}</Typography>
+              <Button color="inherit" href={base_url}>Home</Button>
+              <Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
+              <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>
+          </Toolbar>
+      </AppBar>
       <div style={{"display": "inline-block"}}>
         <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}</div>
         <div style={carstyle}>

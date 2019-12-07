@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import StudentDashboard from '../student/Dashboard'
+import Navbar from '../components/Navbar';
 const history = window.history;
 
 export default class WelcomeScreen extends Component{
@@ -7,21 +8,30 @@ export default class WelcomeScreen extends Component{
     render(){
         if(history.state.type === "teacher"){
             return(
-                <div> 
-                    Hello teacher 😎! 
-                </div>
+                <>
+                    <Navbar></Navbar>
+                    <div> 
+                        Hello teacher 😎! 
+                    </div>
+                </>
             )
         }else if(history.state.type === "student"){
             return (
-                <div>
-                    <StudentDashboard/>
-                </div>
+                <>
+                    <Navbar></Navbar>
+                    <div>
+                        <StudentDashboard/>
+                    </div>
+                </>
             )
         }else{
             return (
-                <div>
-                    Hello admin!
-                </div>
+                <>
+                    <Navbar></Navbar>
+                    <div>
+                        Hello admin!
+                    </div>
+                </>
             )
         }
     }

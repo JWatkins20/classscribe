@@ -8,6 +8,8 @@ import MenuItem from 'material-ui/MenuItem';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 
+import Navbar from '../Navbar';
+
 import 'react-week-calendar/dist/style.less';
 import Axios from 'axios';
 import { base_url, url } from "../../App";
@@ -241,6 +243,7 @@ export default class CourseCalendar extends React.Component {
         if (this.state.user && this.state.user.type === "admin") {
             return (
                 <>
+                    <Navbar username={this.state.user.username}></Navbar>
                     <MuiThemeProvider>
                         <SelectField
                             id="semester-select"
