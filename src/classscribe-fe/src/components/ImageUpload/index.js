@@ -6,49 +6,69 @@ import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
 import Typography from '@material-ui/core/Typography';
+import align from '@material-ui/core/Typography';
 import AppBar from 'material-ui/AppBar';
 import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
+import borderColor  from '@material-ui/system/borders';
 
 const carstyle = {
-  width: '650px',
-  height: '90%',
+  width: '50vw',
+  height: '87vh',
   float: 'left',
   overflow: 'auto',
-  paddingLeft: "5px"
+  marginRight: "8px",
+  marginTop: "10px",
+  border: "2px solid black"
 };
 
+const imagestyle = {
+  width: "50vw",
+  height: "87vh"
+}
+
 const transcriptStyle = {
-    width: '300px',
-    height: '890px',
+    width: '24vw',
+    height: '59vh',
     float: 'left',
     overflow: 'auto',
     paddingLeft: "0px",
+    marginTop: "10px",
+    whiteSpace: "normal",
     border: "2px solid black"
 };
 
 const divstyle = {
-  'padding-right': '20px',
-  'padding-left': '20px',
-  'width': '16rem',
-  'float': 'left'
+  'margin-right': '8px',
+  'margin-left': '8px',
+  'padding-right': '10px',
+  'padding-left': '10px',
+  'width': '20vw',
+  'height': '87vh',
+  'float': 'left',
+  marginTop: "10px",
+  overflow: "auto",
+  border: "2px solid black"
 }
 const pagestyle = {
   "padding-top": "10px",
   "padding-bottom": "10px",
   "padding-left": "20px",
   "padding-right":"20px",
+  "margin-left": "15px",
   "width": "11rem"
 }
 const notestyle = {
   width: '14rem',
   "padding-top": "5px",
   "padding-bottom": "5px",
+  "margin-left": "15px",
  }
 
  const headerstyle = {
-   "font-size": "30px"
+   "font-size": "30px",
+   "text-align": "center",
  }
 
 export default class ImageCarousel extends Component {
@@ -99,15 +119,15 @@ async loadNotes()
           var is = [];
       for(var i = 0; i<data[this.state.notebook].pages.length; i++){
           ps.push(data[this.state.notebook].pages[i]);
-          this.setState({
-            transcript: data[this.state.notebook].pages[i].transcript
-          });
+        }
+        this.setState({
+          transcript: data[this.state.notebook].pages[this.state.page].transcript
+        });
           if(!data[this.state.notebook].pages[this.state.page].snapshots.length == 0){
             for (var j = 0; j < data[this.state.notebook].pages[this.state.page].snapshots.length; j++) {
               is.push(data[this.state.notebook].pages[this.state.page].snapshots[j].file);
             }
           }
-      }
       this.setState({
         images:is,
         pages:ps
@@ -178,7 +198,7 @@ async loadNotes()
     for (let i = 0; i < this.state.images.length; i++) {
       htmlImages.push(
         <div>
-          <img src={this.getImgSrc(this.state.images[i])} alt=""/>
+          <img style={imagestyle} src={this.getImgSrc(this.state.images[i])} alt=""/>
         </div>
       );
     }
@@ -198,9 +218,9 @@ async loadNotes()
                 return(
                     
                     <div style={pagestyle}>
-                <Card onClick={() => self.switchPage(pages.indexOf(page))}>
-                    <CardContent><Typography>
-                    Page Number: {pages.indexOf(page)}
+                <Card border={1} borderColor={"#09d3ac"} onClick={() => self.switchPage(pages.indexOf(page))}>
+                    <CardContent><Typography align={'center'}>
+                    Page {pages.indexOf(page)+1}
                     </Typography>
                             </CardContent>
                     </Card>
@@ -212,11 +232,11 @@ async loadNotes()
                 return (
                   <div>
                     <div style={notestyle}>  
-                    <Card onClick={() => self.switchNote(notes.indexOf(note))}>
-                        <CardContent><Typography>
+                    <Card border={1} borderColor={"#09d3ac"} onClick={() => self.switchNote(notes.indexOf(note))}>
+                        <CardContent><Typography align={'center'}>
                             {note.name}
                         </Typography>
-                        <Typography>         
+                        <Typography align={'center'}>         
                                     Number of pages: {note.pages.length}<br/>       
                                     </Typography>      
                                 </CardContent>
@@ -238,9 +258,10 @@ async loadNotes()
       <div style={{"display": "inline-block"}}>
         <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}</div>
         <div style={carstyle}>
-          {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
+          {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
         </div>
         <div style={transcriptStyle}>
+          <p style={headerstyle}>Transcript{'\n'}</p>
           <p>{this.state.transcript}</p>
         </div>
       </div>
