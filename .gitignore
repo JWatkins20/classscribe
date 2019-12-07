@@ -7,6 +7,9 @@ venv
 **/staticfiles/**
 *.pyc
 
+#server url
+url.txt
+
 # Pycharm Stuff # 
 **/.idea/*
 **/.idea/**/workspace.xml 
