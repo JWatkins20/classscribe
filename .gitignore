@@ -25,3 +25,6 @@ url.txt
 .idea/**/gradle.xml 
 .idea/**/libraries 
 *.iws /out/ 
+*.json
+src/classscribe/classscribe/urls.py
+src/classscribe-fe/package.json

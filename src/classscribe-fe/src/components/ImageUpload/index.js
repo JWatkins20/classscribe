@@ -2,53 +2,83 @@ import React, { Component } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { base_url } from "../../App"
+import AudioPlayer from "../../student/AudioPlayer"
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
+import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
+import borderColor  from '@material-ui/system/borders';
 
-import { AppBar, Typography, Toolbar, Button} from '@material-ui/core';
+import Navbar from '../Navbar';
 
 const carstyle = {
-  width: '650px',
-  height: '90%',
+  width: '50vw',
+  height: '87vh',
   float: 'left',
   overflow: 'auto',
-  paddingLeft: "5px"
+  marginRight: "8px",
+  marginTop: "10px",
+  border: "2px solid black"
 };
+
+const imagestyle = {
+  width: "50vw",
+  height: "87vh"
+}
 
 const transcriptStyle = {
-    width: '300px',
-    height: '890px',
-    float: 'left',
+    width: '24vw',
+    height: '59vh',
+    
     overflow: 'auto',
     paddingLeft: "0px",
-    border: "2px solid black"
+    marginTop: "10px",
+    whiteSpace: "normal",
+    border: "2px solid black",
 };
 
+const tandastyle = {
+  float: 'left',
+}
+
+const audiostyle={
+  width: "20vw",
+  height: "10vh",
+}
+
 const divstyle = {
-  'padding-right': '20px',
-  'padding-left': '20px',
-  'width': '16rem',
-  'float': 'left'
+  'margin-right': '8px',
+  'margin-left': '8px',
+  'padding-right': '10px',
+  'padding-left': '10px',
+  'width': '20vw',
+  'height': '87vh',
+  'float': 'left',
+  marginTop: "10px",
+  overflow: "auto",
+  border: "2px solid black"
 }
 const pagestyle = {
   "padding-top": "10px",
   "padding-bottom": "10px",
   "padding-left": "20px",
   "padding-right":"20px",
+  "margin-left": "15px",
   "width": "11rem"
 }
 const notestyle = {
   width: '14rem',
   "padding-top": "5px",
   "padding-bottom": "5px",
+  "margin-left": "15px",
  }
 
  const headerstyle = {
-   "font-size": "30px"
+   "font-size": "30px",
+   "text-align": "center",
  }
 
 export default class ImageCarousel extends Component {
@@ -61,6 +91,7 @@ export default class ImageCarousel extends Component {
       items: [],
       pages: [],
       user: {},
+      audio: {},
       page: 0,
       notebook: 0,
       transcript: ""
@@ -99,15 +130,18 @@ async loadNotes()
           var is = [];
       for(var i = 0; i<data[this.state.notebook].pages.length; i++){
           ps.push(data[this.state.notebook].pages[i]);
-          this.setState({
-            transcript: data[this.state.notebook].pages[i].transcript
-          });
+        }
+        this.setState({
+          transcript: data[this.state.notebook].pages[this.state.page].transcript
+        });
+        this.setState({
+          audio: data[this.state.notebook].pages[this.state.page].audio
+        });
           if(!data[this.state.notebook].pages[this.state.page].snapshots.length == 0){
             for (var j = 0; j < data[this.state.notebook].pages[this.state.page].snapshots.length; j++) {
               is.push(data[this.state.notebook].pages[this.state.page].snapshots[j].file);
             }
           }
-      }
       this.setState({
         images:is,
         pages:ps
@@ -122,7 +156,8 @@ async loadNotes()
     console.log("hello");
     this.setState({
       page:index,
-      transcript: this.state.items[this.state.notebook].pages[index].transcript
+      transcript: this.state.items[this.state.notebook].pages[index].transcript,
+      audio: this.state.items[this.state.notebook].pages[index].audio
     });
     var is = [];
       if(!this.state.items[this.state.notebook].pages[index].snapshots.length == 0){
@@ -137,7 +172,11 @@ async loadNotes()
 
   switchNote = (index) => {
     this.setState({notebook:index});
-    this.setState({page:0});
+    this.setState({
+      page:0,
+      transcript: this.state.items[index].pages[0].transcript,
+      audio: this.state.items[index].pages[0].audio
+    });
     var is = [];
     var ps = [];
     for(var i = 0; i<this.state.items[index].pages.length; i++){
@@ -169,8 +208,9 @@ async loadNotes()
   // }
 
   getImgSrc = (imageName) => {
-    return 'http://128.143.67.97:44104' + imageName;
+    return 'http://128.143.67.97:44104/' + imageName;
   }
+
 
   createCarousel = () => {
     let htmlImages = [];
@@ -178,7 +218,7 @@ async loadNotes()
     for (let i = 0; i < this.state.images.length; i++) {
       htmlImages.push(
         <div>
-          <img src={this.getImgSrc(this.state.images[i])} alt=""/>
+          <img style={imagestyle} src={this.getImgSrc(this.state.images[i])} alt=""/>
         </div>
       );
     }
@@ -198,9 +238,9 @@ async loadNotes()
                 return(
                     
                     <div style={pagestyle}>
-                <Card onClick={() => self.switchPage(pages.indexOf(page))}>
-                    <CardContent><Typography>
-                    Page Number: {pages.indexOf(page)}
+                <Card border={1} borderColor={"#09d3ac"} onClick={() => self.switchPage(pages.indexOf(page))}>
+                    <CardContent><Typography align={'center'}>
+                    Page {pages.indexOf(page)+1}
                     </Typography>
                             </CardContent>
                     </Card>
@@ -212,11 +252,11 @@ async loadNotes()
                 return (
                   <div>
                     <div style={notestyle}>  
-                    <Card onClick={() => self.switchNote(notes.indexOf(note))}>
-                        <CardContent><Typography>
+                    <Card border={1} borderColor={"#09d3ac"} onClick={() => self.switchNote(notes.indexOf(note))}>
+                        <CardContent><Typography align={'center'}>
                             {note.name}
                         </Typography>
-                        <Typography>         
+                        <Typography align={'center'}>         
                                     Number of pages: {note.pages.length}<br/>       
                                     </Typography>      
                                 </CardContent>
@@ -232,24 +272,31 @@ async loadNotes()
         else{
             return(<div>Unable to display notebooks</div>);
         }
+        if(this.state.user.type!="student"){
+          return (
+            <>
+              <Navbar username={this.state.user && this.state.user.username}/>
+              <div>Must be logged in as a user to view notebooks!</div>
+            </>
+          );
+        }
     return (
       <MuiThemeProvider>
-      <AppBar position="static">
-          <Toolbar>
-              <Typography variant="h6">Hello {this.state.user.username}</Typography>
-              <Button color="inherit" href={base_url}>Home</Button>
-              <Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
-              <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>
-          </Toolbar>
-      </AppBar>
+      <Navbar username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
         <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}</div>
         <div style={carstyle}>
-          {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
+          {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
         </div>
+        <div style={tandastyle}>
         <div style={transcriptStyle}>
+          <p style={headerstyle}>Transcript{'\n'}</p>
           <p>{this.state.transcript}</p>
         </div>
+          <div style={audiostyle}>
+         {this.state.loaded||this.state.audio != {}  ? <AudioPlayer audio_url={'http://128.143.67.97:44104/'+this.state.audio.file}></AudioPlayer> : <div>No images to show select page with images</div>}
+         </div>
+         </div>
       </div>
       </MuiThemeProvider>
     );

@@ -10,4 +10,5 @@ urlpatterns = [
     path('<str:semester>/<str:building>/rooms', get_rooms, name="get_rooms"),  # returns unique class names for dropdown selector
     path('<str:semester>/<str:building>/<str:room>/classes', get_courses, name="get_courses"),  # returns all of the classes for the provided building and room
     path('semesters', get_semesters, name="get_semesters"),  # gets all unique semesters
+    path('getAdminAssignments/', AssignmentView.as_view())
 ]

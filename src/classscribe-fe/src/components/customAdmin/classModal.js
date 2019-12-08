@@ -111,7 +111,6 @@ class classModal extends React.Component {
                             defaultValue={this.state.name}
                             onChange = {(event) => this.setState({name: event.target.value})}
                         />
-                        <br/>
 
                         <TextField
                             id="professorId"
@@ -129,7 +128,6 @@ class classModal extends React.Component {
                             defaultValue={this.state.building}
                             onChange = {(event) => this.setState({building: event.target.value})}
                         />
-                        <br/>
 
                         <TextField
                             id="room"
@@ -148,7 +146,6 @@ class classModal extends React.Component {
                             onChange = {(event) => this.setState({time: event.target.value})}
                             helperText="Please enter the meeting day in following this format: MWF 12pm-12:50pm. This class would meet Monday, Wednesday, Friday from 12pm to 12:50pm."
                         />
-                        <br/>
 
                         <TextField
                             id="serial"
