@@ -2,12 +2,11 @@ import React, { Component } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { base_url } from "../../App"
+import AudioPlayer from "../../student/AudioPlayer"
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
-import Typography from '@material-ui/core/Typography';
 import align from '@material-ui/core/Typography';
-import AppBar from 'material-ui/AppBar';
 import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
@@ -33,13 +32,22 @@ const imagestyle = {
 const transcriptStyle = {
     width: '24vw',
     height: '59vh',
-    float: 'left',
+    
     overflow: 'auto',
     paddingLeft: "0px",
     marginTop: "10px",
     whiteSpace: "normal",
-    border: "2px solid black"
+    border: "2px solid black",
 };
+
+const tandastyle = {
+  float: 'left',
+}
+
+const audiostyle={
+  width: "20vw",
+  height: "10vh",
+}
 
 const divstyle = {
   'margin-right': '8px',
@@ -83,6 +91,7 @@ export default class ImageCarousel extends Component {
       items: [],
       pages: [],
       user: {},
+      audio: {},
       page: 0,
       notebook: 0,
       transcript: ""
@@ -125,6 +134,9 @@ async loadNotes()
         this.setState({
           transcript: data[this.state.notebook].pages[this.state.page].transcript
         });
+        this.setState({
+          audio: data[this.state.notebook].pages[this.state.page].audio
+        });
           if(!data[this.state.notebook].pages[this.state.page].snapshots.length == 0){
             for (var j = 0; j < data[this.state.notebook].pages[this.state.page].snapshots.length; j++) {
               is.push(data[this.state.notebook].pages[this.state.page].snapshots[j].file);
@@ -144,7 +156,8 @@ async loadNotes()
     console.log("hello");
     this.setState({
       page:index,
-      transcript: this.state.items[this.state.notebook].pages[index].transcript
+      transcript: this.state.items[this.state.notebook].pages[index].transcript,
+      audio: this.state.items[this.state.notebook].pages[index].audio
     });
     var is = [];
       if(!this.state.items[this.state.notebook].pages[index].snapshots.length == 0){
@@ -159,7 +172,11 @@ async loadNotes()
 
   switchNote = (index) => {
     this.setState({notebook:index});
-    this.setState({page:0});
+    this.setState({
+      page:0,
+      transcript: this.state.items[index].pages[0].transcript,
+      audio: this.state.items[index].pages[0].audio
+    });
     var is = [];
     var ps = [];
     for(var i = 0; i<this.state.items[index].pages.length; i++){
@@ -192,6 +209,10 @@ async loadNotes()
 
   getImgSrc = (imageName) => {
     return 'http://localhost:8000' + imageName;
+  }
+
+  getAudSrc = (audio) => {
+    return 'http://localhost:8000' + audio;
   }
 
   createCarousel = () => {
@@ -254,6 +275,9 @@ async loadNotes()
         else{
             return(<div>Unable to display notebooks</div>);
         }
+        if(this.state.user.type!="student"){
+          return (<div>Must be logged in as a user to view notebooks!</div>);
+        }
     return (
       <MuiThemeProvider>
       <AppBar position="static">
@@ -269,10 +293,15 @@ async loadNotes()
         <div style={carstyle}>
           {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
         </div>
+        <div style={tandastyle}>
         <div style={transcriptStyle}>
           <p style={headerstyle}>Transcript{'\n'}</p>
           <p>{this.state.transcript}</p>
         </div>
+          <div style={audiostyle}>
+         {this.state.loaded||this.state.audio != {}  ? <AudioPlayer audio_url={'http://128.143.67.97:44104/'+this.state.audio.file}></AudioPlayer> : <div>No images to show select page with images</div>}
+         </div>
+         </div>
       </div>
       </MuiThemeProvider>
     );
