@@ -40,11 +40,11 @@ def submit_course(request):
                 return Response(status=status.HTTP_400_BAD_REQUEST,
                                 data={'message': 'Old courses have conflicting SNs!'})
 
-    if request.data.get("lamp_serial") in serial_to_building and request.data.get("building") != serial_to_building[request.data.get("building")]:
+    if request.data.get("lamp_serial") in serial_to_building and request.data.get("building") != serial_to_building[request.data.get("lamp_serial")]:
         return Response(status=status.HTTP_400_BAD_REQUEST,
                         data={'message': 'The lamp youre using already is being used in a different room!'})
 
-    if request.data.get("lamp_serial") in serial_to_room and request.data.get("room") != serial_to_room[request.data.get("room")]:
+    if request.data.get("lamp_serial") in serial_to_room and request.data.get("room") != serial_to_room[request.data.get("lamp_serial")]:
         return Response(status=status.HTTP_400_BAD_REQUEST,
                         data={'message': 'The lamp youre using already is being used in a different room!'})
 
