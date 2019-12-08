@@ -9,4 +9,5 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
 
 class ArticleSerializer(serializers.Serializer):
     idNumber = serializers.CharField(max_length=120)
+	email = serializers.CharField(max_length=60)
 
