@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import {url} from '../App'
 import {default as BuiltinAudioPlayer} from "react-h5-audio-player";
 var aud = document.getElementById("");
 const AudioPlayer = ({audio_url}) => {

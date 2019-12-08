@@ -5,10 +5,6 @@ import Register from './login_registration/Register';
 import Loginscreen from './login_registration/Loginscreen';
 import WelcomeScreen from './login_registration/WelcomeScreen';
 import 'react-week-calendar/dist/style.css';
-import Axios from 'axios';
-import Cookies from 'js-cookie';
-import CourseEdit from "./components/customAdmin/edit";
-import CourseForm from "./components/customAdmin/index";
 import CourseCalendar from "./components/customAdmin/viewAll";
 import ImageCarousel from "./components/ImageUpload/index";
 import NotebookViewer from "./components/notebooks/index"
