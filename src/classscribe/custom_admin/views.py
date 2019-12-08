@@ -106,7 +106,7 @@ def edit_course(request, semester=None, course_name=None, building=None, room=No
                                           )
 
         if len(cur_entry) == 0:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Couldnt find the course to edit'})
 
         return Response(status=status.HTTP_200_OK, data={
             "course_name": cur_entry[0].name,
