@@ -33,7 +33,7 @@ class classModal extends React.Component {
             return true;
         }
         let map = {  // Regular expressions to match time format and serial number
-            "time": "[MTWF\!]{1,} [0-9]{1,2}:[0-9]{2,2}-[0-9]{1,2}:[0-9]{2,2}$",
+            "time": "[M\@WF\!]{1,} [0-9]{1,2}:[0-9]{2,2}-[0-9]{1,2}:[0-9]{2,2}$",
             "serial": "[0-9a-f]{16,16}$",
             "courseSemester": "(Fall|Spring) [0-9]{4,4}$"
         }
@@ -44,7 +44,8 @@ class classModal extends React.Component {
                 return true;
             }
             val = val.replace("Thu", "!");
-            return RegExp(map[field], 'g').test(val);
+            val = val.replace("Tu", "@");
+            return val.search(RegExp(map[field], 'g')) == 0;
         }
         else {
             let val = $('#'+field)[0].value;
@@ -155,6 +156,7 @@ class classModal extends React.Component {
                     <div>
                         <TextField
                             id="courseSemester"
+                            maxlength="50"
                             floatingLabelText="Semester"
                             floatingLabelFixed={true}
                             defaultValue={this.state.semester}
@@ -207,7 +209,7 @@ class classModal extends React.Component {
                             floatingLabelFixed={true}
                             defaultValue={this.state.time}
                             onBlur = {(event) => this.setState({time: event.target.value})}
-                            errorText = {!this.checkInput("time") && "Please enter a valid meeting time(s) in the form MWF 11:00-13:30 for Mon, Wed, Fri from 11am to 1:30pm. Use 'Thu' for Thursday!"}
+                            errorText = {!this.checkInput("time") && "Please enter a valid meeting time(s) in the form MWF 11:00-13:30 for Mon, Wed, Fri from 11am to 1:30pm. Use 'Tu' for Tuesday and 'Thu' for Thursday!"}
                         />
 
                         <TextField
