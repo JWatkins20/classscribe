@@ -26,6 +26,36 @@ class classModal extends React.Component {
         this.getValues();
         this.getValues = this.getValues.bind(this);
     }
+
+    checkInput(field) {
+        let check = $('#'+field)[0];
+        if (!check) {
+            return true;
+        }
+        let map = {  // Regular expressions to match time format and serial number
+            "time": "[MTWF\!]{1,} [0-9]{1,2}:[0-9]{2,2}-[0-9]{1,2}:[0-9]{2,2}$",
+            "serial": "[0-9a-f]{16,16}$",
+            "courseSemester": "(Fall|Spring) [0-9]{4,4}$"
+        }
+
+        if (field === "time" || field === "serial" || field === "courseSemester") {
+            let val = $('#'+field)[0].value;
+            if (val === "") {
+                return true;
+            }
+            val = val.replace("Thu", "!");
+            return RegExp(map[field], 'g').test(val);
+        }
+        else {
+            let val = $('#'+field)[0].value;
+            if (val.length > 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
     
     getValues() {
         var that = this;
@@ -55,12 +85,40 @@ class classModal extends React.Component {
         let that = this;
         const data = new FormData();
         data.append("courseName", this.state.name);
+        if (!this.checkInput("courseName")) {
+            alert("Please enter a valid course name!");
+            return;
+        }
         data.append("professorId", this.state.professorId);
+        if (!this.checkInput("professorId")) {
+            alert("Please enter a valid professor ID!");
+            return;
+        }
         data.append("building", this.state.building);
+        if (!this.checkInput("building")) {
+            alert("Please enter a valid building!");
+            return;
+        }
         data.append("room", this.state.room);
+        if (!this.checkInput("room")) {
+            alert("Please enter a valid room!");
+            return;
+        }
         data.append("time", this.state.time);
+        if (!this.checkInput("time")) {
+            alert("Please enter a valid time!");
+            return;
+        }
         data.append("lamp_serial", this.state.serial);
+        if (!this.checkInput("serial")) {
+            alert("Please enter a valid lamp serial number!");
+            return;
+        }
         data.append("semester", this.state.semester);
+        if (!this.checkInput("courseSemester")) {
+            alert("Please enter a valid semester!");
+            return;
+        }
         var putUrl;
         if (this.state.pk !== 0) {
             putUrl = `${base_url}courses/edit/${this.state.pk}`;
@@ -100,7 +158,8 @@ class classModal extends React.Component {
                             floatingLabelText="Semester"
                             floatingLabelFixed={true}
                             defaultValue={this.state.semester}
-                            onChange = {(event) => this.setState({semester: event.target.value})}
+                            onBlur = {(event) => this.setState({semester: event.target.value})}
+                            errorText = {!this.checkInput("courseSemester") && "Please enter a semester in terms of Fall or Spring and the year in form YYYY!"}
                         />
                         <br/>
 
@@ -109,7 +168,8 @@ class classModal extends React.Component {
                             floatingLabelText="Course Name"
                             floatingLabelFixed={true}
                             defaultValue={this.state.name}
-                            onChange = {(event) => this.setState({name: event.target.value})}
+                            onBlur = {(event) => this.setState({name: event.target.value})}
+                            errorText = {!this.checkInput("courseName") && "Please enter a course name!"}
                         />
 
                         <TextField
@@ -117,7 +177,8 @@ class classModal extends React.Component {
                             floatingLabelText="Professor ID"
                             floatingLabelFixed={true}
                             defaultValue={this.state.professorId}
-                            onChange = {(event) => this.setState({professorId: event.target.value})}
+                            onBlur = {(event) => this.setState({professorId: event.target.value})}
+                            errorText = {!this.checkInput("professorId") && "Please enter a professor ID!"}
                         />
                         <br/>
 
@@ -126,7 +187,8 @@ class classModal extends React.Component {
                             floatingLabelText="Building Name"
                             floatingLabelFixed={true}
                             defaultValue={this.state.building}
-                            onChange = {(event) => this.setState({building: event.target.value})}
+                            onBlur = {(event) => this.setState({building: event.target.value})}
+                            errorText = {!this.checkInput("building") && "Please enter a building name!"}
                         />
 
                         <TextField
@@ -134,7 +196,8 @@ class classModal extends React.Component {
                             floatingLabelText="Room Number/Name"
                             floatingLabelFixed={true}
                             defaultValue={this.state.room}
-                            onChange = {(event) => this.setState({room: event.target.value})}
+                            onBlur = {(event) => this.setState({room: event.target.value})}
+                            errorText = {!this.checkInput("room") && "Please enter a room!"}
                         />
                         <br/>
 
@@ -143,8 +206,8 @@ class classModal extends React.Component {
                             floatingLabelText="Meeting Times"
                             floatingLabelFixed={true}
                             defaultValue={this.state.time}
-                            onChange = {(event) => this.setState({time: event.target.value})}
-                            helperText="Please enter the meeting day in following this format: MWF 12pm-12:50pm. This class would meet Monday, Wednesday, Friday from 12pm to 12:50pm."
+                            onBlur = {(event) => this.setState({time: event.target.value})}
+                            errorText = {!this.checkInput("time") && "Please enter a valid meeting time(s) in the form MWF 11:00-13:30 for Mon, Wed, Fri from 11am to 1:30pm. Use 'Thu' for Thursday!"}
                         />
 
                         <TextField
@@ -152,7 +215,8 @@ class classModal extends React.Component {
                             floatingLabelText="Lamp Serial Number"
                             floatingLabelFixed={true}
                             defaultValue={this.state.serial}
-                            onChange = {(event) => this.setState({serial: event.target.value})}
+                            onBlur = {(event) => this.setState({serial: event.target.value})}
+                            errorText = {!this.checkInput("serial") && "Please enter a valid serial number. It should be 16 hexadecimal characters!"}
                         />
                         <br/>
 
