@@ -18,3 +18,4 @@ class Notebook(models.Model):
     name = models.CharField(max_length = 100)
     pages = models.ManyToManyField(Page, null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    time = models.DateField(default=datetime.now)
