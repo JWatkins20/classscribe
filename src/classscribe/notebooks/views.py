@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from datetime import date
+from audioupload.views import AudioFile
 
 # Create your views here.
 
@@ -68,10 +69,13 @@ adds file with remark (remark) to notebook with name (name)
 @api_view(["POST"])
 def add_file_view(request):
     data = request.data
+    files = []
     added_files = []
     page = Page.objects.get(id=data["pk"])
-    today = date.today()
-    files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
+    # today = date.today()
+    # files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
+    for pk in data['image_pks']:
+        files.append(File.objects.get(pk=pk))
     for f in files:
         page.snapshots.add(f)
         added_files.append(f)
@@ -93,3 +97,4 @@ def add_audio_and_transcript_view(request):
         return Response(status=status.HTTP_201_CREATED)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
