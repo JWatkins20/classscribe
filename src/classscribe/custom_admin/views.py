@@ -5,12 +5,19 @@ from django.views.generic import CreateView
 
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
 
 import json
 
 from .models import Course
 
+from .serializers import AssignmentSerializer
+
+class AssignmentView(APIView):
+    def get(self, request):
+        serializer = AssignmentSerializer(Course.objects.filter(), many=True)
+        return Response({"assignments": serializer.data})
 
 
 class PersonCreateView(CreateView):

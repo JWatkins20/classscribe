@@ -12,9 +12,13 @@ from django.core.mail import send_mail
 import random
 import string
 
-class StudentViewSet(viewsets.ModelViewSet):
-	queryset = Student.objects.all().order_by('idNumber')
-	serializer_class = StudentSerializer
+from .serializers import ArticleSerializer
+
+class ArticleView(APIView):
+    def get(self, request, idNumber):
+        serializer = ArticleSerializer(Student.objects.filter(idNumber=idNumber), many=True)
+        return Response({"articles": serializer.data})
+
 
 @api_view(['POST'])
 def link_studentID(request, email=None, idNumber=None):

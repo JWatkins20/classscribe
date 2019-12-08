@@ -20,11 +20,11 @@ from classscribe.views import index
 
 urlpatterns = [
   path('api/', include('api.urls')),
-  path('api/retrieveStudentIDs/', include('Student.urls')),
   path('backend/admin/', admin.site.urls),
   path('upload/', include('imageupload.urls')),
   path('courses/', include('custom_admin.urls')),
   path('notebooks/', include('notebooks.urls')),
+  path('IDexists/', include('Student.urls'))
 ]
 
 if settings.DEBUG:
