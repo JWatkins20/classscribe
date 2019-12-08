@@ -208,12 +208,9 @@ async loadNotes()
   // }
 
   getImgSrc = (imageName) => {
-    return 'http://localhost:8000' + imageName;
+    return 'http://128.143.67.97:44104/' + imageName;
   }
 
-  getAudSrc = (audio) => {
-    return 'http://localhost:8000' + audio;
-  }
 
   createCarousel = () => {
     let htmlImages = [];
