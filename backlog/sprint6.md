@@ -1,0 +1,1 @@
+Hank worked on polishing up the admin course editing, adding a navigation bar, and adding the transcript viewing in the student notebook view.
