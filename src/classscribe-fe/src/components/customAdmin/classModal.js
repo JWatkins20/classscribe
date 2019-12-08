@@ -156,7 +156,7 @@ class classModal extends React.Component {
                     <div>
                         <TextField
                             id="courseSemester"
-                            maxlength="50"
+                            maxlength="12"
                             floatingLabelText="Semester"
                             floatingLabelFixed={true}
                             defaultValue={this.state.semester}
@@ -167,6 +167,7 @@ class classModal extends React.Component {
 
                         <TextField
                             id="courseName"
+                            maxlength="50"
                             floatingLabelText="Course Name"
                             floatingLabelFixed={true}
                             defaultValue={this.state.name}
@@ -176,6 +177,7 @@ class classModal extends React.Component {
 
                         <TextField
                             id="professorId"
+                            maxlength="7"
                             floatingLabelText="Professor ID"
                             floatingLabelFixed={true}
                             defaultValue={this.state.professorId}
@@ -186,6 +188,7 @@ class classModal extends React.Component {
 
                         <TextField
                             id="building"
+                            maxlength="50"
                             floatingLabelText="Building Name"
                             floatingLabelFixed={true}
                             defaultValue={this.state.building}
@@ -195,6 +198,7 @@ class classModal extends React.Component {
 
                         <TextField
                             id="room"
+                            maxlength="50"
                             floatingLabelText="Room Number/Name"
                             floatingLabelFixed={true}
                             defaultValue={this.state.room}
@@ -205,6 +209,7 @@ class classModal extends React.Component {
 
                         <TextField
                             id="time"
+                            maxlength="20"
                             floatingLabelText="Meeting Times"
                             floatingLabelFixed={true}
                             defaultValue={this.state.time}
@@ -214,6 +219,8 @@ class classModal extends React.Component {
 
                         <TextField
                             id="serial"
+                            maxlength="16"
+                            minlength="16"
                             floatingLabelText="Lamp Serial Number"
                             floatingLabelFixed={true}
                             defaultValue={this.state.serial}
