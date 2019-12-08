@@ -6,13 +6,13 @@ import AudioPlayer from "../../student/AudioPlayer"
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
-import align from '@material-ui/core/Typography';
+import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
 import borderColor  from '@material-ui/system/borders';
 
-import { AppBar, Typography, Toolbar, Button} from '@material-ui/core';
+import Navbar from '../Navbar';
 
 const carstyle = {
   width: '50vw',
@@ -273,18 +273,16 @@ async loadNotes()
             return(<div>Unable to display notebooks</div>);
         }
         if(this.state.user.type!="student"){
-          return (<div>Must be logged in as a user to view notebooks!</div>);
+          return (
+            <>
+              <Navbar username={this.state.user && this.state.user.username}/>
+              <div>Must be logged in as a user to view notebooks!</div>
+            </>
+          );
         }
     return (
       <MuiThemeProvider>
-      <AppBar position="static">
-          <Toolbar>
-              <Typography variant="h6">Hello {this.state.user.username}</Typography>
-              <Button color="inherit" href={base_url}>Home</Button>
-              <Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
-              <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>
-          </Toolbar>
-      </AppBar>
+      <Navbar username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
         <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}</div>
         <div style={carstyle}>

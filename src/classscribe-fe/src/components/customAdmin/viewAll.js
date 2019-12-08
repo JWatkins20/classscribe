@@ -300,9 +300,12 @@ export default class CourseCalendar extends React.Component {
         }
         else {
             return (
-                <div>
-                    You must be logged in as an admin to view this page!
-                </div>
+                <>
+                    <Navbar/>
+                    <div>
+                        You must be logged in as an admin to view this page!
+                    </div>
+                </>
             )
         }
     }

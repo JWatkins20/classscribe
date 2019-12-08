@@ -54,13 +54,7 @@ render() {
       <div>
         <MuiThemeProvider>
             <div>
-                <AppBar title="Login">
-                  <Toolbar>
-                      <Button color="inherit" href={base_url}>Home</Button>
-                      <Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
-                      <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>
-                  </Toolbar>
-                </AppBar>
+                <AppBar title="Login"/>
                 <TextField
                     hintText="Enter your Username"
                     floatingLabelText="Username"

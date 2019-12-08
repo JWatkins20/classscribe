@@ -12,6 +12,14 @@ class Navbar extends React.Component {
         };
     }
 
+    componentDidUpdate(props) {
+        if (props.username !== this.state.username) {
+            this.setState({
+                username: props.username
+            });
+        }
+    }
+
     render() {
 
         let that = this;
@@ -19,7 +27,6 @@ class Navbar extends React.Component {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6">Hello {this.state.username}</Typography>
-                    <Button color="inherit" href={base_url}>Home</Button>
                     <Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
                     <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>
                     <LogoutButton/>
