@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import File
 from .models import User
+from .models import AudioFile
 from notebooks.models import Notebook, Page
 from notebooks.serializers import NotebookSerializer, PageSerializer
 from rest_framework import generics

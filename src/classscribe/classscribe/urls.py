@@ -25,6 +25,7 @@ urlpatterns = [
   path('upload/', include('imageupload.urls')),
   path('courses/', include('custom_admin.urls')),
   path('notebooks/', include('notebooks.urls')),
+  path('audio/', include('audioupload.urls')),
 ]
 
 if settings.DEBUG:
