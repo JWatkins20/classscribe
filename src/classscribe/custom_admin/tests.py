@@ -1,12 +1,13 @@
 from django.test import TestCase, Client
 from .models import Course
+from rest_framework import status
 
 class CourseTests(TestCase):
 
     def setUp(self):
         Course.objects.create(
             room="testRoom",
-            time="testTime",
+            time="MWF 8:00-8:50",
             name="testName",
             building="testBuilding",
             professorID="testProfessorID",
@@ -15,7 +16,7 @@ class CourseTests(TestCase):
         )
         Course.objects.create(
             room="testRoom1",
-            time="testTime",
+            time="TThu 8:00-9:15",
             name="test Name",
             building="testBuilding",
             professorID="testProfessorID",
@@ -27,7 +28,7 @@ class CourseTests(TestCase):
         found_course = None
         found_course = Course.objects.get(
             room="testRoom",
-            time="testTime",
+            time="MWF 8:00-8:50",
             name="testName",
             building="testBuilding",
             professorID="testProfessorID",
@@ -38,12 +39,12 @@ class CourseTests(TestCase):
 
     def test_edit_course_finds_course(self):
         c = Client()
-        response = c.get('/courses/edit/Fall 2019/testName/testBuilding/testRoom/testTime')
+        response = c.get('/courses/edit/Fall 2019/testName/testBuilding/testRoom/MWF 8:00-8:50')
         self.assertEqual(response.status_code, 200)
 
     def test_edit_course_finds_course_with_space(self):
         c = Client()
-        response = c.get('/courses/edit/Fall 2019/test Name/testBuilding/testRoom1/testTime')
+        response = c.get('/courses/edit/Fall 2019/test Name/testBuilding/testRoom1/TThu 8:00-9:15')
         self.assertEqual(response.status_code, 200)
 
     def test_edit_course_fails_to_find_course(self):
@@ -76,3 +77,56 @@ class CourseTests(TestCase):
         c = Client()
         response = c.get('/courses/Fall 2019/testBuilding/testRoom/classes')
         self.assertEqual("testLamp_serial123", response.data["courses"][0]["fields"]["lamp_serial"])
+
+    def test_edit_to_conflicting_time_fails(self):
+        c = Client()
+        course2 = Course.objects.get(time="TThu 8:00-9:15")
+        path = '/courses/edit/' + str(course2.pk)
+        response = c.post(path, {
+                                'semester': course2.semester,
+                                'courseName': course2.name,
+                                'building': course2.building,
+                                'room': "testRoom",
+                                'professorId': course2.professorID,
+                                'lamp_serial': course2.lamp_serial,
+                                'time': "MTThu 8:00-9:15"
+        })
+
+        self.assertEqual(response.data["message"], "Conflicting Times!")
+
+    def test_edit_to_conflicting_lamp_fails(self):
+        c = Client()
+        course2 = Course.objects.get(time="TThu 8:00-9:15")
+        path = '/courses/edit/' + str(course2.pk)
+
+        response = c.post(path, {
+            'semester': course2.semester,
+            'courseName': course2.name,
+            'building': course2.building,
+            'room': course2.room,
+            'professorId': course2.professorID,
+            'lamp_serial': "testLamp_serial123",
+            'time': course2.time
+        })
+
+        self.assertEqual(response.data["message"], "The lamp youre using already is being used in a different room!")
+
+    def test_edit_course_makes_successful_change(self):
+        c = Client()
+        course2 = Course.objects.get(time="TThu 8:00-9:15")
+        path = '/courses/edit/' + str(course2.pk)
+
+        response = c.post(path, {
+            'semester': course2.semester,
+            'courseName': course2.name,
+            'building': course2.building,
+            'room': "testRoom",
+            'professorId': course2.professorID,
+            'lamp_serial': "testLamp_serial123",
+            'time': course2.time
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+

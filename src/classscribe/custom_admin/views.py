@@ -29,16 +29,24 @@ class PersonCreateView(CreateView):
 def submit_course(request):
     all_courses = Course.objects.filter(semester=request.data.get("semester"))
     serial_to_building = {}
+    serial_to_room = {}
 
     for course in all_courses:
         if course.lamp_serial not in serial_to_building:
             serial_to_building[course.lamp_serial] = course.building
+            serial_to_room[course.lamp_serial] = course.room
         else:
-            if course.building != serial_to_building[course.lamp_serial]:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Old courses have conflicting SNs!'})
+            if course.building != serial_to_building[course.lamp_serial] or course.room != serial_to_room[course.lamp_serial]:
+                return Response(status=status.HTTP_400_BAD_REQUEST,
+                                data={'message': 'Old courses have conflicting SNs!'})
 
-    if request.data.get("lamp_serial") in serial_to_building and request.data.get("building") != serial_to_building[request.data.get("lamp_serial")]:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'The lamp youre using already is being used in a different room!'})
+    if request.data.get("lamp_serial") in serial_to_building and request.data.get("building") != serial_to_building[request.data.get("building")]:
+        return Response(status=status.HTTP_400_BAD_REQUEST,
+                        data={'message': 'The lamp youre using already is being used in a different room!'})
+
+    if request.data.get("lamp_serial") in serial_to_room and request.data.get("room") != serial_to_room[request.data.get("room")]:
+        return Response(status=status.HTTP_400_BAD_REQUEST,
+                        data={'message': 'The lamp youre using already is being used in a different room!'})
 
     try:
         conflicting_courses = Course.objects.filter(semester=request.data.get("semester"),
@@ -98,7 +106,7 @@ def edit_course(request, semester=None, course_name=None, building=None, room=No
                                           )
 
         if len(cur_entry) == 0:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'Couldnt find the course to edit'})
 
         return Response(status=status.HTTP_200_OK, data={
             "course_name": cur_entry[0].name,
@@ -123,16 +131,24 @@ def edit_course(request, semester=None, course_name=None, building=None, room=No
 
         all_courses = Course.objects.filter(semester=to_edit.semester)
         serial_to_building = {}
+        serial_to_room = {}
 
         for course in all_courses:
+            if course.pk == pk:
+                continue  # we don't want to check the old value of the course
             if course.lamp_serial not in serial_to_building:
                 serial_to_building[course.lamp_serial] = course.building
+                serial_to_room[course.lamp_serial] = course.room
             else:
-                if course.building != serial_to_building[course.lamp_serial]:
+                if course.building != serial_to_building[course.lamp_serial] or course.room != serial_to_room[course.lamp_serial]:
                     return Response(status=status.HTTP_400_BAD_REQUEST,
                                     data={'message': 'Old courses have conflicting SNs!'})
 
         if to_edit.lamp_serial in serial_to_building and to_edit.building != serial_to_building[to_edit.lamp_serial]:
+            return Response(status=status.HTTP_400_BAD_REQUEST,
+                            data={'message': 'The lamp youre using already is being used in a different room!'})
+
+        if to_edit.lamp_serial in serial_to_room and to_edit.room != serial_to_room[to_edit.lamp_serial]:
             return Response(status=status.HTTP_400_BAD_REQUEST,
                             data={'message': 'The lamp youre using already is being used in a different room!'})
 
