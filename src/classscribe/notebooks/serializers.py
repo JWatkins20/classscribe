@@ -21,4 +21,4 @@ class NotebookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notebook
-        fields = ('Private', 'class_name', 'name', 'pages', 'pk')
+        fields = ('time', 'Private', 'class_name', 'name', 'pages', 'pk')
