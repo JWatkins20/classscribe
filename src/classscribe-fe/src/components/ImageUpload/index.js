@@ -294,7 +294,7 @@ async loadNotes()
           <p>{this.state.transcript}</p>
         </div>
           <div style={audiostyle}>
-         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://128.143.67.97:44104/'+this.state.audio.file}></AudioPlayer> : <div>No audio to load</div>}
+         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://128.143.67.97:44104'+this.state.audio.file}></AudioPlayer> : <div>No audio to load</div>}
          </div>
          </div>
       </div>
