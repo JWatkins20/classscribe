@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import StudentSerializer
 from .models import Student
 from rest_framework.response import Response
@@ -30,6 +30,15 @@ def link_studentID(request, email=None, idNumber=None):
 		# user.save()
 		send_email(idNumber, email)
 		return Response(status=status.HTTP_200_OK, data={})
+	except Exception:
+		return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+
+@api_view(['GET'])
+def getPKbyCardID(request, id=None):
+	try:
+		student = Student.objects.get(idNumber=id)
+		user = User.objects.get(username=student.email)
+		return Response(status=status.HTTP_200_OK, data={"pk": user.pk, "email": str(user.email)})
 	except Exception:
 		return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 

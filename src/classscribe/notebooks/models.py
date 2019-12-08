@@ -7,8 +7,8 @@ from datetime import datetime
 class Page(models.Model):
     snapshots = models.ManyToManyField(File, null=True, blank=True)
     audio = models.ForeignKey(AudioFile, on_delete=models.CASCADE, null=True, related_name="audio", blank=True)
-    name = models.CharField(max_length = 50)
-    transcript = models.CharField(max_length=20000, blank=True)
+    name = models.CharField(max_length=50)
+    transcript = models.CharField(max_length=200000, blank=True)
     time = models.DateField(default=datetime.now)
 
 
