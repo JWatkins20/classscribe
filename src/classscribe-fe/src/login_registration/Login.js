@@ -30,7 +30,9 @@ login = async () =>{
         async function(res){
             Cookies.set('user-key', res.data.key)
             const user = (await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})).data
-            history.pushState(user,"", "dashboard");
+            Cookies.set('user-type', user.type)
+            Cookies.set('user-email', user.email)
+            history.pushState({},"", "dashboard");
             window.location.reload(false);
             history.go(1);
         }

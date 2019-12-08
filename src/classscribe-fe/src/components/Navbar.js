@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { AppBar, Typography, Toolbar, Button} from '@material-ui/core';
-
+import LogoutButton from '../login_registration/LogoutButton'
 import { base_url, url } from "../App";
 
 class Navbar extends React.Component {
@@ -22,6 +22,7 @@ class Navbar extends React.Component {
                     <Button color="inherit" href={base_url}>Home</Button>
                     <Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
                     <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>
+                    <LogoutButton/>
                 </Toolbar>
             </AppBar>
         );

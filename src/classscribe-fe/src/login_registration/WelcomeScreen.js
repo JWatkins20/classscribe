@@ -1,24 +1,25 @@
 import React, {Component} from 'react';
 import StudentDashboard from '../student/Dashboard'
 import Navbar from '../components/Navbar';
+import Cookies from 'js-cookie'
 const history = window.history;
 
 export default class WelcomeScreen extends Component{
 
     render(){
-        if(history.state.type === "teacher"){
+        if(Cookies.get('user-type') === "teacher"){
             return(
                 <>
-                    <Navbar></Navbar>
+                    <Navbar username={Cookies.get('user-email')}></Navbar>
                     <div> 
                         Hello teacher 😎! 
                     </div>
                 </>
             )
-        }else if(history.state.type === "student"){
+        }else if(Cookies.get('user-type') === "student"){
             return (
                 <>
-                    <Navbar></Navbar>
+                    <Navbar username={Cookies.get('user-email')}></Navbar>
                     <div>
                         <StudentDashboard/>
                     </div>
@@ -27,7 +28,7 @@ export default class WelcomeScreen extends Component{
         }else{
             return (
                 <>
-                    <Navbar></Navbar>
+                    <Navbar username={Cookies.get('user-email')}></Navbar>
                     <div>
                         Hello admin!
                     </div>

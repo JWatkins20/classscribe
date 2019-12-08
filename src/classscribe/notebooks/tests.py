@@ -2,6 +2,7 @@ from django.test import TestCase
 from notebooks.models import Notebook, Page
 from users.models import User
 from imageupload.models import File
+from audioupload.models import AudioFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 from .urls import notebook_page_view
@@ -61,7 +62,9 @@ class NotebookGetViewTests(APITestCase):
         notebook2 = Notebook.objects.create(Private=False, class_name="Class2", name="bfb3ab_notes2")
         notebook3 = Notebook.objects.create(Private=False, class_name="Class3", name="bfb3ab_notes3")
         file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1")
+        audiofile1 = AudioFile.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", length="1")
         page1 = Page.objects.create(name="Page1 name") 
+
         page2 = Page.objects.create(name="Page2 name") 
         notebook1.owner = user1
         notebook1.pages.add(page1)
@@ -113,7 +116,8 @@ class NotebookGetViewTests(APITestCase):
         data = json.loads(response.content)
         self.assertTrue(response.status_code==200)
         self.assertTrue(data["data"][0]["pages"][0]["transcript"] == '' , msg=str(response.context))
-        response = self.client.post(reverse('audio'), {"remark": "test1", "pk": page.pk, "transcript": "This is the transcript of lecture"})
+        a = AudioFile.objects.get(remark="test1")
+        response = self.client.post(reverse('audio'), {"pk_page": page.pk, "pk_audio": a.pk,  "transcript": "This is the transcript of lecture"})
         self.assertTrue(response.status_code==201)
         response = self.client.get(reverse('notebooks', args=[user.pk]), format=json)
         data = json.loads(response.content)
