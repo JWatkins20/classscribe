@@ -13,6 +13,7 @@ from rest_framework import status
 from datetime import date
 from audioupload.views import AudioFile
 from django.core.files.uploadedfile import SimpleUploadedFile
+import requests
 
 # Create your views here.
 
@@ -80,7 +81,8 @@ def add_file_view(request):
 	page = Page.objects.get(id=data["pk"])
 	# today = date.today()
 	# files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
-	for pk in data['image_pks']:
+	image_pks = request.GET.getlist(data['image_pks'])
+	for pk in image_pks:
 		try:
 			files.append(File.objects.get(pk=int(pk)))
 		except:
