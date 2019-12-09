@@ -84,7 +84,7 @@ def add_file_view(request):
 		try:
 			files.append(File.objects.get(pk=int(pk)))
 		except:
-			return Response({"type": type(data["image_pks"])}, status=status.HTTP_201_CREATED)
+			return Response({"type": str(type(data["image_pks"]))}, status=status.HTTP_201_CREATED)
 	for f in files:
 		page.snapshots.add(f)
 		added_files.append(f)
