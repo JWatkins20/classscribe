@@ -9,7 +9,7 @@ import Axios from 'axios';
 import { base_url } from "../App"
 
 const sendID = async (email, user_id) => {
-    var endpoint = base_url + "api/retrieveStudentIDs/lamp_registration/" + email + "/" + user_id 
+    var endpoint = base_url + "IDexists/lamp_registration/" + email + "/" + user_id 
     await Axios.post(endpoint).then(
       async function(res){
           if(res.status !== 200){
