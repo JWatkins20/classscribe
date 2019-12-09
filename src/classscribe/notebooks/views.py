@@ -81,7 +81,11 @@ def add_file_view(request):
 	page = Page.objects.get(id=data["pk"])
 	# today = date.today()
 	# files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
-	image_pks = request.GET.getlist(data['image_pks'])
+	image_pks = data["image_pks"]
+	image_pks.rstrip("]")
+	image_pks.lstrip("[")
+	image_pks = image_pks.split(',')
+	image_pks = image_pks.rstrip()
 	for pk in image_pks:
 		try:
 			files.append(File.objects.get(pk=int(pk)))
