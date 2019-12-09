@@ -74,46 +74,49 @@ adds file with remark (remark) to notebook with name (name)
 '''
 @api_view(["POST"])
 def add_file_view(request):
-    data = request.data
-    files = []
-    added_files = []
-    page = Page.objects.get(id=data["pk"])
-    # today = date.today()
-    # files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
-    for pk in data['image_pks']:
-        files.append(File.objects.get(pk=pk))
-    for f in files:
-        page.snapshots.add(f)
-        added_files.append(f)
-    page.save()
-    if len(added_files) > 0:
-        return Response({"num_added": len(added_files)}, status=status.HTTP_201_CREATED)
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+	data = request.data
+	files = []
+	added_files = []
+	page = Page.objects.get(id=data["pk"])
+	# today = date.today()
+	# files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
+	for pk in data['image_pks']:
+		try:
+			files.append(File.objects.get(pk=int(pk)))
+		except:
+			return Response({"type": type(data["image_pks"])}, status=status.HTTP_201_CREATED)
+	for f in files:
+		page.snapshots.add(f)
+		added_files.append(f)
+	page.save()
+	if len(added_files) > 0:
+		return Response({"num_added": len(added_files)}, status=status.HTTP_201_CREATED)
+	else:
+		return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
 def add_audio_and_transcript_view(request):
-    data = request.data
-    page = Page.objects.get(pk=data["pk_page"])
-    files = AudioFile.objects.get(pk=data["pk_audio"])
-    page.audio = files
-    page.transcript = data["transcript"]
-    page.save()
-    if files == page.audio:
-        return Response(status=status.HTTP_201_CREATED)
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+	data = request.data
+	page = Page.objects.get(pk=data["pk_page"])
+	files = AudioFile.objects.get(pk=data["pk_audio"])
+	page.audio = files
+	page.transcript = data["transcript"]
+	page.save()
+	if files == page.audio:
+		return Response(status=status.HTTP_201_CREATED)
+	else:
+		return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class ProcessingView(APIView):
-    def get(self, request):
-        notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes")
-        file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1")
-        file2 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test2", class_name="Something else", page_num="2")
-        file3 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test3", class_name="Practicum", page_num="3")
-        file4 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test4", class_name="Something else", page_num="4")
-        page1 = Page.objects.create(name="Page name") 
-        page1.snapshots.add(file1)
-        page1.snapshots.add(file2)
-        page1.snapshots.add(file3)
-        notebook1.pages.add(page1)
-        return Response()
+	def get(self, request):
+		notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes")
+		file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1")
+		file2 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test2", class_name="Something else", page_num="2")
+		file3 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test3", class_name="Practicum", page_num="3")
+		file4 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test4", class_name="Something else", page_num="4")
+		page1 = Page.objects.create(name="Page name")
+		page1.snapshots.add(file1)
+		page1.snapshots.add(file2)
+		page1.snapshots.add(file3)
+		notebook1.pages.add(page1)
+		return Response()
