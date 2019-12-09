@@ -32,7 +32,12 @@ login = async () =>{
             const user = (await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})).data
             Cookies.set('user-type', user.type)
             Cookies.set('user-email', user.email)
-            history.pushState({},"", "dashboard");
+            if(user.type == "student"){
+              history.pushState({}, "", "notebook-carousel/")
+            }
+            if(user.type == "admin" || user.type == "teacher"){
+              history.pushState({}, "", "dashboard");
+            }
             window.location.reload(false);
             history.go(1);
         }
