@@ -276,7 +276,7 @@ async loadNotes()
           return (
             <>
               <Navbar username={this.state.user && this.state.user.username}/>
-              <div>Must be logged in as a user to view notebooks!</div>
+              <div>Must be logged in as a student to view notebooks!</div>
             </>
           );
         }
