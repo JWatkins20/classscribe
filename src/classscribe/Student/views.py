@@ -15,19 +15,16 @@ import string
 from .serializers import ArticleSerializer
 
 class ArticleView(APIView):
-    def get(self, request, idNumber):
-        serializer = ArticleSerializer(Student.objects.filter(idNumber=idNumber), many=True)
-        return Response({"articles": serializer.data})
+	def get(self, request, idNumber):
+		serializer = ArticleSerializer(Student.objects.filter(idNumber=idNumber), many=True)
+		return Response({"articles": serializer.data})
 
 
 @api_view(['POST'])
 def link_studentID(request, email=None, idNumber=None):
 	try:
-		# user = User.objects.get(email=email)
 		student = Student.objects.create(email=email, idNumber=idNumber)
 		student.save()
-		# user.type_object = student
-		# user.save()
 		send_email(idNumber, email)
 		return Response(status=status.HTTP_200_OK, data={})
 	except Exception:
