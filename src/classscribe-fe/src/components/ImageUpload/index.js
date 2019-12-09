@@ -286,15 +286,16 @@ async loadNotes()
       <div style={{"display": "inline-block"}}>
         <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}</div>
         <div style={carstyle}>
-          {this.state.loaded||this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>No images to show select page with images</div>}
+          {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
         </div>
         <div style={tandastyle}>
         <div style={transcriptStyle}>
           <p style={headerstyle}>Transcript{'\n'}</p>
-          <p>{this.state.transcript}</p>
+          {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
          {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://128.143.67.97:44104'+this.state.audio.file}></AudioPlayer> : <div>No audio to load</div>}
+
          </div>
          </div>
       </div>
