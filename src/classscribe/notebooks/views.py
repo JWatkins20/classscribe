@@ -43,7 +43,7 @@ class NotebookCreateView(APIView):
 		serializer = NotebookSerializer(data=request.data)
 		if serializer.is_valid():
 			try:
-				notebook = Notebook.objects.get(class_name=request.data["class_name"])
+				notebook = Notebook.objects.get(class_name=request.data["class_name"], name=request.data["name"])
 				return Response({"key": notebook.pk}, status=status.HTTP_200_OK)
 			except Notebook.DoesNotExist:
 				serializer.save()
