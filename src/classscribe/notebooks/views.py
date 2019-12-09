@@ -85,7 +85,6 @@ def add_file_view(request):
 	image_pks.rstrip("]")
 	image_pks.lstrip("[")
 	image_pks = image_pks.split(',')
-	image_pks = image_pks.rstrip()
 	for pk in image_pks:
 		try:
 			files.append(File.objects.get(pk=int(pk)))
