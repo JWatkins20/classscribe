@@ -18,13 +18,13 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 @api_view(["GET"])
 def notebook_page_view(request, pk):
-    obj = Notebook.objects.filter(owner__pk__contains=pk)# finds pages with remark matching parameter
-    objs = []
-    for book in obj:
-        objs.append(NotebookSerializer(book).data)
-    if not objs:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-    return Response(status=status.HTTP_200_OK, data={"data": objs})
+	obj = Notebook.objects.filter(owner__pk__contains=pk)# finds pages with remark matching parameter
+	objs = []
+	for book in obj:
+		objs.append(NotebookSerializer(book).data)
+	if not objs:
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	return Response(status=status.HTTP_200_OK, data={"data": objs})
 
 
 '''
@@ -38,30 +38,34 @@ Creates notebook object and assigns it to user
 Response contains key of created notebook
 '''
 class NotebookCreateView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = NotebookSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            notebook = Notebook.objects.get(name=request.data["name"])
-            notebook.owner = User.objects.get(pk=request.data["pk"])
-            notebook.save()
-            return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	def post(self, request, *args, **kwargs):
+		serializer = NotebookSerializer(data=request.data)
+		if serializer.is_valid():
+			try:
+				notebook = Notebook.objects.get(class_name=request.data["class_name"])
+				return Response({"key": notebook.pk}, status=status.HTTP_200_OK)
+			except Notebook.DoesNotExist:
+				serializer.save()
+				notebook = Notebook.objects.get(class_name=request.data["class_name"])
+				notebook.owner = User.objects.get(pk=request.data["pk"])
+				notebook.save()
+			return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PageCreateView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = PageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            page = Page.objects.get(name=request.data["name"])
-            notebook = Notebook.objects.get(pk=request.data["pk"])
-            notebook.pages.add(page)
-            notebook.save()
-            return Response({"key": page.pk}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	def post(self, request, *args, **kwargs):
+		serializer = PageSerializer(data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			page = Page.objects.get(name=request.data["name"])
+			notebook = Notebook.objects.get(pk=request.data["pk"])
+			notebook.pages.add(page)
+			notebook.save()
+			return Response({"key": page.pk}, status=status.HTTP_201_CREATED)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 '''
 @params: name, remark
 pk: pk of page object

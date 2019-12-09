@@ -14,7 +14,7 @@ import AudioPlayer from './student/AudioPlayer'
 import { is } from '@babel/types';
 import Cookie from "js-cookie"
 import EmailVerification from './login_registration/EmailVerification';
-
+import FourOhFour from './components/404'
 export const base_url = "http://128.143.67.97:44104/"
 export const url = "http://128.143.67.97:44104/api/"
 // for testng: http://localhost:8000/api/
@@ -43,6 +43,7 @@ const Routes =  () => {
         <Route path="/notebook-carousel/" exact component={ImageCarousel} />
         <Route path="/link_your_id/:user_id" component = {CardIDRegistration} />
         <Route path="/audioplayer/:pk" component = {AudioPlayer} />
+        <Route component={FourOhFour}/>
     </Switch>
   );
 }

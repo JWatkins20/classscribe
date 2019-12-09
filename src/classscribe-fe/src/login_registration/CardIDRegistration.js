@@ -9,6 +9,7 @@ import Axios from 'axios';
 import { base_url } from "../App"
 
 const sendID = async (email, user_id) => {
+    email = email.toLowerCase()
     var endpoint = base_url + "IDexists/lamp_registration/" + email + "/" + user_id 
     await Axios.post(endpoint).then(
       async function(res){
