@@ -15,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
+import Switch from '@material-ui/core/Switch';
 import borderColor  from '@material-ui/system/borders';
 
 import Navbar from '../Navbar';
@@ -115,20 +116,20 @@ const notecardstyle = {
    "text-align": "center",
  }
 
-class EditNotebookForm extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {notebookname: ''};
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  handleChange(event){
-    this.setState({notebookname: event.target.value})
-  }
-  handleSubmit(event){
-    this.items[this.state.notebook].name = this.notebookname
-  }
-}
+// class EditNotebookForm extends React.Component{
+//   constructor(props){
+//     super(props);
+//     this.state = {notebookname: ''};
+//     this.handleChange = this.handleChange.bind(this);
+//     this.handleSubmit = this.handleSubmit.bind(this);
+//   }
+//   handleChange(event){
+//     this.setState({notebookname: event.target.value})
+//   }
+//   handleSubmit(event){
+//     this.items[this.state.notebook].name = this.notebookname
+//   }
+// }
 
 export default class ImageCarousel extends Component {
   constructor(props) {
