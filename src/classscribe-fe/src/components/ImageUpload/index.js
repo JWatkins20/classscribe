@@ -7,6 +7,8 @@ import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
 import Typography from '@material-ui/core/Typography';
+import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
 import CardContent from '@material-ui/core/CardContent';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
@@ -226,6 +228,17 @@ async loadNotes()
     return htmlImages;
   }
 
+  deleteNotebook = (pk) => {
+    let that = this;
+    if (window.confirm("Are you sure you want to delete this notebook?")) {
+      const deleteUrl = `${base_url}notebooks/delete/${pk}`;
+      Axios.delete(deleteUrl)
+        .catch(function (error) {
+          alert(error.response.data["message"]);
+        });
+    }
+  }
+
 
 
   render() {
@@ -252,20 +265,24 @@ async loadNotes()
                 return (
                   <div>
                     <div style={notestyle}>  
-                    <Card border={1} borderColor={"#09d3ac"} onClick={() => self.switchNote(notes.indexOf(note))}>
-                        <CardContent><Typography align={'center'}>
+                      <Card border={1} borderColor={"#09d3ac"} onClick={() => self.switchNote(notes.indexOf(note))}>
+                        <CardContent>
+                          <Typography align={'center'}>
                             {note.name}
-                        </Typography>
-                        <Typography align={'center'}>         
-                                    Number of pages: {note.pages.length}<br/>       
-                                    </Typography>      
-                                </CardContent>
-                        </Card>
-                        </div>
+                          </Typography>
+                          <Typography align={'center'}>
+                            Number of pages: {note.pages.length}<br/>
+                          </Typography>
+                        </CardContent>
+                        <CardActions>
+                          <Button size="small" fullWidth={true} onClick={() => self.deleteNotebook(note.pk)}>Delete Notebook</Button>
+                        </CardActions>
+                      </Card>
+                      </div>
                         <div>
                         {notes.indexOf(note) === notebook ? pagelist : null}
                         </div>
-                        </div>
+                    </div>
                 )
                 })}
                 

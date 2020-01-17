@@ -55,6 +55,18 @@ class NotebookCreateView(APIView):
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(["DELETE"])
+def delete_notebook(request, pk=None):
+	notebook = None
+	notebook = Notebook.objects.get(pk=pk)
+	if notebook is None:
+		return Response(status=status.HTTP_404_NOT_FOUND, data={"message": "Couldn't find the specified notebook to delete!"})
+
+	else:
+		notebook.delete()
+		return Response(status=status.HTTP_200_OK, data={})
+
+
 class PageCreateView(APIView):
 	def post(self, request, *args, **kwargs):
 		serializer = PageSerializer(data=request.data)
