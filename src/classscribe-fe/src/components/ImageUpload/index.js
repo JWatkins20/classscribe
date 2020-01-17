@@ -7,8 +7,13 @@ import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
 import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
 import CardContent from '@material-ui/core/CardContent';
+import EditIcon from '@material-ui/icons/Edit';
+import CardActions from '@material-ui/core/CardActions';
+import IconButton from '@material-ui/core/IconButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
 import borderColor  from '@material-ui/system/borders';
 
@@ -24,24 +29,40 @@ const carstyle = {
   border: "2px solid black"
 };
 
+const formstyle= {
+  position: 'absolute',
+  top: "10vh",
+  left: "10vh",
+  'z-index': 1
+}
+
 const imagestyle = {
   width: "50vw",
   height: "87vh"
 }
 
 const transcriptStyle = {
-    width: '24vw',
-    height: '59vh',
-    
-    overflow: 'auto',
-    paddingLeft: "0px",
-    marginTop: "10px",
-    whiteSpace: "normal",
-    border: "2px solid black",
+  width: '24vw',
+  height: '59vh',   
+  overflow: 'auto',
+  paddingLeft: "0px",
+  marginTop: "10px",
+  whiteSpace: "normal",
+  border: "2px solid black",
 };
 
 const tandastyle = {
   float: 'left',
+}
+const buttonstyle = {
+  float: 'left',
+  width: '20%', 
+  height: '15%'
+}
+
+const textfieldstyle = {
+  float: 'left', 
+  width: '65%'
 }
 
 const audiostyle={
@@ -61,25 +82,53 @@ const divstyle = {
   overflow: "auto",
   border: "2px solid black"
 }
+const floatstyle = {
+  "float": "left",
+}
+
 const pagestyle = {
-  "padding-top": "10px",
-  "padding-bottom": "10px",
-  "padding-left": "20px",
-  "padding-right":"20px",
-  "margin-left": "15px",
-  "width": "11rem"
+  "padding-top": "1vw",
+  "padding-bottom": "1vw",
+  "padding-left": "1vw",
+  "padding-right":"1vw",
+  "margin-left": "3vw",
+  "margin-bottom": "1vw",
+  "width": "11vw",
+  "height": "3vh"
 }
 const notestyle = {
-  width: '14rem',
-  "padding-top": "5px",
-  "padding-bottom": "5px",
-  "margin-left": "15px",
+  width: '18vw',
+  height: '12vh',
+  "padding-top": "1vw",
+  "padding-left": "1vw",
+  "padding-right":"1vw",
+  "margin-left": "3px",
+ }
+
+const notecardstyle = {
+   width: '100%',
+   height: '100%'
  }
 
  const headerstyle = {
    "font-size": "30px",
    "text-align": "center",
  }
+
+class EditNotebookForm extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {notebookname: ''};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleChange(event){
+    this.setState({notebookname: event.target.value})
+  }
+  handleSubmit(event){
+    this.items[this.state.notebook].name = this.notebookname
+  }
+}
 
 export default class ImageCarousel extends Component {
   constructor(props) {
@@ -92,14 +141,56 @@ export default class ImageCarousel extends Component {
       pages: [],
       user: {},
       audio: {},
+      edit: false,
       page: 0,
+      notebookname: "",
+      notebookprivate: false,
       notebook: 0,
       transcript: ""
     };
     this.loadNotes = this.loadNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
+    // this.handlePrivacyChange = this.handlePrivacyChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  handleNameChange(event){
+    this.setState({notebookname: event.target.value})
+  }
+  // handlePrivacyChange(event){
+  //   this.setState({private: event.target.value})
+  // }
+  async handleSubmit(event){
+    event.preventDefault();
+    if(this.state.notebookname === ""){
+
+    }
+    this.setState({edit: false})
+    var dummy = this.state.items
+    dummy[this.state.notebook].name = this.state.notebookname
+    this.setState({items : dummy})
+    var data = {
+      'pk' : this.state.items[this.state.notebook].pk,
+      'name': this.state.notebookname,
+      //'private': this.state.notebookprivate
+    }
+    const url = `${base_url}notebooks/edit/`;
+    await Axios.post(url, data)
+        .then(function (response) {
+            if (response.status === 200) {
+                
+            }
+            else {
+                alert("Edits were not saved!");
+            }
+        })
+        .catch(function (error) {
+            alert("Edits were not saved. Check the console for the error!");
+            console.log(error);
+        });
+
+  }
   async componentDidMount() {
     await this.loadUser();
     this.setState({loaded: true});
@@ -109,7 +200,7 @@ export default class ImageCarousel extends Component {
     const res = await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
         const user = res.data;
-        console.log(user.username);
+        console.log(user.pk);
         this.setState({user:user});
     }
     if(this.state.user.type == "student"){
@@ -120,7 +211,7 @@ export default class ImageCarousel extends Component {
 
 async loadNotes()
   {
-    const res = await Axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/").then((res) =>{
+    await Axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/").then((res) =>{
     
     if(res.status===200){
       const data = res.data.data;
@@ -208,7 +299,7 @@ async loadNotes()
   // }
 
   getImgSrc = (imageName) => {
-    return 'http://128.143.67.97:44104' + imageName;
+    return 'http://localhost:8000' + imageName;
   }
 
 
@@ -224,6 +315,13 @@ async loadNotes()
     }
 
     return htmlImages;
+  }
+
+  handleEditNotebook = (notebook) => {
+    this.setState({edit:true})
+    this.setState({notebook:notebook})
+    this.setState({state:this.state});
+
   }
 
 
@@ -252,15 +350,28 @@ async loadNotes()
                 return (
                   <div>
                     <div style={notestyle}>  
-                    <Card border={1} borderColor={"#09d3ac"} onClick={() => self.switchNote(notes.indexOf(note))}>
-                        <CardContent><Typography align={'center'}>
+                    <Card style={notecardstyle} border={1} borderColor={"#09d3ac"} onClick={() => self.switchNote(notes.indexOf(note))}>
+                        {self.state.edit ? //conditional render based on whether editing process has been initiated
+                        <div style={{display: 'inline-block'}}><CardContent><form>
+                        <TextField style={textfieldstyle} id="standard-basic" label="new name" onChange={(event)=>self.handleNameChange(event)} />
+                        <Button style={buttonstyle} variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
+                        </form> 
+                        </CardContent></div>
+                        :
+                        <div>
+                        <CardContent>
+                        <Typography align={'center'}>
                             {note.name}
-                        </Typography>
-                        <Typography align={'center'}>         
-                                    Number of pages: {note.pages.length}<br/>       
-                                    </Typography>      
-                                </CardContent>
-                        </Card>
+                        </Typography> 
+                        </CardContent>
+                            <CardActions>
+                            <IconButton style={{marginLeft: '80%'}} aria-label="edit icon" onClick={() => self.handleEditNotebook(note)}>
+                            <EditIcon />
+                            </IconButton>
+                            </CardActions> 
+                            </div>
+            }
+                        </Card> 
                         </div>
                         <div>
                         {notes.indexOf(note) === notebook ? pagelist : null}
@@ -281,6 +392,7 @@ async loadNotes()
           );
         }
     return (
+    <div> 
       <MuiThemeProvider>
       <Navbar username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
@@ -294,11 +406,12 @@ async loadNotes()
           {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
-         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://128.143.67.97:44104/'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
+         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://localhost:8000'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
          </div>
          </div>
       </div>
       </MuiThemeProvider>
+      </div>
     );
   }
 }

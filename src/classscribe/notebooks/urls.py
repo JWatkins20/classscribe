@@ -8,5 +8,6 @@ urlpatterns = [
    path('add/audio/', add_audio_and_transcript_view, name="audio"),
    path('create/', NotebookCreateView.as_view(), name="create"),
    path('create/page/', PageCreateView.as_view(), name="create_page"),
-   path('processing/', ProcessingView.as_view())
+   path('processing/', ProcessingView.as_view()),
+   path('edit/', edit_notebook_view, name="edit_notebook")
 ]

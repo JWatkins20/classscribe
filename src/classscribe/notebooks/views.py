@@ -88,6 +88,20 @@ def add_file_view(request):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
+def edit_notebook_view(request):
+    data = request.data
+    #print(data.keys())
+    notebook = Notebook.objects.get(pk=data["pk"])
+    notebook.name = data["name"]
+    #notebook.private = data["private"]
+    try:
+        notebook.save()
+        return Response(status=status.HTTP_200_OK, data={})
+    except Exception as e:
+        print(e.message)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+
+@api_view(["POST"])
 def add_audio_and_transcript_view(request):
     data = request.data
     page = Page.objects.get(pk=data["pk_page"])
@@ -99,6 +113,8 @@ def add_audio_and_transcript_view(request):
         return Response(status=status.HTTP_201_CREATED)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class ProcessingView(APIView):
     def get(self, request):
