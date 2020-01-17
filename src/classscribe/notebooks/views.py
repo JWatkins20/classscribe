@@ -81,23 +81,31 @@ def add_file_view(request):
 	page = Page.objects.get(id=data["pk"])
 	# today = date.today()
 	# files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
-	image_pks = data["image_pks"]
-	image_pks.rstrip("]")
-	image_pks.lstrip("[")
+	image_pks = str(data["image_pks"])
+	image_pks=image_pks.replace("]","")
+	image_pks=image_pks.replace("[","")
 	image_pks = image_pks.split(',')
+	print ("Images passed in:", image_pks)
+
 	for pk in image_pks:
 		try:
 			files.append(File.objects.get(pk=int(pk)))
 		except:
-			return Response({"type": str(type(data["image_pks"]))}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"type": image_pks}, status=status.HTTP_400_BAD_REQUEST)
+	
+	print ("Files added:", files)
+	
 	for f in files:
 		page.snapshots.add(f)
 		added_files.append(f)
+
+
 	page.save()
 	if len(added_files) > 0:
-		return Response({"num_added": len(added_files)}, status=status.HTTP_201_CREATED)
+		return Response({"num_added": (data["image_pks"],image_pks)}, status=status.HTTP_201_CREATED)
 	else:
 		return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(["POST"])
 def add_audio_and_transcript_view(request):
