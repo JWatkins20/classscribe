@@ -8,11 +8,7 @@ import { BrowserRouter as Redirect } from "react-router-dom"
 
 
 const LogoutButton = () => {
-    return (
-        <div>
-            <Button label="Logout" primary={true} style={{margin:15}} onClick={() => logout()}/>
-        </div>
-    )
+    return (<Button label="Logout" color="inherit" primary={true} style={{margin:15}} onClick={() => logout()}>Logout</Button>)
 }
 
 

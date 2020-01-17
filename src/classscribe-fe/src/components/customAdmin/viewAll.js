@@ -18,7 +18,8 @@ import Cookies from 'js-cookie';
 
 const dayMap = {
     "M": 1,
-    "T": 2,
+    "Tu": 2,
+    "@": 2,
     "W": 3,
     "Thu": 4,
     "!": 4,
@@ -146,12 +147,13 @@ export default class CourseCalendar extends React.Component {
         let endTime = daysAndTime[1].split("-")[1];
         let intervals = [];
         days = days.replace("Thu", "!"); // Make it so that every day only has one char
+        days = days.replace("Tu", "@");
         for (let i = 0; i < days.length; i++) {
             intervals.push({
                 uid: this.state.lastUid,
                 start: moment({h: startTime.split(":")[0], m: startTime.split(":")[1]}).day(dayMap[days[i]]),
                 end: moment({h: endTime.split(":")[0], m: endTime.split(":")[1]}).day(dayMap[days[i]]),
-                days: days.replace("!", "Thu")
+                days: days.replace("!", "Thu").replace("@", "Tu")
             });
             this.setState({
                 lastUid: this.state.lastUid + 1

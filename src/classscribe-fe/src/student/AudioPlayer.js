@@ -12,13 +12,11 @@ const AudioPlayer = ({audio_url}) => {
     })
     return (
         <div>
-            <button onClick={() => {setCurrentTime(currentTime-15)}}>Back 15 Seconds</button>
             <BuiltinAudioPlayer
                 onPlay={()=>{setPlaying(true)}}
                 onPause={()=>{setPlaying(false)}}
                 src={audio_url}
             />
-            <button onClick={() => {setCurrentTime(currentTime+15)}}s>Forward 15 Seconds</button>
         </div>
     );
 }
