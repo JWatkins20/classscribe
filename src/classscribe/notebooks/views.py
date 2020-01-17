@@ -101,6 +101,20 @@ def edit_notebook_view(request):
         print(e.message)
         return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 
+
+@api_view(["POST"])
+def toggle_privacy_view(request):
+    data = request.data
+    notebook = Notebook.objects.get(pk=data["pk"])
+    notebook.Private = not notebook.Private
+    #notebook.private = data["private"]
+    try:
+        notebook.save()
+        return Response(status=status.HTTP_200_OK, data={})
+    except Exception as e:
+        print(e.message)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+
 @api_view(["POST"])
 def add_audio_and_transcript_view(request):
     data = request.data

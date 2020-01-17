@@ -17,6 +17,7 @@ import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
 import Switch from '@material-ui/core/Switch';
 import borderColor  from '@material-ui/system/borders';
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 
 import Navbar from '../Navbar';
 
@@ -88,22 +89,25 @@ const floatstyle = {
 }
 
 const pagestyle = {
-  "padding-top": "1vw",
-  "padding-bottom": "1vw",
-  "padding-left": "1vw",
-  "padding-right":"1vw",
-  "margin-left": "3vw",
-  "margin-bottom": "1vw",
-  "width": "11vw",
-  "height": "3vh"
+  "display": "block",
+  "padding-top": "3px",
+  "padding-bottom": "3px",
+  "padding-left": "5px",
+  "padding-right":"5px",
+  "margin-left": "auto",
+  "margin-right": "auto",
+  "margin-bottom": "5px",
+  "width": "45%",
+  "height": "6vh"
 }
 const notestyle = {
-  width: '18vw',
-  height: '12vh',
-  "padding-top": "1vw",
-  "padding-left": "1vw",
-  "padding-right":"1vw",
-  "margin-left": "3px",
+  "display": "block",
+  "padding-top": "3px",
+  "padding-left": "3px",
+  "padding-bottom": "3px",
+  "padding-right":"3px",
+  "margin-left": "auto",
+  "margin-right": "auto",
  }
 
 const notecardstyle = {
@@ -114,6 +118,7 @@ const notecardstyle = {
  const headerstyle = {
    "font-size": "30px",
    "text-align": "center",
+   "line-height": "1.0",
  }
 
 // class EditNotebookForm extends React.Component{
@@ -131,6 +136,8 @@ const notecardstyle = {
 //   }
 // }
 
+
+
 export default class ImageCarousel extends Component {
   constructor(props) {
     super(props);
@@ -142,6 +149,7 @@ export default class ImageCarousel extends Component {
       pages: [],
       user: {},
       audio: {},
+      checked: false,
       edit: false,
       page: 0,
       notebookname: "",
@@ -154,11 +162,40 @@ export default class ImageCarousel extends Component {
     this.handleNameChange = this.handleNameChange.bind(this);
     // this.handlePrivacyChange = this.handlePrivacyChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSwitch = this.handleSwitch.bind(this);
   }
+
+  
 
   handleNameChange(event){
     this.setState({notebookname: event.target.value})
   }
+
+  async handleSwitch(event){
+    this.setState({checked: event.target.checked})
+    var dummy = this.state.items
+    dummy[this.state.notebook].Private = !dummy[this.state.notebook].Private
+    this.setState({items : dummy})
+    var data = {
+      'pk' : this.state.items[this.state.notebook].pk,
+    }
+    const url = `${base_url}notebooks/privacy-toggle/`;
+    await Axios.post(url, data)
+        .then(function (response) {
+            if (response.status === 200) {
+                
+            }
+            else {
+                alert("Edits were not saved!");
+            }
+        })
+        .catch(function (error) {
+            alert("Edits were not saved. Check the console for the error!");
+            console.log(error);
+        });
+
+  }
+
   // handlePrivacyChange(event){
   //   this.setState({private: event.target.value})
   // }
@@ -236,7 +273,8 @@ async loadNotes()
           }
       this.setState({
         images:is,
-        pages:ps
+        pages:ps,
+        checked: data[this.state.notebook].Private
       });
       this.setState({state:this.state});
     }
@@ -361,12 +399,18 @@ async loadNotes()
                         :
                         <div>
                         <CardContent>
-                        <Typography align={'center'}>
+                        <Typography style={{padding: "0"}} align={'center'} variant={"h6"}>
                             {note.name}
                         </Typography> 
                         </CardContent>
                             <CardActions>
-                            <IconButton style={{marginLeft: '80%'}} aria-label="edit icon" onClick={() => self.handleEditNotebook(note)}>
+                            <FormControlLabel
+                          control={
+                          <Switch checked={self.state.checked} onChange={(event) => self.handleSwitch(event)} value="checked" />
+                          }
+                          label="Private"
+                          />
+                            <IconButton aria-label="edit icon" onClick={() => self.handleEditNotebook(note)}>
                             <EditIcon />
                             </IconButton>
                             </CardActions> 
