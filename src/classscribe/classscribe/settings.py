@@ -203,6 +203,6 @@ CORS_ALLOW_CREDENTIALS = False
 # django_heroku.settings(locals())
 try:
     import django_heroku
-    django_heroku.settings(locals())
+    django_heroku.settings(locals(), test_runner=False)
 except ImportError:
     found = False
