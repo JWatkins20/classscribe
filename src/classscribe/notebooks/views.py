@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import File
+from imageupload.models import File
 from .models import User
 from .models import AudioFile
 from notebooks.models import Notebook, Page
@@ -57,17 +57,20 @@ class NotebookCreateView(APIView):
 
 
 class PageCreateView(APIView):
-	def post(self, request, *args, **kwargs):
-		serializer = PageSerializer(data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			page = Page.objects.get(name=request.data["name"])
-			notebook = Notebook.objects.get(pk=request.data["pk"])
-			notebook.pages.add(page)
-			notebook.save()
-			return Response({"key": page.pk}, status=status.HTTP_201_CREATED)
-		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        serializer = PageSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                page = Page.objects.get(name=request.data["name"])
+                page.notebook = Notebook.objects.get(pk=request.data["pk"])
+                page.save()
+                return Response({"key": page.pk}, status=status.HTTP_201_CREATED)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 '''
 @params: name, remark
 pk: pk of page object
@@ -109,6 +112,34 @@ def add_file_view(request):
 
 
 @api_view(["POST"])
+def edit_notebook_view(request):
+    data = request.data
+    #print(data.keys())
+    notebook = Notebook.objects.get(pk=data["pk"])
+    notebook.name = data["name"]
+    #notebook.private = data["private"]
+    try:
+        notebook.save()
+        return Response(status=status.HTTP_200_OK, data={})
+    except Exception as e:
+        print(e.message)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+
+
+@api_view(["POST"])
+def toggle_privacy_view(request):
+    data = request.data
+    notebook = Notebook.objects.get(pk=data["pk"])
+    notebook.Private = not notebook.Private
+    #notebook.private = data["private"]
+    try:
+        notebook.save()
+        return Response(status=status.HTTP_200_OK, data={})
+    except Exception as e:
+        print(e.message)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+
+@api_view(["POST"])
 def add_audio_and_transcript_view(request):
 	data = request.data
 	page = Page.objects.get(pk=data["pk_page"])
@@ -121,6 +152,8 @@ def add_audio_and_transcript_view(request):
 	else:
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+
 class ProcessingView(APIView):
 	def get(self, request):
 		notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes")
@@ -132,5 +165,5 @@ class ProcessingView(APIView):
 		page1.snapshots.add(file1)
 		page1.snapshots.add(file2)
 		page1.snapshots.add(file3)
-		notebook1.pages.add(page1)
+		page1.notebook = notebook1
 		return Response()
