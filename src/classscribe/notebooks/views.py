@@ -13,6 +13,7 @@ from rest_framework import status
 from datetime import date
 from audioupload.views import AudioFile
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db.models.base import ObjectDoesNotExist
 import requests
 
 # Create your views here.
@@ -45,12 +46,12 @@ class NotebookCreateView(APIView):
 			try:
 				notebook = Notebook.objects.get(class_name=request.data["class_name"], name=request.data["name"])
 				return Response({"key": notebook.pk}, status=status.HTTP_200_OK)
-			except Notebook.DoesNotExist:
+			except ObjectDoesNotExist:
 				serializer.save()
 				notebook = Notebook.objects.get(class_name=request.data["class_name"])
 				notebook.owner = User.objects.get(pk=request.data["pk"])
 				notebook.save()
-			return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)
+				return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
