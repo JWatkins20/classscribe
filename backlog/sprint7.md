@@ -1,0 +1,1 @@
+Hank is working on adding the capability for students to delete existing notebooks and also addressing some feedback from the end of last semester.
