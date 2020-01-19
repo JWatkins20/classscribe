@@ -338,7 +338,7 @@ async loadNotes()
   // }
 
   getImgSrc = (imageName) => {
-    return 'http://localhost:8000' + imageName;
+    return 'http://128.143.67.97:44104' + imageName;
   }
 
 
@@ -451,7 +451,7 @@ async loadNotes()
           {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
-         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://localhost:8000'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
+         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://128.143.67.97:44104/'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
          </div>
          </div>
       </div>
