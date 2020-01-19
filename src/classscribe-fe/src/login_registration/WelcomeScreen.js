@@ -21,7 +21,7 @@ export default class WelcomeScreen extends Component{
                 <>
                     <Navbar username={Cookies.get('user-email')}></Navbar>
                     <div>
-                        <StudentDashboard/>
+                        Hello student!
                     </div>
                 </>
             )

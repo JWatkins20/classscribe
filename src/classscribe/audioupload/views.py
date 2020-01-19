@@ -15,7 +15,7 @@ class AudioFileUploadView(APIView):
 
 		if file_serializer.is_valid():
 			file_serializer.save()
-			file = AudioFile.objects.get(remark=request.data['remark'])
+			file = AudioFile.objects.get(remark=request.data['remark'], timestamp=request.data['timestamp'])
 			return Response({"key": file.pk}, status=status.HTTP_201_CREATED)
 		else:
 			return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

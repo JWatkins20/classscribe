@@ -43,6 +43,7 @@ class Register extends Component {
     if(this.state.email.substring(this.state.email.length-3) !== 'edu'){
       alert("Please enter a valid edu email address.")
     }else{
+      this.setState({email:this.state.email.toLowerCase()})
       var payload = {
           "username": this.state.email,
           "email": this.state.email,
