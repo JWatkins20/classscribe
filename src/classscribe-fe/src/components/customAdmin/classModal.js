@@ -6,6 +6,8 @@ import * as $ from 'jquery';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 import { base_url } from "../../App";
 
@@ -17,15 +19,23 @@ class classModal extends React.Component {
             professorId: props.professor,
             building:  $('#building-select')[0].innerText,
             room:  $('#room-select')[0].innerText,
+            days: "",
             time:  (props.days || "") + " " + props.start.format('H:mm') + "-" + props.end.format('H:mm'),
             serial: props.lamp || $('#lamp-serial')[0].value,
             semester: props.semester || $('#semester-select')[0].innerText,
-            pk: 0
+            pk: 0,
+            mondaySelected: false,
+            tuesdaySelected: false,
+            wednesdaySelected: false,
+            thursdaySelected: false,
+            fridaySelected: false
         };
 
         this.getValues();
         this.getValues = this.getValues.bind(this);
     }
+
+    
 
     checkInput(field) {
         let check = $('#'+field)[0];
@@ -33,9 +43,15 @@ class classModal extends React.Component {
             return true;
         }
         let map = {  // Regular expressions to match time format and serial number
-            "time": "[M\@WF\!]{1,} [0-9]{1,2}:[0-9]{2,2}-[0-9]{1,2}:[0-9]{2,2}$",
+            "time": "[0-9]{1,2}:[0-9]{2,2}-[0-9]{1,2}:[0-9]{2,2}$",
+            "days": "[M\@WF\!]{1,}",
             "serial": "[0-9a-f]{16,16}$",
             "courseSemester": "(Fall|Spring) [0-9]{4,4}$"
+        }
+
+        if (field === "days") {
+            let val = this.state.days;
+            return val.search(RegExp(map[field], 'g')) == 0;
         }
 
         if (field === "time" || field === "serial" || field === "courseSemester") {
@@ -105,7 +121,11 @@ class classModal extends React.Component {
             alert("Please enter a valid room!");
             return;
         }
-        data.append("time", this.state.time);
+        if (!this.checkInput("days")) {
+            alert("Please select at least one day!");
+            return;
+        }
+        data.append("time", this.state.days.concat(" ", this.state.time));
         if (!this.checkInput("time")) {
             alert("Please enter a valid time!");
             return;
@@ -205,6 +225,73 @@ class classModal extends React.Component {
                             onBlur = {(event) => this.setState({room: event.target.value})}
                             errorText = {!this.checkInput("room") && "Please enter a room!"}
                         />
+                        <br/>
+
+                        <ToggleButtonGroup
+                            aria-label="day selector"
+                            id="days"
+                        >
+                            <ToggleButton
+                                id="monToggle"
+                                value="M"
+                                aria-label="Monday"
+                                selected={this.state.mondaySelected}
+                                onClick={() => this.setState({
+                                    mondaySelected: !this.state.mondaySelected,
+                                    days: this.state.days.indexOf("M") === -1 ? this.state.days.concat("M") : this.state.days.replace("M", "")
+                                })}
+                            >
+                                Mon
+                            </ToggleButton>
+                            <ToggleButton
+                                id="tueToggle"
+                                value="Tu"
+                                aria-label="Tuesday"
+                                selected={this.state.tuesdaySelected}
+                                onClick={() => this.setState({
+                                    tuesdaySelected: !this.state.tuesdaySelected,
+                                    days: this.state.days.indexOf("@") === -1 ? this.state.days.concat("@") : this.state.days.replace("@", "")
+                                })}
+                            >
+                                Tue
+                            </ToggleButton>
+                            <ToggleButton
+                                id="wedToggle"
+                                value="W"
+                                aria-label="Wednesday"
+                                selected={this.state.wednesdaySelected}
+                                onClick={() => this.setState({
+                                    wednesdaySelected: !this.state.wednesdaySelected,
+                                    days: this.state.days.indexOf("W") === -1 ? this.state.days.concat("W") : this.state.days.replace("W", "")
+                                })}
+                            >
+                                Wed
+                            </ToggleButton>
+                            <ToggleButton
+                                id="thuToggle"
+                                value="Th"
+                                aria-label="Thursday"
+                                selected={this.state.thursdaySelected}
+                                onClick={() => this.setState({
+                                    thursdaySelected: !this.state.thursdaySelected,
+                                    days: this.state.days.indexOf("!") === -1 ? this.state.days.concat("!") : this.state.days.replace("!", "")
+                                })}
+                            >
+                                Thu
+                            </ToggleButton>
+                            <ToggleButton
+                                id="friToggle"
+                                value="F"
+                                aria-label="Friday"
+                                selected={this.state.fridaySelected}
+                                onClick={() => this.setState({
+                                    fridaySelected: !this.state.fridaySelected,
+                                    days: this.state.days.indexOf("F") === -1 ? this.state.days.concat("F") : this.state.days.replace("F", "")
+                                })}
+                            >
+                                Fri
+                            </ToggleButton>
+                        </ToggleButtonGroup>
                         <br/>
 
                         <TextField
