@@ -17,18 +17,18 @@ class classModal extends React.Component {
         this.state = {
             name:  props.name || "",
             professorId: props.professor,
-            building:  $('#building-select')[0].innerText,
-            room:  $('#room-select')[0].innerText,
-            days: "",
-            time:  (props.days || "") + " " + props.start.format('H:mm') + "-" + props.end.format('H:mm'),
+            building: $('#building-select')[0].innerText,
+            room: $('#room-select')[0].innerText,
+            days: props.days && props.days.replace("Tu", "@").replace("Thu", "!") || "",
+            time: props.start.format('H:mm') + "-" + props.end.format('H:mm'),
             serial: props.lamp || $('#lamp-serial')[0].value,
             semester: props.semester || $('#semester-select')[0].innerText,
             pk: 0,
-            mondaySelected: false,
-            tuesdaySelected: false,
-            wednesdaySelected: false,
-            thursdaySelected: false,
-            fridaySelected: false
+            mondaySelected: props.days && props.days.indexOf("M") > -1,
+            tuesdaySelected: props.days && props.days.indexOf("Tu") > -1,
+            wednesdaySelected: props.days && props.days.indexOf("W") > -1,
+            thursdaySelected: props.days && props.days.indexOf("Thu") > -1,
+            fridaySelected: props.days && props.days.indexOf("F") > -1
         };
 
         this.getValues();
@@ -77,7 +77,7 @@ class classModal extends React.Component {
     getValues() {
         var that = this;
         if (this.state.name !== "") {
-            const getUrl = `${base_url}courses/edit/${this.state.semester}/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.time}`;
+            const getUrl = `${base_url}courses/edit/${this.state.semester}/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.days} ${this.state.time}`;
             axios.get(getUrl)
                 .then(function (response) {
                     that.setState({
@@ -142,9 +142,11 @@ class classModal extends React.Component {
         }
         var putUrl;
         if (this.state.pk !== 0) {
+            alert("editing course");
             putUrl = `${base_url}courses/edit/${this.state.pk}`;
         }
         else {
+            alert("creating new course");
             putUrl = `${base_url}courses/create`;
         }
         
@@ -301,7 +303,7 @@ class classModal extends React.Component {
                             floatingLabelFixed={true}
                             defaultValue={this.state.time}
                             onBlur = {(event) => this.setState({time: event.target.value})}
-                            errorText = {!this.checkInput("time") && "Please enter a valid meeting time(s) in the form MWF 11:00-13:30 for Mon, Wed, Fri from 11am to 1:30pm. Use 'Tu' for Tuesday and 'Thu' for Thursday!"}
+                            errorText = {!this.checkInput("time") && "Please enter the time span of the class. The following example spans from 11AM to 1PM: 11:00-13:00"}
                         />
 
                         <TextField
