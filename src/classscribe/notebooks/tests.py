@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from notebooks.models import Notebook, Page
 from users.models import User
 from imageupload.models import File
@@ -54,6 +54,23 @@ class NotebookTests(TestCase):
         pages = []
         pages = File.objects.filter(class_name="Prcticum")
         self.assertTrue(len(pages) == 0)
+
+    def testDeleteNotebookSuccess(self):
+        notebook = Notebook.objects.get(class_name="Capstone Practicum")
+        notebook_pk = notebook.pk
+        print(notebook_pk)
+        c = Client()
+        response = c.delete('/notebooks/delete/' + str(notebook_pk))
+        self.assertEqual(response.status_code, 200)
+
+    def testDeleteNotebookFail(self):
+        notebook = Notebook.objects.get(class_name="Capstone Practicum")
+        notebook_pk = notebook.pk
+        c = Client()
+        response = c.delete('/notebooks/delete/' + str(notebook_pk+1))
+        self.assertEqual(response.data["message"], "Couldn't find the specified notebook to delete!")
+
+
 class NotebookGetViewTests(APITestCase):
     def setUp(self):
         user1 = User.objects.create(username='username134', password='pa$$word12466')

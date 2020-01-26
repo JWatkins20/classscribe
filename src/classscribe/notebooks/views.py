@@ -58,8 +58,9 @@ class NotebookCreateView(APIView):
 @api_view(["DELETE"])
 def delete_notebook(request, pk=None):
 	notebook = None
-	notebook = Notebook.objects.get(pk=pk)
-	if notebook is None:
+	try:
+		notebook = Notebook.objects.get(pk=pk)
+	except Notebook.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND, data={"message": "Couldn't find the specified notebook to delete!"})
 
 	else:
