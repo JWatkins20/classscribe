@@ -8,7 +8,7 @@ import CardActions from '@material-ui/core/CardActions';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
-import Toggle from './Toggle';
+import Toggle from './toggle';
 import PageCard from './PageCard';
 import { base_url } from "../../App"
 import Axios from 'axios';
