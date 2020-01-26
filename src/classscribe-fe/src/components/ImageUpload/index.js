@@ -6,24 +6,16 @@ import AudioPlayer from "../../student/AudioPlayer"
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import CardContent from '@material-ui/core/CardContent';
-import EditIcon from '@material-ui/icons/Edit';
-import CardActions from '@material-ui/core/CardActions';
-import IconButton from '@material-ui/core/IconButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button'
-import Card from '@material-ui/core/Card';
-import Switch from '@material-ui/core/Switch';
-import borderColor  from '@material-ui/system/borders';
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-
 import Navbar from '../Navbar';
+import NotebookCard from './NotebookCard';
+
+
 
 const carstyle = {
   width: '50vw',
-  height: '87vh',
+  height: '90vh',
   float: 'left',
   overflow: 'auto',
   marginRight: "8px",
@@ -40,12 +32,12 @@ const formstyle= {
 
 const imagestyle = {
   width: "50vw",
-  height: "87vh"
+  height: "90vh"
 }
 
 const transcriptStyle = {
   width: '24vw',
-  height: '59vh',   
+  height: '80vh',   
   overflow: 'auto',
   paddingLeft: "0px",
   marginTop: "10px",
@@ -56,17 +48,6 @@ const transcriptStyle = {
 const tandastyle = {
   float: 'left',
 }
-const buttonstyle = {
-  float: 'left',
-  width: '20%', 
-  height: '15%'
-}
-
-const textfieldstyle = {
-  float: 'left', 
-  width: '65%'
-}
-
 const audiostyle={
   width: "20vw",
   height: "10vh",
@@ -78,7 +59,7 @@ const divstyle = {
   'padding-right': '10px',
   'padding-left': '10px',
   'width': '20vw',
-  'height': '87vh',
+  'height': '90vh',
   'float': 'left',
   marginTop: "10px",
   overflow: "auto",
@@ -88,18 +69,7 @@ const floatstyle = {
   "float": "left",
 }
 
-const pagestyle = {
-  "display": "block",
-  "padding-top": "3px",
-  "padding-bottom": "3px",
-  "padding-left": "5px",
-  "padding-right":"5px",
-  "margin-left": "auto",
-  "margin-right": "auto",
-  "margin-bottom": "5px",
-  "width": "45%",
-  "height": "6vh"
-}
+
 const notestyle = {
   "display": "block",
   "padding-top": "3px",
@@ -120,115 +90,48 @@ const notecardstyle = {
    "text-align": "center",
    "line-height": "1.0",
  }
-
-// class EditNotebookForm extends React.Component{
-//   constructor(props){
-//     super(props);
-//     this.state = {notebookname: ''};
-//     this.handleChange = this.handleChange.bind(this);
-//     this.handleSubmit = this.handleSubmit.bind(this);
-//   }
-//   handleChange(event){
-//     this.setState({notebookname: event.target.value})
-//   }
-//   handleSubmit(event){
-//     this.items[this.state.notebook].name = this.notebookname
-//   }
-// }
-
-
-
+ 
 export default class ImageCarousel extends Component {
   constructor(props) {
     super(props);
     this.state = {
       pagename: props.match.params.page_name,
-      loaded: false,
       images:[],
       items: [],
+      public_items: [],
       pages: [],
       user: {},
       audio: {},
-      checked: false,
-      edit: false,
+      loaded: false,
       page: 0,
-      notebookname: "",
-      notebookprivate: false,
       notebook: 0,
-      transcript: ""
+      transcript: "",
+      public: false
     };
     this.loadNotes = this.loadNotes.bind(this);
+    this.loadPublicNotes = this.loadPublicNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
-    // this.handlePrivacyChange = this.handlePrivacyChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSwitch = this.handleSwitch.bind(this);
+    this.changePrivacy = this.changePrivacy.bind(this);
+    this.updateCards = this.updateCards.bind(this);
+    this.Toggle_public_notebooks = this.Toggle_public_notebooks.bind(this);
   }
 
-  
 
-  handleNameChange(event){
-    this.setState({notebookname: event.target.value})
-  }
 
-  async handleSwitch(event){
-    this.setState({checked: event.target.checked})
-    var dummy = this.state.items
-    dummy[this.state.notebook].Private = !dummy[this.state.notebook].Private
-    this.setState({items : dummy})
-    var data = {
-      'pk' : this.state.items[this.state.notebook].pk,
-    }
-    const url = `${base_url}notebooks/privacy-toggle/`;
-    await Axios.post(url, data)
-        .then(function (response) {
-            if (response.status === 200) {
-                
-            }
-            else {
-                alert("Edits were not saved!");
-            }
-        })
-        .catch(function (error) {
-            alert("Edits were not saved. Check the console for the error!");
-            console.log(error);
-        });
-
-  }
 
   // handlePrivacyChange(event){
   //   this.setState({private: event.target.value})
   // }
-  async handleSubmit(event){
-    event.preventDefault();
-    if(this.state.notebookname === ""){
-
-    }
-    this.setState({edit: false})
-    var dummy = this.state.items
-    dummy[this.state.notebook].name = this.state.notebookname
-    this.setState({items : dummy})
-    var data = {
-      'pk' : this.state.items[this.state.notebook].pk,
-      'name': this.state.notebookname,
-      //'private': this.state.notebookprivate
-    }
-    const url = `${base_url}notebooks/edit/`;
-    await Axios.post(url, data)
-        .then(function (response) {
-            if (response.status === 200) {
-                
-            }
-            else {
-                alert("Edits were not saved!");
-            }
-        })
-        .catch(function (error) {
-            alert("Edits were not saved. Check the console for the error!");
-            console.log(error);
-        });
-
+  
+  async Toggle_public_notebooks(event){
+    await this.setState({public: !this.state.public})
+    this.switchNote(0) //opens public notebook with 0 index in array
   }
+
+  updateCards(dummy){
+    this.setState({items : dummy})
+  }
+
   async componentDidMount() {
     await this.loadUser();
     this.setState({loaded: true});
@@ -238,7 +141,6 @@ export default class ImageCarousel extends Component {
     const res = await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
         const user = res.data;
-        console.log(user.pk);
         this.setState({user:user});
     }
     if(this.state.user.type == "student"){
@@ -280,19 +182,43 @@ async loadNotes()
     }
     }
 })
+
+await this.loadPublicNotes()
   }
 
+changePrivacy(notebook){
+  var dummy = this.state.items
+  dummy[notebook].Private = !dummy[notebook].Private
+  this.setState({items : dummy})
+}
+
+async loadPublicNotes(){
+  await Axios.get(base_url + "notebooks/get/public/"+String(this.state.user.pk)+"/").then((res) =>{
+        
+    if(res.status===200){
+      const data = res.data.data;
+      console.log(data)
+      this.setState({public_items: data});
+    }
+  
+  
+  })
+}
+
   switchPage = (index) =>{
-    console.log("hello");
+    var object = this.state.items
+    if(this.state.public){
+      object = this.state.public_items
+    }
     this.setState({
       page:index,
-      transcript: this.state.items[this.state.notebook].pages[index].transcript,
-      audio: this.state.items[this.state.notebook].pages[index].audio
+      transcript: object[this.state.notebook].pages[index].transcript,
+      audio: object[this.state.notebook].pages[index].audio
     });
     var is = [];
-      if(!this.state.items[this.state.notebook].pages[index].snapshots.length == 0){
-        for(var i = 0; i<this.state.items[this.state.notebook].pages[index].snapshots.length; i++){
-        is.push(this.state.items[this.state.notebook].pages[index].snapshots[i].file)
+      if(!object[this.state.notebook].pages[index].snapshots.length == 0){
+        for(var i = 0; i<object[this.state.notebook].pages[index].snapshots.length; i++){
+        is.push(object[this.state.notebook].pages[index].snapshots[i].file)
         }
       }
   
@@ -301,46 +227,37 @@ async loadNotes()
   }
 
   switchNote = (index) => {
+    console.log(this.state.public)
+    var object = this.state.items
+    if(this.state.public){
+      object = this.state.public_items
+    }
     this.setState({notebook:index});
     this.setState({
       page:0,
-      transcript: this.state.items[index].pages[0].transcript,
-      audio: this.state.items[index].pages[0].audio
+      transcript: object[index].pages[0] != {} && object[index].pages[0] != undefined  ? object[index].pages[0].transcript: '',
+      audio: object[index].pages[0] != {} && object[index].pages[0] != undefined ? object[index].pages[0].audio : undefined
     });
     var is = [];
     var ps = [];
-    for(var i = 0; i<this.state.items[index].pages.length; i++){
-      ps.push(this.state.items[index].pages[i]);
+    if(object[index].pages.length != 0){
+    for(var i = 0; i<object[index].pages.length; i++){
+      ps.push(object[index].pages[i]);
     }
-    if(!this.state.items[index].pages[0].snapshots.length == 0){
-        for(var i = 0; i<this.state.items[index].pages[0].snapshots.length; i++){
-          is.push(this.state.items[index].pages[0].snapshots[i].file)
+    if(!object[index].pages[0].snapshots.length == 0){
+        for(var i = 0; i<object[index].pages[0].snapshots.length; i++){
+          is.push(object[index].pages[0].snapshots[i].file)
         }
       }
+    }
   this.setState({images:is});
   this.setState({pages:ps});
   this.setState({state:this.state});
   }
 
-  
-
-  // async loadImages()
-  // {
-  //   const url = 'http://localhost:8000/upload/get/'+this.state.pagename+ '/';
-  //   const promise = await axios.get(url);
-  //   console.log('what happened')
-  //   const status = promise.status;
-  //   if(status===200)
-  //   {
-  //     const data = promise.data.data;
-  //     this.setState({images:data});
-  //   }
-  // }
-
   getImgSrc = (imageName) => {
-    return 'http://128.143.67.97:44104' + imageName;
+    return 'http://localhost:8000' + imageName;
   }
-
 
   createCarousel = () => {
     let htmlImages = [];
@@ -356,80 +273,25 @@ async loadNotes()
     return htmlImages;
   }
 
-  handleEditNotebook = (notebook) => {
-    this.setState({edit:true})
-    this.setState({notebook:notebook})
-    this.setState({state:this.state});
-
-  }
-
-
 
   render() {
     const self = this;
     var notes = this.state.items;
-        var pages = this.state.pages;
-        var notebook = this.state.notebook;
-        if(notes != undefined){
-            var pagelist = pages.map(function(page){
-                return(
-                    
-                    <div style={pagestyle}>
-                <Card border={1} borderColor={"#09d3ac"} onClick={() => self.switchPage(pages.indexOf(page))}>
-                    <CardContent><Typography align={'center'}>
-                    Page {pages.indexOf(page)+1}
-                    </Typography>
-                            </CardContent>
-                    </Card>
-                    </div>
-                )
-            })
-            var notelist = notes.map(function(note){
-              
-                return (
-                  <div>
-                    <div style={notestyle}>  
-                    <Card style={notecardstyle} border={1} borderColor={"#09d3ac"} onClick={() => self.switchNote(notes.indexOf(note))}>
-                        {self.state.edit ? //conditional render based on whether editing process has been initiated
-                        <div style={{display: 'inline-block'}}><CardContent><form>
-                        <TextField style={textfieldstyle} id="standard-basic" label="new name" onChange={(event)=>self.handleNameChange(event)} />
-                        <Button style={buttonstyle} variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
-                        </form> 
-                        </CardContent></div>
-                        :
-                        <div>
-                        <CardContent>
-                        <Typography style={{padding: "0"}} align={'center'} variant={"h6"}>
-                            {note.name}
-                        </Typography> 
-                        </CardContent>
-                            <CardActions>
-                            <FormControlLabel
-                          control={
-                          <Switch checked={self.state.checked} onChange={(event) => self.handleSwitch(event)} value="checked" />
-                          }
-                          label="Private"
-                          />
-                            <IconButton aria-label="edit icon" onClick={() => self.handleEditNotebook(note)}>
-                            <EditIcon />
-                            </IconButton>
-                            </CardActions> 
-                            </div>
-            }
-                        </Card> 
-                        </div>
-                        <div>
-                        {notes.indexOf(note) === notebook ? pagelist : null}
-                        </div>
-                        </div>
-                )
-                })}
-                
-        else{
-            return(<div>Unable to display notebooks</div>);
+    if(notes != undefined){
+      if(this.state.public){
+        var notelist = self.state.public_items.map(function(note){
+          return <NotebookCard parent={self} notes={self.state.public_items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
+        })}
+      else{
+        var notelist = self.state.items.map(function(note){
+          return <NotebookCard parent={self} notes={self.state.items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
+        })}
+      }            
+    else{
+          return(<div>Unable to display notebooks</div>);
         }
-        if(this.state.user.type!="student"){
-          return (
+    if(this.state.user.type!="student"){
+      return (
             <>
               <Navbar username={this.state.user && this.state.user.username}/>
               <div>Must be logged in as a student to view notebooks!</div>
@@ -439,9 +301,9 @@ async loadNotes()
     return (
     <div> 
       <MuiThemeProvider>
-      <Navbar username={this.state.user && this.state.user.username}/>
+      <Navbar style={{'height': '2vh'}} username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
-        <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}</div>
+        <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}<Button onClick={(event)=>this.Toggle_public_notebooks(event)}>View Public Notebooks</Button></div>
         <div style={carstyle}>
           {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
         </div>
@@ -451,7 +313,7 @@ async loadNotes()
           {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
-         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://128.143.67.97:44104/'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
+         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://localhost:8000'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
          </div>
          </div>
       </div>
