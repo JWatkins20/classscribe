@@ -8,9 +8,10 @@ verify_ssl = true
 [packages]
 django = "*"
 django-cors-headers = "*"
-rest-framework = "*"
 djangorestframework = "*"
 django-rest-auth = "*"
+django-allauth = "*"
+django-heroku = "*"
 
 [requires]
 python_version = "3.7"
