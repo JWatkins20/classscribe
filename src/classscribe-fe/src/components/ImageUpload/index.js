@@ -118,7 +118,6 @@ export default class ImageCarousel extends Component {
 
 
 
-
   // handlePrivacyChange(event){
   //   this.setState({private: event.target.value})
   // }
