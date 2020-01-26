@@ -165,8 +165,6 @@ export default class ImageCarousel extends Component {
     this.handleSwitch = this.handleSwitch.bind(this);
   }
 
-  
-
   handleNameChange(event){
     this.setState({notebookname: event.target.value})
   }
@@ -365,6 +363,7 @@ async loadNotes()
           alert(error.response.data["message"]);
         });
     }
+  }
    
   handleEditNotebook = (notebook) => {
     this.setState({edit:true})
