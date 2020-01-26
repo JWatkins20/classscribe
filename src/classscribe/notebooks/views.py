@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import File
+from imageupload.models import File
 from .models import User
 from .models import AudioFile
 from notebooks.models import Notebook, Page
@@ -13,6 +13,7 @@ from rest_framework import status
 from datetime import date
 from audioupload.views import AudioFile
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db.models.base import ObjectDoesNotExist
 import requests
 
 # Create your views here.
@@ -45,12 +46,12 @@ class NotebookCreateView(APIView):
 			try:
 				notebook = Notebook.objects.get(class_name=request.data["class_name"], name=request.data["name"])
 				return Response({"key": notebook.pk}, status=status.HTTP_200_OK)
-			except Notebook.DoesNotExist:
+			except ObjectDoesNotExist:
 				serializer.save()
 				notebook = Notebook.objects.get(class_name=request.data["class_name"])
 				notebook.owner = User.objects.get(pk=request.data["pk"])
 				notebook.save()
-			return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)
+				return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -69,17 +70,20 @@ def delete_notebook(request, pk=None):
 
 
 class PageCreateView(APIView):
-	def post(self, request, *args, **kwargs):
-		serializer = PageSerializer(data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			page = Page.objects.get(name=request.data["name"])
-			notebook = Notebook.objects.get(pk=request.data["pk"])
-			notebook.pages.add(page)
-			notebook.save()
-			return Response({"key": page.pk}, status=status.HTTP_201_CREATED)
-		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        serializer = PageSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                page = Page.objects.get(name=request.data["name"])
+                page.notebook = Notebook.objects.get(pk=request.data["pk"])
+                page.save()
+                return Response({"key": page.pk}, status=status.HTTP_201_CREATED)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 '''
 @params: name, remark
 pk: pk of page object
@@ -94,23 +98,59 @@ def add_file_view(request):
 	page = Page.objects.get(id=data["pk"])
 	# today = date.today()
 	# files = File.objects.filter(remark=data["remark"], class_name=data["class_name"], timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
-	image_pks = data["image_pks"]
-	image_pks.rstrip("]")
-	image_pks.lstrip("[")
+	image_pks = str(data["image_pks"])
+	image_pks=image_pks.replace("]","")
+	image_pks=image_pks.replace("[","")
 	image_pks = image_pks.split(',')
+	print ("Images passed in:", image_pks)
+
 	for pk in image_pks:
 		try:
 			files.append(File.objects.get(pk=int(pk)))
 		except:
-			return Response({"type": str(type(data["image_pks"]))}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"type": image_pks}, status=status.HTTP_400_BAD_REQUEST)
+	
+	print ("Files added:", files)
+	
 	for f in files:
 		page.snapshots.add(f)
 		added_files.append(f)
+
+
 	page.save()
 	if len(added_files) > 0:
-		return Response({"num_added": len(added_files)}, status=status.HTTP_201_CREATED)
+		return Response({"num_added": (data["image_pks"],image_pks)}, status=status.HTTP_201_CREATED)
 	else:
 		return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def edit_notebook_view(request):
+    data = request.data
+    #print(data.keys())
+    notebook = Notebook.objects.get(pk=data["pk"])
+    notebook.name = data["name"]
+    #notebook.private = data["private"]
+    try:
+        notebook.save()
+        return Response(status=status.HTTP_200_OK, data={})
+    except Exception as e:
+        print(e.message)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+
+
+@api_view(["POST"])
+def toggle_privacy_view(request):
+    data = request.data
+    notebook = Notebook.objects.get(pk=data["pk"])
+    notebook.Private = not notebook.Private
+    #notebook.private = data["private"]
+    try:
+        notebook.save()
+        return Response(status=status.HTTP_200_OK, data={})
+    except Exception as e:
+        print(e.message)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 
 @api_view(["POST"])
 def add_audio_and_transcript_view(request):
@@ -125,6 +165,8 @@ def add_audio_and_transcript_view(request):
 	else:
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+
 class ProcessingView(APIView):
 	def get(self, request):
 		notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes")
@@ -136,5 +178,5 @@ class ProcessingView(APIView):
 		page1.snapshots.add(file1)
 		page1.snapshots.add(file2)
 		page1.snapshots.add(file3)
-		notebook1.pages.add(page1)
+		page1.notebook = notebook1
 		return Response()

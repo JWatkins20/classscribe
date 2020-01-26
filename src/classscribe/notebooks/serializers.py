@@ -10,15 +10,15 @@ from .models import User
 class PageSerializer(serializers.ModelSerializer):
     snapshots = FileSerializer(many=True, read_only=True)
     audio = AudioFileSerializer(read_only=True)
-
     class Meta:
         model = Page
         fields = ('time', 'snapshots', 'audio', 'name', 'transcript', 'pk')
 
 
 class NotebookSerializer(serializers.ModelSerializer):
-    pages = PageSerializer(many=True, read_only=True)
-
+    #pages = PageSerializer(many=True, read_only=True)
+    pages = PageSerializer(read_only = True , many=True)
     class Meta:
         model = Notebook
-        fields = ('Private', 'class_name', 'name', 'pages', 'pk')
+        depth = 1
+        fields = ('Private', 'class_name', 'name', 'pages', 'pk', )
