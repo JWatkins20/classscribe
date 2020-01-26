@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import CardContent from '@material-ui/core/CardContent';
 import EditIcon from '@material-ui/icons/Edit';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import IconButton from '@material-ui/core/IconButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Card from '@material-ui/core/Card';
@@ -363,6 +364,7 @@ async loadNotes()
           alert(error.response.data["message"]);
         });
     }
+    window.location.reload();
   }
    
   handleEditNotebook = (notebook) => {
@@ -411,7 +413,7 @@ async loadNotes()
                             {note.name}
                         </Typography> 
                         </CardContent>
-                            <CardActions>
+                            <CardActions style={{justifyContent: 'center'}}>
                             <FormControlLabel
                           control={
                           <Switch checked={self.state.checked} onChange={(event) => self.handleSwitch(event)} value="checked" />
@@ -421,12 +423,12 @@ async loadNotes()
                             <IconButton aria-label="edit icon" onClick={() => self.handleEditNotebook(note)}>
                             <EditIcon />
                             </IconButton>
+                            <IconButton aria-label="delete icon" onClick={() => self.deleteNotebook(note.pk)}>
+                              <DeleteForeverIcon/>
+                            </IconButton>
                             </CardActions> 
                             </div>
             }
-                          <CardActions>
-                            <Button size="small" fullWidth={true} onClick={() => self.deleteNotebook(note.pk)}>Delete Notebook</Button>
-                          </CardActions>
                         </Card> 
                         </div>
 
