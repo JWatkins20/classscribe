@@ -7,6 +7,8 @@ import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
 import Typography from '@material-ui/core/Typography';
+import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import CardContent from '@material-ui/core/CardContent';
 import EditIcon from '@material-ui/icons/Edit';
@@ -356,11 +358,20 @@ async loadNotes()
     return htmlImages;
   }
 
+  deleteNotebook = (pk) => {
+    let that = this;
+    if (window.confirm("Are you sure you want to delete this notebook?")) {
+      const deleteUrl = `${base_url}notebooks/delete/${pk}`;
+      Axios.delete(deleteUrl)
+        .catch(function (error) {
+          alert(error.response.data["message"]);
+        });
+    }
+   
   handleEditNotebook = (notebook) => {
     this.setState({edit:true})
     this.setState({notebook:notebook})
     this.setState({state:this.state});
-
   }
 
 
@@ -416,12 +427,16 @@ async loadNotes()
                             </CardActions> 
                             </div>
             }
+                          <CardActions>
+                            <Button size="small" fullWidth={true} onClick={() => self.deleteNotebook(note.pk)}>Delete Notebook</Button>
+                          </CardActions>
                         </Card> 
                         </div>
+
                         <div>
                         {notes.indexOf(note) === notebook ? pagelist : null}
                         </div>
-                        </div>
+                    </div>
                 )
                 })}
                 
