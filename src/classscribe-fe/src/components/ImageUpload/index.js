@@ -15,7 +15,7 @@ import NotebookCard from './NotebookCard';
 
 const carstyle = {
   width: '50vw',
-  height: '90vh',
+  height: '88vh',
   float: 'left',
   overflow: 'auto',
   marginRight: "8px",
@@ -32,12 +32,12 @@ const formstyle= {
 
 const imagestyle = {
   width: "50vw",
-  height: "90vh"
+  height: "88vh"
 }
 
 const transcriptStyle = {
   width: '24vw',
-  height: '80vh',   
+  height: '78vh',   
   overflow: 'auto',
   paddingLeft: "0px",
   marginTop: "10px",
@@ -59,14 +59,12 @@ const divstyle = {
   'padding-right': '10px',
   'padding-left': '10px',
   'width': '20vw',
-  'height': '90vh',
+  'height': '88vh',
   'float': 'left',
   marginTop: "10px",
   overflow: "auto",
-  border: "2px solid black"
-}
-const floatstyle = {
-  "float": "left",
+  border: "2px solid black",
+  justifyContent: 'center'
 }
 
 
@@ -255,7 +253,7 @@ async loadPublicNotes(){
   }
 
   getImgSrc = (imageName) => {
-    return 'http://localhost:8000' + imageName;
+    return 'http://128.143.67.97:44104' + imageName;
   }
 
   createCarousel = () => {
@@ -302,7 +300,7 @@ async loadPublicNotes(){
       <MuiThemeProvider>
       <Navbar style={{'height': '2vh'}} username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
-        <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}<Button onClick={(event)=>this.Toggle_public_notebooks(event)}>View Public Notebooks</Button></div>
+    <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}{this.state.public ? <Button onClick={(event)=>this.Toggle_public_notebooks(event)}>View Your Notebooks</Button> : <Button onClick={(event)=>this.Toggle_public_notebooks(event)}>View Public Notebooks</Button>}</div>
         <div style={carstyle}>
           {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
         </div>
@@ -312,7 +310,7 @@ async loadPublicNotes(){
           {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
-         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://localhost:8000'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
+         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://128.143.67.97:44104'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
          </div>
          </div>
       </div>

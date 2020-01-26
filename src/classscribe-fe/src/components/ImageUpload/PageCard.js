@@ -5,15 +5,14 @@ import Card from '@material-ui/core/Card';
 
 const pagestyle = {
     "display": "block",
-    "padding-top": "3px",
-    "padding-bottom": "3px",
+    "padding-bottom": "5px",
     "padding-left": "5px",
     "padding-right":"5px",
     "margin-left": "auto",
     "margin-right": "auto",
     "margin-bottom": "5px",
-    "width": "45%",
-    "height": "6vh"
+    "width": "40%",
+    "height": "4vh"
   }
 
   class PageCard extends React.Component{
@@ -39,8 +38,8 @@ const pagestyle = {
     var self = this
     if(this.state.page != undefined){
       return(
-      <div style={pagestyle}>
-        <Card border={1} borderColor={"#09d3ac"} onClick={() => self.state.parent.switchPage(self.state.pages.indexOf(self.state.page))}>
+      <div>
+        <Card border={1} style={pagestyle} borderColor={"#09d3ac"} onClick={() => self.state.parent.switchPage(self.state.pages.indexOf(self.state.page))}>
             <CardContent>
                 <Typography align={'center'}>
                     Page {self.state.pages.indexOf(self.state.page)+1}

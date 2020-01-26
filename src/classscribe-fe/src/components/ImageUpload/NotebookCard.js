@@ -3,6 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import CardContent from '@material-ui/core/CardContent';
 import EditIcon from '@material-ui/icons/Edit';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import CardActions from '@material-ui/core/CardActions';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button'
@@ -66,6 +67,18 @@ class NotebookCard extends React.Component{
       this.setState({edit:true})
       this.setState({state:this.state});
   
+    }
+
+    deleteNotebook = (pk) => {
+      let that = this;
+      if (window.confirm("Are you sure you want to delete this notebook?")) {
+        const deleteUrl = `${base_url}notebooks/delete/${pk}`;
+        Axios.delete(deleteUrl)
+          .catch(function (error) {
+            alert(error.response.data["message"]);
+          });
+      }
+      window.location.reload();
     }
 
     async handleSwitch(event){
@@ -164,12 +177,15 @@ class NotebookCard extends React.Component{
                       {self.state.note.name}
                     </Typography> 
                   </CardContent>
-                  <CardActions>
+                  <CardActions style={{justifyContent: 'center'}}>
                     {self.state.parent.state.public ? <div>Shared by: {self.state.note.owner.username}</div> :
                     <div>
                     <Toggle parent={self} />
                     <IconButton aria-label="edit icon" onClick={() => self.handleEditNotebook(self.state.note)}>
                     <EditIcon />
+                    </IconButton>
+                    <IconButton aria-label="delete icon" onClick={() => self.deleteNotebook(self.state.note.pk)}>
+                      <DeleteForeverIcon/>
                     </IconButton>
                     </div>
                     }
