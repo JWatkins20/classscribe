@@ -35,8 +35,11 @@ login = async () =>{
             if(user.type == "student"){
               history.pushState({}, "", "notebook-carousel/")
             }
-            if(user.type == "admin" || user.type == "teacher"){
-              history.pushState({}, "", "dashboard");
+            if(user.type == "admin"){
+              history.pushState({}, "", "view-all-courses/");
+            }
+            if(user.type == "teacher"){
+              history.pushState({}, "", "dashboard/");
             }
             window.location.reload(false);
             history.go(1);
