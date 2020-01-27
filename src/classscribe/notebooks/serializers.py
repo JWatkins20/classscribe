@@ -17,8 +17,9 @@ class PageSerializer(serializers.ModelSerializer):
 
 class NotebookSerializer(serializers.ModelSerializer):
     #pages = PageSerializer(many=True, read_only=True)
+    owner = UserDetailsSerializer(read_only=True)
     pages = PageSerializer(read_only = True , many=True)
     class Meta:
         model = Notebook
         depth = 1
-        fields = ('Private', 'class_name', 'name', 'pages', 'pk', )
+        fields = ('Private', 'class_name', 'name', 'pages', 'pk', 'owner')

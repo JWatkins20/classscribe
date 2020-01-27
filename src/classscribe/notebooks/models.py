@@ -11,6 +11,7 @@ class Notebook(models.Model):
     name = models.CharField(max_length = 100)
     #pages = models.ManyToManyField(Page, null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    #rating = models.FloatField(blank=True)
 
 class Page(models.Model):
     snapshots = models.ManyToManyField(File, null=True, blank=True)

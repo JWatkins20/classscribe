@@ -11,5 +11,6 @@ urlpatterns = [
    path('processing/', ProcessingView.as_view()),
    path('delete/<int:pk>', delete_notebook, name="delete_notebook"),
    path('edit/', edit_notebook_view, name="edit_notebook"),
-   path('privacy-toggle/', toggle_privacy_view, name="toggle")
+   path('privacy-toggle/', toggle_privacy_view, name="toggle"),
+   path('get/public/<slug:pk>/', retrieve_public_notebooks, name="public")
 ]
