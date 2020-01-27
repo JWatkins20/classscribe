@@ -85,7 +85,7 @@ class classModal extends React.Component {
                         professorId: response.data["professorID"],
                         building: response.data["building"],
                         room: response.data["room"],
-                        time: response.data["time"],
+                        time: response.data["time"].split(" ")[1],
                         serial: response.data["lamp_serial"],
                         semester: response.data["semester"],
                         pk: response.data["pk"] || 0
