@@ -9,3 +9,6 @@ class Course(models.Model):
     professorID = models.CharField(max_length=7)
     lamp_serial = models.CharField(max_length=16)
     semester = models.CharField(max_length=12)
+
+    def __str__(self):
+        return self.name + " " + self.time
