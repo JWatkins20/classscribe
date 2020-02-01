@@ -22,7 +22,11 @@ import requests
 
 @api_view(["GET"])
 def notebook_page_view(request, pk):
-	user = User.objects.get(pk=pk)
+	try:
+		user = User.objects.get(pk=pk)
+	except User.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+
 	if user.type == "teacher":
 		return view_professor_notebooks(user.pk)
 	obj = Notebook.objects.filter(owner__pk__exact=pk)# finds pages with remark matching parameter
@@ -35,7 +39,7 @@ def notebook_page_view(request, pk):
 
 @api_view(["GET"])
 def retrieve_public_notebooks(request, pk):
-    obj = Notebook.objects.filter(~Q(owner__pk__contains=pk) & Q(Private=False))# finds pages with remark matching parameter
+    obj = Notebook.objects.filter(~Q(owner__pk__exact=pk) & Q(Private=False))# finds pages with remark matching parameter
     objs = []
     for book in obj:
         objs.append(NotebookSerializer(book).data)
@@ -195,3 +199,19 @@ class ProcessingView(APIView):
 		page1.snapshots.add(file3)
 		page1.notebook = notebook1
 		return Response()
+
+
+@api_view(["GET"])
+def send_page_to_prof(request, pk):
+	try:
+		to_send = Page.objects.get(pk=pk)
+
+	except Page.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+
+	to_send.pk = None  # make a copy of the page
+	prof_notebook = to_send.course.notebook
+	to_send.notebook = prof_notebook
+
+	return Response(status=status.HTTP_200_OK)
+
