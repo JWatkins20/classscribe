@@ -2,6 +2,7 @@ from django.db import models
 from users.models import User
 from imageupload.models import File
 from audioupload.models import AudioFile
+from custom_admin.models import Course
 from datetime import datetime
 
 
@@ -12,6 +13,7 @@ class Notebook(models.Model):
     #pages = models.ManyToManyField(Page, null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     #rating = models.FloatField(blank=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='notebook')  # helpful for sending pages from student to prof
 
 class Page(models.Model):
     snapshots = models.ManyToManyField(File, null=True, blank=True)
