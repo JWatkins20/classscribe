@@ -194,7 +194,6 @@ async loadPublicNotes(){
         
     if(res.status===200){
       const data = res.data.data;
-      console.log(data)
       this.setState({public_items: data});
     }
   

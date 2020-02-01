@@ -13,6 +13,7 @@ import json
 from .models import Professor
 from custom_admin.models import Course
 from users.models import User
+from django.db.models import Q
 
 from notebooks.serializers import NotebookSerializer
 
@@ -29,10 +30,11 @@ def view_professor_notebooks(userPK):  # request data should contain logged in u
 
     obj = []
     for course in courses_teaching:
-        if len(course.notebook.all()) != 1:
+        prof_books = course.notebook.filter(Q(owner__pk__exact=user.pk) | Q(owner=None))
+        if len(prof_books) != 1:
             return Response(status=status.HTTP_409_CONFLICT,
                             data={"message": "One of the courses being taught is associated with multiple notebooks!"})
-        obj.append(course.notebook.all()[0])
+        obj.append(prof_books[0])
 
     objs = []
     for book in obj:

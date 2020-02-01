@@ -205,13 +205,22 @@ class ProcessingView(APIView):
 def send_page_to_prof(request, pk):
 	try:
 		to_send = Page.objects.get(pk=pk)
+		original_owner = to_send.notebook.owner
 
 	except Page.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)
 
 	to_send.pk = None  # make a copy of the page
-	prof_notebook = to_send.course.notebook
+
+	prof_notebooks = to_send.notebook.course.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))
+	if len(prof_notebooks) != 1:
+		return Response(status=status.HTTP_409_CONFLICT)
+
+	prof_notebook = prof_notebooks[0]
+	to_send.name = original_owner.email + " submitted"
+	to_send.name = "Submitted by: " + original_owner.email
 	to_send.notebook = prof_notebook
+	to_send.save()
 
 	return Response(status=status.HTTP_200_OK)
 

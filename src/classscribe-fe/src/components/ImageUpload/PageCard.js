@@ -63,7 +63,8 @@ const contentStyle = {
     }
 
     render(){
-    var self = this
+    var self = this;
+    let isStudent = self.state.parent.state.user.type === "student";
     if(this.state.page != undefined){
       return(
       <div>
@@ -71,9 +72,11 @@ const contentStyle = {
             <CardContent style={contentStyle}>
                 <Typography align={'center'}>
                     Page {self.state.pages.indexOf(self.state.page)+1}
-                    <IconButton aria-label="delete icon" onClick={() => self.sendPage(self.state.page.pk)}>
-                        <SendIcon/>
-                    </IconButton>
+                    {isStudent && 
+                        <IconButton aria-label="delete icon" onClick={() => self.sendPage(self.state.page.pk)}>
+                            <SendIcon/>
+                        </IconButton>
+                    }
                 </Typography>
                 
             </CardContent>
