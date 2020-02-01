@@ -30,11 +30,12 @@ def view_professor_notebooks(userPK):  # request data should contain logged in u
 
     obj = []
     for course in courses_teaching:
-        prof_books = course.notebook.filter(Q(owner__pk__exact=user.pk) | Q(owner=None))
-        if len(prof_books) != 1:
+        prof_books = course.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))
+        if len(prof_books) > 1:
             return Response(status=status.HTTP_409_CONFLICT,
                             data={"message": "One of the courses being taught is associated with multiple notebooks!"})
-        obj.append(prof_books[0])
+        elif len(prof_books) == 1:
+            obj.append(prof_books[0])
 
     objs = []
     for book in obj:

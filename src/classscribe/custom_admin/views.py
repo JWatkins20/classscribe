@@ -1,6 +1,7 @@
 import datetime
 
 from django.core import serializers
+from django.db.models import Q
 from django.views.generic import CreateView
 
 from rest_framework import status
@@ -197,14 +198,14 @@ def edit_course(request, semester=None, course_name=None, building=None, room=No
         try:
             to_edit.save()
             prof_notebook = None
-            if len(to_edit.notebook.all()) == 0:  # should only happen if the course existed before this change was made
+            if len(to_edit.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))) == 0:  # should only happen if the course existed before this change was made
                 prof_notebook = Notebook.objects.create(Private=True,
                                                         class_name=to_edit.name,
                                                         name="Professor Notebook",
                                                         owner=None,
                                                         course=to_edit)
             else:
-                prof_notebook = to_edit.notebook.all()[0]
+                prof_notebook = to_edit.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))[0]
                 prof_notebook.class_name = to_edit.name
             prof_notebook.save()
             return Response(status=status.HTTP_200_OK, data={})

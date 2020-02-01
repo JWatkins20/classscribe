@@ -218,7 +218,7 @@ def send_page_to_prof(request, pk):
 
 	prof_notebook = prof_notebooks[0]
 	to_send.name = original_owner.email + " submitted"
-	to_send.name = "Submitted by: " + original_owner.email
+	to_send.transcript = "Submitted by: " + original_owner.email
 	to_send.notebook = prof_notebook
 	to_send.save()
 
