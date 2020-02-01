@@ -15,13 +15,17 @@ from datetime import date
 from audioupload.views import AudioFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.base import ObjectDoesNotExist
+from Professor.views import view_professor_notebooks
 import requests
 
 # Create your views here.
 
 @api_view(["GET"])
 def notebook_page_view(request, pk):
-	obj = Notebook.objects.filter(owner__pk__contains=pk)# finds pages with remark matching parameter
+	user = User.objects.get(pk=pk)
+	if user.type == "teacher":
+		return view_professor_notebooks(user.pk)
+	obj = Notebook.objects.filter(owner__pk__exact=pk)# finds pages with remark matching parameter
 	objs = []
 	for book in obj:
 		objs.append(NotebookSerializer(book).data)
