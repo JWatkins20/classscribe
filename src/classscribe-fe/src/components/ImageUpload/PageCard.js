@@ -59,6 +59,7 @@ const contentStyle = {
             .catch(function (error) {
                 alert(error.response.data["message"]);
             });
+            window.location.reload();
         }
     }
 

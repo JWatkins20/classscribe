@@ -95,7 +95,7 @@ def submit_course(request):
 
         Notebook.objects.create(Private=True,
                                 class_name=request.data.get("courseName"),
-                                name="Professor Notebook",
+                                name=request.data.get("courseName") + " Professor Notebook",
                                 owner=None,
                                 course=new_course)
 
@@ -201,7 +201,7 @@ def edit_course(request, semester=None, course_name=None, building=None, room=No
             if len(to_edit.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))) == 0:  # should only happen if the course existed before this change was made
                 prof_notebook = Notebook.objects.create(Private=True,
                                                         class_name=to_edit.name,
-                                                        name="Professor Notebook",
+                                                        name=to_edit.name  + " Professor Notebook",
                                                         owner=None,
                                                         course=to_edit)
             else:
