@@ -72,7 +72,7 @@ const contentStyle = {
             <CardContent style={contentStyle}>
                 <Typography align={'center'}>
                     Page {self.state.pages.indexOf(self.state.page)+1}
-                    {isStudent && 
+                    {isStudent && !self.state.page.submitted && 
                         <IconButton aria-label="delete icon" onClick={() => self.sendPage(self.state.page.pk)}>
                             <SendIcon/>
                         </IconButton>

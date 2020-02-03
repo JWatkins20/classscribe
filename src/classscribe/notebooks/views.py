@@ -210,6 +210,8 @@ def send_page_to_prof(request, pk):
 	except Page.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)
 
+	to_send.submitted = True
+	to_send.save()
 	to_send.pk = None  # make a copy of the page
 
 	prof_notebooks = to_send.notebook.course.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))

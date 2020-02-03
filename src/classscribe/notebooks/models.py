@@ -22,3 +22,4 @@ class Page(models.Model):
     transcript = models.CharField(max_length=200000, blank=True)
     time = models.DateField(default=datetime.now)
     notebook = models.ForeignKey(Notebook, on_delete=models.CASCADE, related_name='pages', null=True)
+    submitted = models.BooleanField(default=False)
