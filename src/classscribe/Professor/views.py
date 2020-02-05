@@ -26,6 +26,10 @@ def view_professor_notebooks(userPK):  # request data should contain logged in u
         return Response(status=status.HTTP_404_NOT_FOUND,
                         data={"message": "Couldn't find a matching professor"})
 
+    if user.type != "teacher":
+        return Response(status=status.HTTP_401_UNAUTHORIZED,
+                        data={"message": "You must be a teacher to access this view"})
+
     courses_teaching = Course.objects.filter(professorID=user.email)
 
     obj = []
