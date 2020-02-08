@@ -77,8 +77,8 @@ class NotebookCard extends React.Component{
           .catch(function (error) {
             alert(error.response.data["message"]);
           });
+        window.location.reload();
       }
-      window.location.reload();
     }
 
     async handleSwitch(event){

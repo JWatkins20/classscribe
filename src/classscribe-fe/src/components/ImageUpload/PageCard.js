@@ -3,6 +3,12 @@ import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import Card from '@material-ui/core/Card';
 
+import IconButton from '@material-ui/core/IconButton';
+import SendIcon from '@material-ui/icons/Send';
+
+import { base_url } from "../../App";
+import Axios from 'axios';
+
 const pagestyle = {
     "display": "block",
     "padding-bottom": "5px",
@@ -11,9 +17,21 @@ const pagestyle = {
     "margin-left": "auto",
     "margin-right": "auto",
     "margin-bottom": "5px",
-    "width": "40%",
+    "width": "45%",
     "height": "4vh"
   }
+
+const contentStyle = {
+    "display": "block",
+    "padding-bottom": "5px",
+    "padding-left": "10px",
+    "padding-right":"5px",
+    "padding-top": "0px",
+    "margin-left": "auto",
+    "margin-right": "auto",
+    "margin-bottom": "5px",
+    "height": "4vh"
+}
 
   class PageCard extends React.Component{
     constructor(props){
@@ -34,16 +52,34 @@ const pagestyle = {
         }
     }
 
+    sendPage = (pk) => {
+        if (window.confirm("Are you sure you want to send this page to the prof?")) {
+            const sendUrl = `${base_url}notebooks/send/page/${pk}`;
+            Axios.get(sendUrl)
+            .catch(function (error) {
+                alert(error.response.data["message"]);
+            });
+            window.location.reload();
+        }
+    }
+
     render(){
-    var self = this
+    var self = this;
+    let isStudent = self.state.parent.state.user.type === "student";
     if(this.state.page != undefined){
       return(
       <div>
         <Card border={1} style={pagestyle} borderColor={"#09d3ac"} onClick={() => self.state.parent.switchPage(self.state.pages.indexOf(self.state.page))}>
-            <CardContent>
+            <CardContent style={contentStyle}>
                 <Typography align={'center'}>
                     Page {self.state.pages.indexOf(self.state.page)+1}
+                    {isStudent && !self.state.page.submitted && 
+                        <IconButton aria-label="delete icon" onClick={() => self.sendPage(self.state.page.pk)}>
+                            <SendIcon/>
+                        </IconButton>
+                    }
                 </Typography>
+                
             </CardContent>
             </Card>
             </div>

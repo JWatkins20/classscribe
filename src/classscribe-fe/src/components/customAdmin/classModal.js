@@ -201,7 +201,7 @@ class classModal extends React.Component {
 
                         <TextField
                             id="professorId"
-                            maxlength="7"
+                            maxlength="64"
                             floatingLabelText="Professor ID"
                             floatingLabelFixed={true}
                             defaultValue={this.state.professorId}

@@ -1,6 +1,7 @@
 import datetime
 
 from django.core import serializers
+from django.db.models import Q
 from django.views.generic import CreateView
 
 from rest_framework import status
@@ -13,6 +14,8 @@ import json
 from .models import Course
 
 from .serializers import AssignmentSerializer
+
+from notebooks.models import Notebook
 
 class AssignmentView(APIView):
     def get(self, request):
@@ -82,13 +85,20 @@ def submit_course(request):
                 print(e)
                 return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 
-        Course.objects.create(name=request.data.get("courseName"),
+        new_course = Course.objects.create(name=request.data.get("courseName"),
                               professorID=request.data.get("professorId"),
                               building=request.data.get("building"),
                               room=request.data.get("room"),
                               time=request.data.get("time"),
                               lamp_serial=request.data.get("lamp_serial"),
                               semester=request.data.get("semester"))
+
+        Notebook.objects.create(Private=True,
+                                class_name=request.data.get("courseName"),
+                                name=request.data.get("courseName") + " Professor Notebook",
+                                owner=None,
+                                course=new_course)
+
         return Response(status=status.HTTP_200_OK, data={})
     except Exception as e:
         print(e)
@@ -187,6 +197,17 @@ def edit_course(request, semester=None, course_name=None, building=None, room=No
 
         try:
             to_edit.save()
+            prof_notebook = None
+            if len(to_edit.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))) == 0:  # should only happen if the course existed before this change was made
+                prof_notebook = Notebook.objects.create(Private=True,
+                                                        class_name=to_edit.name,
+                                                        name=to_edit.name  + " Professor Notebook",
+                                                        owner=None,
+                                                        course=to_edit)
+            else:
+                prof_notebook = to_edit.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))[0]
+                prof_notebook.class_name = to_edit.name
+            prof_notebook.save()
             return Response(status=status.HTTP_200_OK, data={})
         except Exception as e:
             print(e.message)

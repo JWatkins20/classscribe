@@ -140,7 +140,7 @@ export default class ImageCarousel extends Component {
         const user = res.data;
         this.setState({user:user});
     }
-    if(this.state.user.type == "student"){
+    if(this.state.user.type == "student" || this.state.user.type == "teacher"){
       this.loadNotes();
     }
 
@@ -194,7 +194,6 @@ async loadPublicNotes(){
         
     if(res.status===200){
       const data = res.data.data;
-      console.log(data)
       this.setState({public_items: data});
     }
   
@@ -287,7 +286,7 @@ async loadPublicNotes(){
     else{
           return(<div>Unable to display notebooks</div>);
         }
-    if(this.state.user.type!="student"){
+    if(this.state.user.type !="student" && this.state.user.type != "teacher"){
       return (
             <>
               <Navbar username={this.state.user && this.state.user.username}/>
