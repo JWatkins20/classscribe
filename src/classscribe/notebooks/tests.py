@@ -70,7 +70,7 @@ class NotebookTests(TestCase):
         self.assertEqual(response.data["message"], "Couldn't find the specified notebook to delete!")
 
 class NotebookCreationEndpointTest(APITestCase):
-	def setup(self):
+	def setUp(self):
 		user1 = User.objects.create(username='a.i@virginia.edu', password='johnny', type='student')
 	def testendpoint(self):
 		data = {
