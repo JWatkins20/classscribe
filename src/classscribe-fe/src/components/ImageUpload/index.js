@@ -3,6 +3,7 @@ import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { base_url } from "../../App"
 import AudioPlayer from "../../student/AudioPlayer"
+import Sound from 'react-sound'
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
@@ -282,7 +283,6 @@ async loadNotes()
   }
 
   switchPage = (index) =>{
-    console.log("hello");
     this.setState({
       page:index,
       transcript: this.state.items[this.state.notebook].pages[index].transcript,
@@ -337,7 +337,7 @@ async loadNotes()
   // }
 
   getImgSrc = (imageName) => {
-    return 'http://128.143.67.97:44104' + imageName;
+    return base_url + imageName.substring(1);
   }
 
 

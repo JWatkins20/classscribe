@@ -70,6 +70,20 @@ class NotebookTests(TestCase):
         response = c.delete('/notebooks/delete/' + str(notebook_pk+1))
         self.assertEqual(response.data["message"], "Couldn't find the specified notebook to delete!")
 
+class NotebookCreationEndpointTest(APITestCase):
+	def setup(self):
+		user1 = User.objects.create(username='a.i@virginia.edu', password='johnny', type='student')
+	def testendpoint(self):
+		data = {
+			"Private": False,
+			"class_name": 'CS 1110',
+			"name": 'jw2vp CS 1110',
+			"pk": User.objects.get(username='a.i@virginia.edu')
+		}
+		notebook_pk = self.client.get(reverse('create'), format=json, data=data)
+		self.assertTrue(notebook_pk==self.client.get(reverse('create'), format=json, data=data))
+
+
 
 class NotebookGetViewTests(APITestCase):
     def setUp(self):

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {default as BuiltinAudioPlayer} from "react-h5-audio-player";
-var aud = document.getElementById("");
+
 const AudioPlayer = ({audio_url}) => {
     const [currentTime, setCurrentTime] = useState(0)
     const [playing, setPlaying] = useState(false)
@@ -10,8 +10,19 @@ const AudioPlayer = ({audio_url}) => {
             return () => clearTimeout(timer);
         }
     })
+
+    const changeTime = (time) => {
+        setCurrentTime(currentTime + time);
+        
+    }
     return (
         <div>
+            {/* <audio id="audioPlayer" 
+                preload="auto" 
+                src="http://upload.wikimedia.org/wikipedia/commons/a/a9/Tromboon-sample.ogg"  controls>
+            </audio>
+            <button onclick={changeTime(10)}>10 seconds event</button>
+            <button onclick={changeTime(20)}>20 seconds event</button> */}
             <BuiltinAudioPlayer
                 onPlay={()=>{setPlaying(true)}}
                 onPause={()=>{setPlaying(false)}}
@@ -20,5 +31,7 @@ const AudioPlayer = ({audio_url}) => {
         </div>
     );
 }
+
+
 
 export default AudioPlayer;

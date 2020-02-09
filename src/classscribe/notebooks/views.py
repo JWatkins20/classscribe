@@ -23,7 +23,13 @@ def notebook_page_view(request, pk):
 	obj = Notebook.objects.filter(owner__pk__contains=pk)# finds pages with remark matching parameter
 	objs = []
 	for book in obj:
-		objs.append(NotebookSerializer(book).data)
+		pages = Page.objects.filter(notebook=NotebookSerializer(book).data['pk'])
+		pages = list(pages)
+		for page in range(len(pages)):
+			pages[page] = PageSerializer(pages[page]).data
+		data = dict(NotebookSerializer(book).data)
+		data["pages"] = pages
+		objs.append(data)
 	if not objs:
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	return Response(status=status.HTTP_200_OK, data={"data": objs})
@@ -70,19 +76,20 @@ def delete_notebook(request, pk=None):
 
 
 class PageCreateView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = PageSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                serializer.save()
-                page = Page.objects.get(name=request.data["name"])
-                page.notebook = Notebook.objects.get(pk=request.data["pk"])
-                page.save()
-                return Response({"key": page.pk}, status=status.HTTP_201_CREATED)
-            except:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	def post(self, request, *args, **kwargs):
+		serializer = PageSerializer(data=request.data)
+		if serializer.is_valid():
+			try:
+				serializer.save()
+				page = Page.objects.get(name=request.data["name"])
+				page.notebook = Notebook.objects.get(pk=request.data["pk"])
+				page.save()
+				return Response({"key": page.pk}, status=status.HTTP_201_CREATED)
+			except:
+				print(serializer.save())
+				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 '''
 @params: name, remark
@@ -103,7 +110,7 @@ def add_file_view(request):
 	image_pks=image_pks.replace("[","")
 	image_pks = image_pks.split(',')
 	print ("Images passed in:", image_pks)
-
+	print(data["image_pks"])
 	for pk in image_pks:
 		try:
 			files.append(File.objects.get(pk=int(pk)))
@@ -122,6 +129,15 @@ def add_file_view(request):
 		return Response({"num_added": (data["image_pks"],image_pks)}, status=status.HTTP_201_CREATED)
 	else:
 		return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+def split_page(request):
+	data = request.data
+
+	notebook = Notebook.objects.get(pk=data["notebook_pk"])
+	page1 = Page.objects.get(pk=data["page1_pk"])
+	page2 = Page.objects.get(pk=data["page2_pk"])
+	image = Page.objects.get(pk=data["image_pk"])
 
 
 @api_view(["POST"])
