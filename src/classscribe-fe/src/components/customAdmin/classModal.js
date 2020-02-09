@@ -19,7 +19,7 @@ class classModal extends React.Component {
             professorId: props.professor,
             building: $('#building-select')[0].innerText,
             room: $('#room-select')[0].innerText,
-            days: props.days && props.days.replace("Tu", "@").replace("Thu", "!") || "",
+            days: props.days && props.days || "",
             time: props.start.format('H:mm') + "-" + props.end.format('H:mm'),
             serial: props.lamp || $('#lamp-serial')[0].value,
             semester: props.semester || $('#semester-select')[0].innerText,
@@ -51,6 +51,8 @@ class classModal extends React.Component {
 
         if (field === "days") {
             let val = this.state.days;
+            val = val.replace("Thu", "!");
+            val = val.replace("Tu", "@");
             return val.search(RegExp(map[field], 'g')) == 0;
         }
 
@@ -85,7 +87,7 @@ class classModal extends React.Component {
                         professorId: response.data["professorID"],
                         building: response.data["building"],
                         room: response.data["room"],
-                        time: response.data["time"],
+                        time: response.data["time"].split(" ")[1],
                         serial: response.data["lamp_serial"],
                         semester: response.data["semester"],
                         pk: response.data["pk"] || 0
@@ -199,7 +201,7 @@ class classModal extends React.Component {
 
                         <TextField
                             id="professorId"
-                            maxlength="7"
+                            maxlength="64"
                             floatingLabelText="Professor ID"
                             floatingLabelFixed={true}
                             defaultValue={this.state.professorId}
@@ -252,7 +254,7 @@ class classModal extends React.Component {
                                 selected={this.state.tuesdaySelected}
                                 onClick={() => this.setState({
                                     tuesdaySelected: !this.state.tuesdaySelected,
-                                    days: this.state.days.indexOf("@") === -1 ? this.state.days.concat("@") : this.state.days.replace("@", "")
+                                    days: this.state.days.indexOf("Tu") === -1 ? this.state.days.concat("Tu") : this.state.days.replace("Tu", "")
                                 })}
                             >
                                 Tue
@@ -276,7 +278,7 @@ class classModal extends React.Component {
                                 selected={this.state.thursdaySelected}
                                 onClick={() => this.setState({
                                     thursdaySelected: !this.state.thursdaySelected,
-                                    days: this.state.days.indexOf("!") === -1 ? this.state.days.concat("!") : this.state.days.replace("!", "")
+                                    days: this.state.days.indexOf("Thu") === -1 ? this.state.days.concat("Thu") : this.state.days.replace("Thu", "")
                                 })}
                             >
                                 Thu

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from imageupload.models import File
 from .models import User
 from .models import AudioFile
+from django.db.models import Q
 from notebooks.models import Notebook, Page
 from notebooks.serializers import NotebookSerializer, PageSerializer
 from rest_framework import generics
@@ -14,13 +15,21 @@ from datetime import date
 from audioupload.views import AudioFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.base import ObjectDoesNotExist
+from Professor.views import view_professor_notebooks
 import requests
 
 # Create your views here.
 
 @api_view(["GET"])
 def notebook_page_view(request, pk):
-	obj = Notebook.objects.filter(owner__pk__contains=pk)# finds pages with remark matching parameter
+	try:
+		user = User.objects.get(pk=pk)
+	except User.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+
+	if user.type == "teacher":
+		return view_professor_notebooks(user.pk)
+	obj = Notebook.objects.filter(owner__pk__exact=pk)# finds pages with remark matching parameter
 	objs = []
 	for book in obj:
 		pages = Page.objects.filter(notebook=NotebookSerializer(book).data['pk'])
@@ -33,6 +42,16 @@ def notebook_page_view(request, pk):
 	if not objs:
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	return Response(status=status.HTTP_200_OK, data={"data": objs})
+
+@api_view(["GET"])
+def retrieve_public_notebooks(request, pk):
+    obj = Notebook.objects.filter(~Q(owner__pk__exact=pk) & Q(Private=False))# finds pages with remark matching parameter
+    objs = []
+    for book in obj:
+        objs.append(NotebookSerializer(book).data)
+    if not objs:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_200_OK, data={"data": objs})
 
 
 '''
@@ -163,7 +182,7 @@ def toggle_privacy_view(request):
     #notebook.private = data["private"]
     try:
         notebook.save()
-        return Response(status=status.HTTP_200_OK, data={})
+        return Response(status=status.HTTP_200_OK, data={'message': 'Should have worked'})
     except Exception as e:
         print(e.message)
         return Response(status=status.HTTP_400_BAD_REQUEST, data={})
@@ -196,3 +215,30 @@ class ProcessingView(APIView):
 		page1.snapshots.add(file3)
 		page1.notebook = notebook1
 		return Response()
+
+
+@api_view(["GET"])
+def send_page_to_prof(request, pk):
+	try:
+		to_send = Page.objects.get(pk=pk)
+		original_owner = to_send.notebook.owner
+
+	except Page.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+
+	to_send.submitted = True
+	to_send.save()
+	to_send.pk = None  # make a copy of the page
+
+	prof_notebooks = to_send.notebook.course.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))
+	if len(prof_notebooks) != 1:
+		return Response(status=status.HTTP_409_CONFLICT)
+
+	prof_notebook = prof_notebooks[0]
+	to_send.name = original_owner.email + " submitted"
+	to_send.transcript = "Submitted by: " + original_owner.email
+	to_send.notebook = prof_notebook
+	to_send.save()
+
+	return Response(status=status.HTTP_200_OK)
+

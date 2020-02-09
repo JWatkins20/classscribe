@@ -25,7 +25,7 @@ class NotebookTests(TestCase):
         page1.snapshots.add(file1)
         page1.snapshots.add(file2)
         page1.snapshots.add(file3)
-        notebook1.pages.add(page1)
+        page1.notebook = notebook1
 
     def testfindnotebook(self):
         notebook = None
@@ -37,7 +37,6 @@ class NotebookTests(TestCase):
         file4 = File.objects.get(remark="test4")
         page1 = Page.objects.get(name="Page name")
         notebook = Notebook.objects.get(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes") 
-        self.assertTrue(notebook.pages.filter(pk=page1.pk).exists())
         self.assertTrue(page1.snapshots.filter(pk=file1.pk).exists())
     def testmissingpagepages(self):
         notebook = None
@@ -98,11 +97,13 @@ class NotebookGetViewTests(APITestCase):
 
         page2 = Page.objects.create(name="Page2 name") 
         notebook1.owner = user1
-        notebook1.pages.add(page1)
+        page1.notebook = notebook1
+        page1.save()
         notebook1.save()
         notebook2.owner = user1  
-        notebook2.pages.add(page2)
+        page2.notebook = notebook2
         notebook2.save()
+        page2.save()
 
     def testgetnoparam(self):
         response = self.client.get(reverse('notebooks', args=(2,)), format=json)
@@ -155,3 +156,17 @@ class NotebookGetViewTests(APITestCase):
         self.assertTrue(response.status_code==200)
         self.assertTrue(data["data"][0]["pages"][0]["transcript"] != '' , msg=str(response.context))
         self.assertTrue(data["data"][0]["pages"][0]["audio"]["remark"] == 'test1' , msg=str(response.context))
+    def testprivacytoggle(self):
+        notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
+        notebook1.Private = False      
+        response = self.client.post(reverse('toggle'), {"pk": notebook1.pk})
+        notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
+        self.assertTrue(response.status_code==200)
+        self.assertTrue(notebook1.Private, msg=response.data['message'])
+    def testnamechange(self):
+        notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
+        pk = notebook1.pk    
+        response = self.client.post(reverse('edit_notebook'), {"pk": pk, "name": 'new notebook name'})
+        notebook1 = Notebook.objects.get(pk=pk)
+        self.assertTrue(response.status_code==200)
+        self.assertTrue(notebook1.name == 'new notebook name')
