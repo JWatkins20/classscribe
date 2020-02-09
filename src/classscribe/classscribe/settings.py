@@ -19,7 +19,7 @@ SECRET_KEY = 'p!ty#bo(h+_a410c1e@$s3e!f89lgm8xlmt!j)@xe(9d=++i9-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.104','128.143.67.97', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['192.168.1.104','128.143.67.97', '127.0.0.1', 'localhost', 'classscribe-be.herokuapp.com']
 
 # Application definition
 
