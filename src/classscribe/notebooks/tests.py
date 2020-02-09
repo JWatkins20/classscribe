@@ -80,6 +80,7 @@ class NotebookCreationEndpointTest(APITestCase):
         self.assertTrue(response.data["key"] == response2.data["key"]-1)
 
 
+
 class NotebookGetViewTests(APITestCase):
     def setUp(self):
         user1 = User.objects.create(username='username134', password='pa$$word12466')
