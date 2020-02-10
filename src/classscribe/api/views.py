@@ -6,6 +6,8 @@ import string
 import random
 from rest_framework.decorators import api_view
 
+server_url = "https://classscribe-fe.herokuapp.com/"
+
 @api_view(['POST'])
 def SendVerificationEmailView(request, email):
 	try:
@@ -14,7 +16,7 @@ def SendVerificationEmailView(request, email):
 		user.verification_password = verification_password
 		user.save()
 
-		verification_link = 'http://128.143.67.97:44104/emailverification/' + email + '/' + verification_password
+		verification_link = server_url + 'emailverification/' + email + '/' + verification_password
 		title = 'Email Verification'
 		subject = 'Hello from Team ClassScribe, \n' + 'We would like to verify your email, please click on the link below:\n' + verification_link + '\n' + 'Thank you, happy note-taking!'
 		user_email = email
