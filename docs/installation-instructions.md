@@ -57,7 +57,7 @@ change the the text in the quotes on that line to the url of your BACKEND heroku
 example, https://classscribe-be.herokuapp.com/), make sure to include the slash at the end of the url when
 you paste it.  
 
-In terminal:  
+In terminal, pointed to the root of the git repo you downloaded:  
 
 1. switch the git heroku repo to the new git heroku repo of the frontend app by running the following commands:     
 2. git remote rm heroku
