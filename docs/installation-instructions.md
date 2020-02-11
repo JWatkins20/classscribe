@@ -65,7 +65,7 @@ In terminal, pointed to the root of the git repo you downloaded:
 5. git subtree split --prefix src/classscribe-fe master  
 (this command generates an alphanumeric string of characters you will use in the next step)
 6. git push heroku ABOVE_GENERATED_STRING_OF_CHARACTERS:refs/heads/master   
-7. Refresh the herokuapps URL for the frontend should any errors occur initially when testing after successful deployment.
+7. Refresh the yourFrontEndAppName.herokuapp.com URL for the frontend should any errors occur initially when testing after successful deployment.
 
 Happy Notetaking :)
 
