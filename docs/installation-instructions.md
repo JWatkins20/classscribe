@@ -39,7 +39,7 @@ Follow the instructions on-screen to login to your Heroku account in the web bro
 2. git remote add heroku INSERT_HEROKU_GIT_URL_FROM_HEROKU_APP_DASHBOARD_HERE  
 ![image](herokugiturl.png)  
 3. git subtree split --prefix src/classscribe master  
-(this command generates an alphanumeric string of characters you will use in the next step) 
+(this command generates an alphanumeric string of characters you will use in step 5) 
 4. heroku config:set DISABLE_COLLECTIONSTATIC=1 
 5. git push heroku ABOVE_GENERATED_STRING_OF_CHARACTERS:refs/heads/master
 6. heroku run python manage.py migrate --run-syncdb  
