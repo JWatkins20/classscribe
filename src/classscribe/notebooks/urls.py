@@ -13,6 +13,7 @@ urlpatterns = [
 	path('delete/<int:pk>', delete_notebook, name="delete_notebook"),
 	path('edit/', edit_notebook_view, name="edit_notebook"),
 	path('privacy-toggle/', toggle_privacy_view, name="toggle"),
-   path('send/page/<int:pk>', send_page_to_prof, name="send_page_to_prof"),
-   path('get/public/<slug:pk>/', retrieve_public_notebooks, name="public")
+	path('send/page/<int:pk>', send_page_to_prof, name="send_page_to_prof"),
+	path('get/public/<slug:pk>/', retrieve_public_notebooks, name="public"),
+	path('toggle_sdac/<int:pk>', toggle_sdac_ready, name="toggle_sdac_ready")
 ]

@@ -105,7 +105,8 @@ export default class ImageCarousel extends Component {
       page: 0,
       notebook: 0,
       transcript: "",
-      public: false
+      public: false,
+      sdac_ready: false
     };
     this.loadNotes = this.loadNotes.bind(this);
     this.loadPublicNotes = this.loadPublicNotes.bind(this);

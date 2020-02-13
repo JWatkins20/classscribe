@@ -22,4 +22,4 @@ class NotebookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notebook
         depth = 1
-        fields = ('Private', 'class_name', 'name', 'pages', 'pk', 'owner')
+        fields = ('Private', 'class_name', 'name', 'pages', 'pk', 'owner', 'sdac_ready')
