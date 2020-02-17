@@ -21,7 +21,9 @@ const carstyle = {
   overflow: 'auto',
   marginRight: "8px",
   marginTop: "10px",
-  border: "2px solid black"
+  //border: "2px solid black"
+  'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+  'border-radius': '0.5em',
 };
 
 const formstyle= {
@@ -43,7 +45,10 @@ const transcriptStyle = {
   paddingLeft: "0px",
   marginTop: "10px",
   whiteSpace: "normal",
-  border: "2px solid black",
+  //border: "2px solid black",
+  'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+  'border-radius': '0.5em',
+  
 };
 
 const tandastyle = {
@@ -52,6 +57,8 @@ const tandastyle = {
 const audiostyle={
   width: "20vw",
   height: "10vh",
+  'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+  'border-radius': '0.5em',
 }
 
 const divstyle = {
@@ -64,8 +71,10 @@ const divstyle = {
   'float': 'left',
   marginTop: "10px",
   overflow: "auto",
-  border: "2px solid black",
-  justifyContent: 'center'
+  //border: "2px solid black",
+  'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+  'border-radius': '0.5em',
+  justifyContent: 'center',
 }
 
 
