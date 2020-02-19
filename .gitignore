@@ -26,3 +26,5 @@ url.txt
 .idea/**/libraries 
 *.iws /out/ 
 src/classscribe/classscribe/urls.py
+src/classscribe/cover/**
+src/classscribe/.coverage

@@ -39,17 +39,26 @@ INSTALLED_APPS = [
     'custom_admin',
     'Student',
     'notebooks',
-	'audioupload',
+    'audioupload',
 
-  'django.contrib.sites',
-  'allauth',
-  'allauth.account',
-  'rest_auth.registration',
-  'allauth.socialaccount',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
+    'allauth.socialaccount',
 
-  'users',
-  'api',
-  'Professor'
+    'users',
+    'api',
+    'Professor',
+    'django_nose'
+]
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-html',
+    '--cover-package=api,audioupload,custom_admin,imageupload,notebooks,Professor,Student,users',
 ]
 
 SITE_ID = 1
