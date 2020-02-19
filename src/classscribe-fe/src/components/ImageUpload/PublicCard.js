@@ -23,6 +23,11 @@ const selectedStyle = {
   background: 'blue',
 }
 
+const cardStyle = {
+  width: '15vw',
+  height: '10vh'
+}
+
 class PublicCard extends Component{
     constructor(props){
         super(props);
@@ -39,6 +44,10 @@ class PublicCard extends Component{
 
     toggleHover = () => {
       this.setState({hover: !this.state.hover})
+    }
+
+    favorite = () => {
+      
     }
 
     render(){
@@ -59,7 +68,7 @@ class PublicCard extends Component{
           </Typography>
             <Avatar>{self.state.sharedBy.charAt(0)}</Avatar> 
         </CardContent>
-      </Card>: <Card onMouseOut={(event)=>this.toggleHover()} onMouseOver={(event)=>this.toggleHover()} style={cardStyle} border={1} borderColor={"#09d3ac"}>
+      </Card>: <Card onClick={(event) => this.favorite()} onMouseOut={(event)=>this.toggleHover()} onMouseOver={(event)=>this.toggleHover()} style={cardStyle} border={1} borderColor={"#09d3ac"}>
       <CardContent>
           <Typography style={{padding: "0"}} align={'center'} variant={"h6"}>
             {this.state.name}

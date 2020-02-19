@@ -150,14 +150,14 @@ def add_file_view(request):
 	else:
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(["POST"])
-def split_page(request):
-	data = request.data
+# @api_view(["POST"])
+# def split_page(request):
+# 	data = request.data
 
-	notebook = Notebook.objects.get(pk=data["notebook_pk"])
-	page1 = Page.objects.get(pk=data["page1_pk"])
-	page2 = Page.objects.get(pk=data["page2_pk"])
-	image = Page.objects.get(pk=data["image_pk"])
+# 	notebook = Notebook.objects.get(pk=data["notebook_pk"])
+# 	page1 = Page.objects.get(pk=data["page1_pk"])
+# 	page2 = Page.objects.get(pk=data["page2_pk"])
+# 	image = Page.objects.get(pk=data["image_pk"])
 
 
 @api_view(["POST"])
@@ -203,19 +203,19 @@ def add_audio_and_transcript_view(request):
 
 
 
-class ProcessingView(APIView):
-	def get(self, request):
-		notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes")
-		file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1")
-		file2 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test2", class_name="Something else", page_num="2")
-		file3 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test3", class_name="Practicum", page_num="3")
-		file4 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test4", class_name="Something else", page_num="4")
-		page1 = Page.objects.create(name="Page name")
-		page1.snapshots.add(file1)
-		page1.snapshots.add(file2)
-		page1.snapshots.add(file3)
-		page1.notebook = notebook1
-		return Response()
+# class ProcessingView(APIView):
+# 	def get(self, request):
+# 		notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes")
+# 		file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1")
+# 		file2 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test2", class_name="Something else", page_num="2")
+# 		file3 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test3", class_name="Practicum", page_num="3")
+# 		file4 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test4", class_name="Something else", page_num="4")
+# 		page1 = Page.objects.create(name="Page name")
+# 		page1.snapshots.add(file1)
+# 		page1.snapshots.add(file2)
+# 		page1.snapshots.add(file3)
+# 		page1.notebook = notebook1
+# 		return Response()
 
 
 @api_view(["GET"])
