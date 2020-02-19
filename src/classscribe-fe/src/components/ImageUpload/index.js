@@ -169,7 +169,9 @@ const carstyle = {
   overflow: 'auto',
   marginRight: "8px",
   marginTop: "10px",
-  border: "2px solid black"
+  //border: "2px solid black"
+  'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+  'border-radius': '0.5em',
 };
 
 const formstyle= {
@@ -186,20 +188,35 @@ const imagestyle = {
 
 const transcriptStyle = {
   width: '24vw',
-  height: '78vh',   
+  height: '70vh',   
   overflow: 'auto',
   paddingLeft: "0px",
   marginTop: "10px",
+  marginBottom: "10px",
+  paddingBottom: "10px",
+  paddingLeft: "10px",
   whiteSpace: "normal",
-  border: "2px solid black",
+  //border: "2px solid black",
+  'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+  'border-radius': '0.5em',
+  
 };
 
 const tandastyle = {
   float: 'left',
 }
 const audiostyle={
-  width: "20vw",
-  height: "10vh",
+  width: "24vw",
+  height: "15vh",
+  'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+  'border-radius': '0.5em',
+  overflow: 'auto',
+  paddingLeft: "0px",
+  marginTop: "10px",
+  marginBottom: "10px",
+  paddingBottom: "10px",
+  paddingLeft: "10px",
+  whiteSpace: "normal",
 }
 
 const divstyle = {
@@ -212,8 +229,10 @@ const divstyle = {
   float: 'left',
   marginTop: "10px",
   overflow: "auto",
-  border: "2px solid black",
-  justifyContent: 'center'
+  //border: "2px solid black",
+  'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+  'border-radius': '0.5em',
+  justifyContent: 'center',
 }
 
 
@@ -525,10 +544,10 @@ async loadSavedPublicNotes(){
           {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
-         {/* {this.state.loaded && this.state.audio != undefined  ? <div><AudioPlayer src={'http://localhost:8000/audio/stream/'+this.state.audio.pk}/> */}
-         {/* <Button onClick={(event)=>{this.syncToAudio()}}>sync to audio</Button>
-         <Button onClick={(event)=>{this.syncToPage()}}>sync to page</Button>  */}
-         <div></div>: <div>Page has no audio</div>}
+         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://128.143.67.97:44104'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
+         <Button>Sync audio to page</Button>
+         <Button>Sync page to audio</Button>
+         <Button>Split into new page</Button>
          </div>
          </div>
       </div>
