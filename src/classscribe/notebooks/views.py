@@ -44,13 +44,14 @@ def notebook_page_view(request, pk):
 	return Response(status=status.HTTP_200_OK, data={"data": objs})
 
 @api_view(["GET"])
-def retrieve_public_notebooks(request, pk):
-    obj = Notebook.objects.filter(~Q(owner__pk__exact=pk) & Q(Private=False))# finds pages with remark matching parameter
+def retrieve_public_notebooks(request, pk, class_name):
+	
+    obj = Notebook.objects.filter(~Q(owner__pk__exact=pk) & Q(Private=False) & Q(class_name=class_name.replace("%20", " ")))# finds pages with remark matching parameter
     objs = []
     for book in obj:
         objs.append(NotebookSerializer(book).data)
-    if not objs:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    # if not objs:
+    #     return Response(status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_200_OK, data={"data": objs})
 
 
@@ -69,11 +70,11 @@ class NotebookCreateView(APIView):
 		serializer = NotebookSerializer(data=request.data)
 		if serializer.is_valid():
 			try:
-				notebook = Notebook.objects.get(class_name=request.data["class_name"], name=request.data["name"])
+				notebook = Notebook.objects.get(name=request.data["name"])
 				return Response({"key": notebook.pk}, status=status.HTTP_200_OK)
 			except ObjectDoesNotExist:
 				serializer.save()
-				notebook = Notebook.objects.get(class_name=request.data["class_name"])
+				notebook = Notebook.objects.get(name=request.data["name"])
 				notebook.owner = User.objects.get(pk=request.data["pk"])
 				notebook.save()
 				return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)

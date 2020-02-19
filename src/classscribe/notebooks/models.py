@@ -13,6 +13,7 @@ class Notebook(models.Model):
     #pages = models.ManyToManyField(Page, null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     #rating = models.FloatField(blank=True)
+    FavoritedBy = models.ForeignKey(User, on_delete=models.PROTECT, related_name='favoritedBooks', null=True)
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='notebook')  # helpful for sending pages from student to prof
 
 class Page(models.Model):

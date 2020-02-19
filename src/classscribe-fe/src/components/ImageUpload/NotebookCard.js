@@ -4,16 +4,20 @@ import TextField from '@material-ui/core/TextField';
 import CardContent from '@material-ui/core/CardContent';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import ExploreIcon from '@material-ui/icons/Explore';
 import CardActions from '@material-ui/core/CardActions';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
+import Avatar from '@material-ui/core/Avatar';
 import Toggle from './toggle';
 import PageCard from './PageCard';
 import { base_url } from "../../App"
 import Axios from 'axios';
-
-
+import Popup from "reactjs-popup";
+import PublicCard from './PublicCard'
+import { SelectableGroup, createSelectable } from 'react-selectable';
+import List from './List'
 
 
   const notestyle = {
@@ -42,7 +46,6 @@ import Axios from 'axios';
      height: '100%'
   }
 
-
 class NotebookCard extends React.Component{
     constructor(props){
         super(props);
@@ -53,6 +56,7 @@ class NotebookCard extends React.Component{
             edit: false,
             notebookname: "",
             notebookprivate: false,
+            selectedKeys: [],
             checked: props.note.Private,
             edit: false,
         };
@@ -61,6 +65,7 @@ class NotebookCard extends React.Component{
         this.handleSwitch = this.handleSwitch.bind(this);
         this.handleEditNotebook = this.handleEditNotebook.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleSelection = this.handleSelection.bind(this)
     }
 
     handleEditNotebook = (notebook) => {
@@ -152,6 +157,11 @@ class NotebookCard extends React.Component{
         }
     }
 
+    handleSelection (selectedKeys) {
+      this.setState({ selectedKeys: selectedKeys });
+      console.log(this.state.selectedKeys)
+    }
+
     render(){
       var self = this
     if(this.state.parent != undefined){
@@ -181,15 +191,29 @@ class NotebookCard extends React.Component{
                     {self.state.parent.state.public ? <div>Shared by: {self.state.note.owner.username}</div> :
                     <div>
                     <Toggle parent={self} />
-                    <IconButton aria-label="edit icon" onClick={() => self.handleEditNotebook(self.state.note)}>
+                    <IconButton aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
                     <EditIcon />
                     </IconButton>
-                    <IconButton aria-label="delete icon" onClick={() => self.deleteNotebook(self.state.note.pk)}>
+                    <IconButton aria-label="delete icon" onClick={(event) => self.deleteNotebook(self.state.note.pk)}>
                       <DeleteForeverIcon/>
                     </IconButton>
+                    <Popup modal trigger={
+                      <IconButton aria-label="explore icon" onClick={this.props.showModal}>
+                        <ExploreIcon />
+                      </IconButton>}>
+                        <SelectableGroup onSelection={this.handleSelection}>
+                        {this.state.parent.state.public_items.map((item, i) => {
+          	              let selected = this.state.selectedKeys.indexOf(item.pk) > -1;
+          	              return (
+          		              <PublicCard name={item.name} sharedBy={item.owner.username} key={i} isSelected={selected} selectableKey={item.pk} />
+          	              );
+                          })}
+                          {/* <List items={self.state.parent.state.public_items} /> */}
+                        </SelectableGroup>
+                      </Popup>
                     </div>
                     }
-                    </CardActions> 
+                    </CardActions>
                     </div>
                       }
                     </Card> 
