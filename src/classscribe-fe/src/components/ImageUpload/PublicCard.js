@@ -2,6 +2,8 @@ import React, { Component, } from "react";
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import CardContent from '@material-ui/core/CardContent';
+import { makeStyles } from '@material-ui/core/styles';
+import { deepOrange, deepPurple, red, pink, blue, lightGreen } from '@material-ui/core/colors';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import ExploreIcon from '@material-ui/icons/Explore';
@@ -28,6 +30,24 @@ const cardStyle = {
   height: '10vh'
 }
 
+var avatarr =[ 
+  {
+    backgroundColor: deepOrange[500],
+  },
+ {
+    backgroundColor: deepPurple[500],
+  },
+  {
+    backgroundColor: blue[500],
+  },
+  {
+    backgroundColor: lightGreen[500],
+  },
+  {
+    backgroundColor: pink[500],
+  },
+]
+
 class PublicCard extends Component{
     constructor(props){
         super(props);
@@ -38,6 +58,7 @@ class PublicCard extends Component{
           selectableRef: props.selectableRef,
           isSelected: props.isSelected,
           isSelecting: props.isSelecting,
+          color: 0,
           hover: false,
         };
     }
@@ -47,7 +68,7 @@ class PublicCard extends Component{
     }
 
     favorite = () => {
-      
+
     }
 
     render(){
@@ -73,7 +94,7 @@ class PublicCard extends Component{
           <Typography style={{padding: "0"}} align={'center'} variant={"h6"}>
             {this.state.name}
           </Typography>
-            <Avatar>{self.state.sharedBy.charAt(0)}</Avatar> 
+            <Avatar style={avatarr[this.state.sharedBy.pk % 5]}>{self.state.sharedBy.username.charAt(0)}</Avatar> 
         </CardContent>
       </Card>}
         

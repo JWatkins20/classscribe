@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { base_url } from "../../App"
-//import AudioPlayer from "../../student/AudioPlayer"
+import AudioPlayer from "../../student/AudioPlayer"
 import Sound from 'react-sound'
 import Axios from 'axios';
 import Cookies from 'js-cookie';
@@ -273,6 +273,7 @@ export default class ImageCarousel extends Component {
       loaded: false,
       page: 0,
       notebook: 0,
+      time: 0,
       transcript: "",
       public: false,
       recording: undefined,
@@ -295,6 +296,10 @@ export default class ImageCarousel extends Component {
   async Toggle_public_notebooks(event){
     await this.setState({public: !this.state.public})
     this.switchNote(0) //opens public notebook with 0 index in array
+  }
+
+  shouldComponentUpdate(){
+    
   }
 
   updateCards(dummy){
@@ -488,6 +493,10 @@ async loadSavedPublicNotes(){
     return base_url + imageName.substring(1);
   }
 
+  updateAudioTime = (time) => {
+    this.setState({time: time})
+  }
+
   createCarousel = () => {
     let htmlImages = [];
     //alert("number of images = " + this.state.images.length);
@@ -533,7 +542,6 @@ async loadSavedPublicNotes(){
       <MuiThemeProvider>
       <Navbar style={{'height': '2vh'}} username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
-        {this.state.items[this.state.notebook] != undefined ? <Modal onClickModal={(event)=>self.closeModal(event)} parent={this} show={this.state.showModal} class_name={this.state.items[this.state.notebook].class_name} /> : null}
     <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}{this.state.public ? <Button onClick={(event)=>this.Toggle_public_notebooks(event)}>View Your Notebooks</Button> : <Button onClick={(event)=>this.Toggle_public_notebooks(event)}>View Public Notebooks</Button>}</div>
         <div style={carstyle}>
           {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
@@ -544,11 +552,12 @@ async loadSavedPublicNotes(){
           {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
-         {this.state.loaded && this.state.audio != null  ? <AudioPlayer audio_url={'http://128.143.67.97:44104'+this.state.audio.file}></AudioPlayer> : <div>Page has no audio</div>}
+         {this.state.loaded && this.state.audio.pk != undefined  ? <AudioPlayer updateTime={this.updateAudioTime} audio_url={'http://localhost:8000/audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div>}
          <Button>Sync audio to page</Button>
          <Button>Sync page to audio</Button>
          <Button>Split into new page</Button>
          </div>
+         <Button onClick={(event)=>console.log(this.state.time)} >see time</Button>
          </div>
       </div>
       </MuiThemeProvider>

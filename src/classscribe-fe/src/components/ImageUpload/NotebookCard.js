@@ -21,14 +21,32 @@ import List from './List'
 
 
   const notestyle = {
-    "display": "block",
-    "padding-top": "3px",
-    "padding-left": "3px",
-    "padding-bottom": "3px",
-    "padding-right":"3px",
-    "margin-left": "auto",
-    "margin-right": "auto",
+    display: "block",
+    paddingTop: "3px",
+    paddingLeft: "3px",
+    paddingBottom: "3px",
+    paddingRight:"3px",
+    marginLeft: "auto",
+    marginRight: "auto",
    }
+
+   const leftModalStyle = {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'spaced-evenly',
+    alignItems: 'center'
+  }
+  const RightModalStyle = {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+
+  const modalStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+  }
 
    const buttonstyle = {
     float: 'left',
@@ -157,8 +175,8 @@ class NotebookCard extends React.Component{
         }
     }
 
-    handleSelection (selectedKeys) {
-      this.setState({ selectedKeys: selectedKeys });
+    handleSelection (key) {
+      this.setState({ selectedKeys: this.state.selectedKeys.shift(key) });
       console.log(this.state.selectedKeys)
     }
 
@@ -201,15 +219,22 @@ class NotebookCard extends React.Component{
                       <IconButton aria-label="explore icon" onClick={this.props.showModal}>
                         <ExploreIcon />
                       </IconButton>}>
+                        <div style={modalStyle}>
+                        <div style={leftModalStyle} >
                         <SelectableGroup onSelection={this.handleSelection}>
                         {this.state.parent.state.public_items.map((item, i) => {
-          	              let selected = this.state.selectedKeys.indexOf(item.pk) > -1;
+          	              let selected = this.state.selectedKeys !== undefined ? this.state.selectedKeys.indexOf(item.pk) > -1 : false;
           	              return (
-          		              <PublicCard name={item.name} sharedBy={item.owner.username} key={i} isSelected={selected} selectableKey={item.pk} />
+          		              <PublicCard name={item.name} sharedBy={item.owner} key={i} isSelected={selected} selectableKey={item.pk} />
           	              );
                           })}
                           {/* <List items={self.state.parent.state.public_items} /> */}
                         </SelectableGroup>
+                        </div>
+                        <div style={RightModalStyle}>
+                          Select a public notebook to save
+                        </div>
+                        </div>
                       </Popup>
                     </div>
                     }
