@@ -5,8 +5,8 @@ import Axios from 'axios';
 import { url } from './App';
 import 'jest';
 import { render, unmountComponentAtNode } from "react-dom";
-import { act} from "react-dom/test-utils";
 import PageCard from './components/ImageUpload/PageCard'
+import {act} from "react-dom/test-utils"
 import NotebookCard from './components/ImageUpload/NotebookCard'
 import { ExpansionPanelActions } from '@material-ui/core';
 // function makeId(length) {
@@ -35,11 +35,13 @@ afterEach(() => {
 
 
 it('renders without crashing', () => {
-  ReactDOM.render(<App />, container);
+  ReactDOM.render(App, container);
 });
 
 it("PageCard doesnt render without input", ()=>{
-  render(<PageCard/>, container);
+  act(()=>{
+    render(<PageCard></PageCard>, container);
+  })
   expect(container.textContent).not.toContain('Page')
 })
 
@@ -152,8 +154,10 @@ it("PageCard render with input", ()=>{
     "pk": 11,
     "submitted": false
 }]
-let page = pages[0]
-  render(<PageCard parent={state} page={page} pages={pages} />, container);
+  let page = pages[0]
+  act(()=>{
+    render(<PageCard parent={state} page={page} pages={pages} />, container);
+  })
   expect(container.textContent).toContain('Page '+String((pages.indexOf(page))+1))
 })
 
