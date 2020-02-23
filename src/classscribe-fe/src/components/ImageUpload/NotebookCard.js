@@ -16,8 +16,8 @@ import { base_url } from "../../App"
 import Axios from 'axios';
 import Popup from "reactjs-popup";
 import PublicCard from './PublicCard'
-import { SelectableGroup, createSelectable } from 'react-selectable';
-import List from './List'
+import Favorite from '@material-ui/icons/Favorite';
+import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 
 
   const notestyle = {
@@ -30,23 +30,40 @@ import List from './List'
     marginRight: "auto",
    }
 
-   const leftModalStyle = {
+
+   const HeaderModalStyle = {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'spaced-evenly',
+    justifyContent: 'flex-start',
     alignItems: 'center'
   }
-  const RightModalStyle = {
-    flex: 1,
+  const ContentModalStyle = {
+    flex: 6,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center'
   }
+  const ButtonModalStyle = {
+    flex: .25,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 
   const modalStyle = {
+    borderRadius: 6,
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
+    alignItems: 'center'
   }
+
+  const SubHeaderModalStyle ={
+    flex: .25,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+  } 
 
    const buttonstyle = {
     float: 'left',
@@ -215,13 +232,18 @@ class NotebookCard extends React.Component{
                     <IconButton aria-label="delete icon" onClick={(event) => self.deleteNotebook(self.state.note.pk)}>
                       <DeleteForeverIcon/>
                     </IconButton>
-                    <Popup modal trigger={
+                    <Popup modal contentStyle={{borderRadius: '20px'}} trigger={
                       <IconButton aria-label="explore icon" onClick={this.props.showModal}>
                         <ExploreIcon />
                       </IconButton>}>
                         <div style={modalStyle}>
-                        <div style={leftModalStyle} >
-                        <SelectableGroup onSelection={this.handleSelection}>
+                        <div style={HeaderModalStyle}>
+                          <h2>Public notebooks for course: {this.state.note.class_name}</h2>
+                        </div>
+                        <div style={SubHeaderModalStyle}>
+                          <h5 style={{alignSelf: 'flex-end', color: 'gray', margin: 0}}>Select a notebook to save to it your collection</h5>
+                        </div>
+                        <div style={ContentModalStyle} >
                         {this.state.parent.state.public_items.map((item, i) => {
           	              let selected = this.state.selectedKeys !== undefined ? this.state.selectedKeys.indexOf(item.pk) > -1 : false;
           	              return (
@@ -229,10 +251,9 @@ class NotebookCard extends React.Component{
           	              );
                           })}
                           {/* <List items={self.state.parent.state.public_items} /> */}
-                        </SelectableGroup>
                         </div>
-                        <div style={RightModalStyle}>
-                          Select a public notebook to save
+                        <div style={ButtonModalStyle}>
+                          <Button style={{backgroundColor: '#3f51b5', color: 'white', textAlign: 'center'}}>Add to collection</Button>
                         </div>
                         </div>
                       </Popup>
