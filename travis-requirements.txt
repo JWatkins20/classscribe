@@ -7,4 +7,4 @@ django_rest_auth
 django-cors-headers
 django-heroku
 django-nose
-ranged_fileresponse
+django-ranged-fileresponse
