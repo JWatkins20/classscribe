@@ -2,6 +2,7 @@ from rest_framework import serializers
 from imageupload.serializers import FileSerializer
 from audioupload.serializers import AudioFileSerializer
 from users.serializers import UserDetailsSerializer
+from rest_auth.serializers import UserDetailsSerializer as DefaultUserDetailsSerializer
 
 from .models import Notebook, Page
 from .models import File
@@ -23,3 +24,12 @@ class NotebookSerializer(serializers.ModelSerializer):
         model = Notebook
         depth = 1
         fields = ('Private', 'class_name', 'name', 'pages', 'pk', 'owner')
+
+class UserBooksandDetailsSerializer(DefaultUserDetailsSerializer):
+	favoritedBooks = NotebookSerializer(read_only=True, many=True)
+
+	class Meta:
+		model = User
+		depth = 1
+		fields = DefaultUserDetailsSerializer.Meta.fields + (
+		'type', 'university', 'verification_password', 'verified', 'type_object', 'favoritedBooks')

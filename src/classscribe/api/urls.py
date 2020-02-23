@@ -1,6 +1,7 @@
 from django.urls import path, include
 from users.views import *
 from .views import *
+from notebooks.views import UserBooksandDetailsView
 from Student.views import *
 
 
@@ -10,7 +11,7 @@ urlpatterns = [
 	path('verifyemail/<str:email>/<str:verification_password>', verify, name="verifyemail"),
 	path('emailverification/<str:email>', SendVerificationEmailView,name="emailverification"),
 	path('adminregistration/', AdminRegisterView.as_view(), name="admin_registration"),
-	path('user/',UserDetailsView.as_view(), name="user_details"),
+	path('user/', UserBooksandDetailsView.as_view(), name="user_details"),
 	path('audioupload/', include('audioupload.urls')),
 	path('login/', LoginView.as_view(), name='login'),
 	path('', include('rest_auth.urls'))

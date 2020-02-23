@@ -49,5 +49,8 @@ class AdminRegisterSerializer(RegisterSerializer):  # for admin user, not for dj
 class UserDetailsSerializer(DefaultUserDetailsSerializer):
 	class Meta:
 		model = User
+		depth = 1
 		fields = DefaultUserDetailsSerializer.Meta.fields + (
 		'type', 'university', 'verification_password', 'verified', 'type_object')
+
+

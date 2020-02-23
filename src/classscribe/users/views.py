@@ -15,3 +15,4 @@ class AdminRegisterView(RegisterView):
 class UserDetailsView(DefaultUserDetailsView):
 	serializer_class = UserDetailsSerializer
 
+

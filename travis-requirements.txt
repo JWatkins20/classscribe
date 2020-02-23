@@ -6,3 +6,5 @@ django-allauth
 django_rest_auth
 django-cors-headers
 django-heroku
+django-nose
+django-ranged-fileresponse

@@ -10,27 +10,27 @@ import { base_url } from "../../App";
 import Axios from 'axios';
 
 const pagestyle = {
-    "display": "block",
-    "padding-bottom": "5px",
-    "padding-left": "5px",
-    "padding-right":"5px",
-    "margin-left": "auto",
-    "margin-right": "auto",
-    "margin-bottom": "5px",
-    "width": "45%",
-    "height": "4vh"
+    display: "block",
+    paddingBottom: "5px",
+    paddingLeft: "5px",
+    paddingRight:"5px",
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: "5px",
+    width: "45%",
+    height: "4vh"
   }
 
 const contentStyle = {
-    "display": "block",
-    "padding-bottom": "5px",
-    "padding-left": "10px",
-    "padding-right":"5px",
-    "padding-top": "0px",
-    "margin-left": "auto",
-    "margin-right": "auto",
-    "margin-bottom": "5px",
-    "height": "4vh"
+    display: "block",
+    paddingBottom: "5px",
+    paddingLeft: "10px",
+    paddingRight:"5px",
+    paddingTop: "0px",
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: "5px",
+    height: "4vh"
 }
 
   class PageCard extends React.Component{
@@ -65,11 +65,14 @@ const contentStyle = {
 
     render(){
     var self = this;
+    if(self.state.parent ===undefined){
+        return(<div></div>)
+    } 
     let isStudent = self.state.parent.state.user.type === "student";
     if(this.state.page != undefined){
       return(
       <div>
-        <Card border={1} style={pagestyle} borderColor={"#09d3ac"} onClick={() => self.state.parent.switchPage(self.state.pages.indexOf(self.state.page))}>
+        <Card border={1} style={pagestyle} onClick={() => self.state.parent.switchPage(self.state.pages.indexOf(self.state.page))}>
             <CardContent style={contentStyle}>
                 <Typography align={'center'}>
                     Page {self.state.pages.indexOf(self.state.page)+1}
