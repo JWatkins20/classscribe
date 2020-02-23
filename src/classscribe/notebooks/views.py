@@ -4,10 +4,11 @@ from .models import User
 from .models import AudioFile
 from django.db.models import Q
 from notebooks.models import Notebook, Page
-from notebooks.serializers import NotebookSerializer, PageSerializer
+from notebooks.serializers import NotebookSerializer, PageSerializer, UserBooksandDetailsSerializer
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from django.shortcuts import HttpResponse
+from rest_auth.views import UserDetailsView as DefaultUserDetailsView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -202,16 +203,20 @@ def favorite_notebook_view(request):
 	#notebooks = Notebook.objects.filter(pk in data["book_pks"])
 	user = User.objects.get(pk=data["user_pk"])
 	number_added = 0
+	note_pks = str(data["books_pk"])
+	note_pks=note_pks.replace("]","")
+	note_pks=note_pks.replace("[","")
+	note_pks = note_pks.split(',')
 	try:
-		for n in data["books_pks"]:
-			notebook = Notebook.objects.get(pk=n)
-			if(user not in notebook.favoritedBy.all()):
-				notebook.favoritedBy.add(user)
+		for n in note_pks:
+			notebook = Notebook.objects.get(pk=int(n))
+			if(user not in notebook.FavoritedBy.all()):
+				notebook.FavoritedBy.add(user)
 			else:
-				return Response(status.HTTP_400_BAD_REQUEST, data={'msg': 'Could not add to favorited books'})
+				return Response(status.HTTP_400_BAD_REQUEST)
 		return Response(status=status.HTTP_201_CREATED)
 	except Exception as e:
-		return Response(status.HTTP_400_BAD_REQUEST, data={'msg': 'Could not add to favorited books'})
+		return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': str(e)})
 
 
 
@@ -254,4 +259,7 @@ def send_page_to_prof(request, pk):
 	to_send.save()
 
 	return Response(status=status.HTTP_200_OK)
+
+class UserBooksandDetailsView(DefaultUserDetailsView):
+	serializer_class = UserBooksandDetailsSerializer
 

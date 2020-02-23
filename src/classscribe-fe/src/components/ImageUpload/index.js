@@ -11,156 +11,9 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button'
 import Navbar from '../Navbar';
 import NotebookCard from './NotebookCard';
-import ReactAudioPlayer from 'react-audio-player';
-import {default as BuiltinAudioPlayer} from "react-h5-audio-player";
-import * as $ from 'jquery';
-import createClass from 'create-react-class';
-import { white } from "material-ui/styles/colors";
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
-// var AudioPlayer = createClass({
-
-//   getInitialState: function() {
-//     return {
-//       player: {},
-//       src: this.props.src
-//     }
-//   },
-
-//   componentDidMount: function() {
-//     var $player = $('.player');
-//     console.log(this.state.src)
-//     console.log($player)
-//     /**
-//       * Have to add media event listeners here.
-//       *
-//     */
-
-//     $player.on('play', (e) => {
-//       e.preventDefault();
-//       this.playLocation();
-//     });
-
-//     $player.on('pause', (e) => {
-//       e.preventDefault();
-//       console.log('pink')
-//       this.pause();
-//     });
-
-//     $player.on('ended', (e) => {
-//       e.preventDefault();
-//       this.ended();
-//     });
-
-//     $(document).on('keydown', (e) => {
-//       // Move currentTime forward and backward via arrow keys and play/pause via spacebar.
-//       if (e.keyCode == 39) {
-//         this.state.player.currentTime += 1;
-//       } else if (e.keyCode == 37) {
-//         this.state.player.currentTime -= 1;
-//       } else if (e.keyCode == 32 && this.state.player.paused == true) {
-//         e.preventDefault();
-//         this.state.player.play();
-//       }  else if (e.keyCode == 32 && this.state.player.paused == false) {
-//         e.preventDefault();
-//         this.state.player.pause()
-//       }
-//     });
-//     $player.on('dragstart', (e)=>{
-//     //   var playbackTime = this.getPlaybackTime(this.state.player.currentTime);
-
-//     // localStorage.setItem('codepenReactPlayer', playbackTime);
-//       e.preventDefault();
-//       e.stopPropagation();
-//       console.log('spink')
-//       console.log(e)
-//     })
-//     // $player.on('seeking', (e)=>{
-//     //   //   var playbackTime = this.getPlaybackTime(this.state.player.currentTime);
-  
-//     //   // localStorage.setItem('codepenReactPlayer', playbackTime);
-//     //     e.preventDefault();
-//     //     e.stopPropagation();
-//     //     console.log('spank')
-//     //     console.log(e.target.value)
-//     //   })
-
-//     $player.on('wheel', (e) => {
-//       e.preventDefault();
-//       e.stopPropagation();
-//       if (e.originalEvent.wheelDelta > 0) {
-//         this.state.player.currentTime += 1;
-//       } else {
-//         this.state.player.currentTime -= 1;
-//       }
-//     });
-//   },
-
-//   componentWillUnmount: function() {
-//     var $player = $('#' + this.props.id);
-//     $player.off('play');
-//     $player.off('pause');
-//     $(document).off('keydown')
-//     $player.off('wheel')
-//   },
-//   shouldComponentUpdate(props){
-//     if(this.state.src != props.src){
-//       return true
-//     }
-//     else{
-//       return false
-//     }
-//   }
-// ,
-//   getPlaybackTime: function(time) {
-//     var hours = Math.floor(time / 3600);
-//     var minutes = Math.floor(time / 60);
-//     if (minutes > 59) {
-//       minutes = Math.floor(time / 60) - 60;
-//     }
-
-//     var seconds = Math.round(time - minutes * 60);
-//     if (seconds > 3599) {
-//       seconds = Math.round(time - minutes * 60) - 3600;
-//     }
-
-//     return time;
-//   },
-
-//   playLocation: function() {
-//     this.setState({player: $('.player')[0]}, function() {
-//       // var playbackTime = this.getPlaybackTime(this.state.player.currentTime);
-//       // console.log(playbackTime)
-//       var playbackTime = localStorage.getItem('codepenReactPlayer');
-      
-//       if (playbackTime !== null) {
-//         console.log(playbackTime)
-//         var player = this.state.player
-//         player.currentTime = playbackTime 
-//         this.setState({player: player})
-//         console.log(this.state.player.currentTime)
-//       }
-//       this.state.player.play();
-//     })
-//   },
-
-//   pause: function() {
-//     var playbackTime = this.getPlaybackTime(this.state.player.currentTime);
-
-//     localStorage.setItem('codepenReactPlayer', playbackTime);
-//     console.log(localStorage.getItem('codepenReactPlayer'))
-//   },
-
-//   ended: function() {
-//     var playbackTime = 0;
-//     localStorage.setItem('codepenReactPlayer', playbackTime);
-//   },
-
-//   render() {
-    
-//     return (<audio controls src={this.state.src} draggable='true' className="player" preload="auto">
-//     </audio>)
-//   }
-// });
 
 const carstyle = {
   width: '50vw',
@@ -246,6 +99,14 @@ const notestyle = {
   marginLeft: "auto",
  }
 
+//  ToggleButtonStyle = {
+   
+//  }
+
+ const ToggleButtonGroupStyle = {
+    height: 10,
+ }
+
 const notecardstyle = {
    width: '100%',
    height: '100%'
@@ -298,9 +159,9 @@ export default class ImageCarousel extends Component {
     this.switchNote(0) //opens public notebook with 0 index in array
   }
 
-  shouldComponentUpdate(){
+  // shouldComponentUpdate(){
     
-  }
+  // }
 
   updateCards(dummy){
     this.setState({items : dummy})
@@ -315,7 +176,10 @@ export default class ImageCarousel extends Component {
     const res = await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
         const user = res.data;
-        this.setState({user:user});
+        this.setState({
+          user:user,
+          saved_items: user.FavoritedBooks,
+        });
     }
     if(this.state.user.type == "student" || this.state.user.type == "teacher"){
       this.loadNotes();
@@ -337,7 +201,8 @@ async loadNotes()
           ps.push(data[this.state.notebook].pages[i]);
         }
         this.setState({
-          transcript: data[this.state.notebook].pages[this.state.page].transcript
+          transcript: data[this.state.notebook].pages[this.state.page].transcript,
+          saved_items: this.state.user.favoritedBooks,
         });
         // this.setState({
         //   recording: new Audio('http://localhost:8000'+this.state.audio.file)
@@ -381,6 +246,45 @@ async getAudioDuration(src){
   })
   return p
 }
+
+  NotebookToggle = () => {
+    var self = this
+    return(<ToggleButtonGroup
+          aria-label="Notebook Toggle"
+          id="Notebooks"
+          exclusive
+          >
+          <ToggleButton
+          id="userToggle"
+          value="user_books"
+          aria-label="Your Notebook"
+          selected={!self.state.public}
+          onClick={async function(event){
+            if(!self.state.public){
+              return
+            }
+            await self.setState({public: false})
+            self.switchNote(0)}}
+          >
+          Your Notebooks
+        </ToggleButton>
+        <ToggleButton
+            id="publicToggle"
+            value="publicbooks"
+            aria-label="Saved Notebooks"
+            selected={self.state.public}
+            onClick={async function(event){
+              if(self.state.public){
+                return
+              }
+              await self.setState({public: true})
+              self.switchNote(0)}}
+            >
+            Saved Notebooks
+        </ToggleButton>
+      </ToggleButtonGroup>
+    )
+  } 
 
 changePrivacy(notebook){
   var dummy = this.state.items
@@ -441,7 +345,7 @@ async loadSavedPublicNotes(){
 
     var object = this.state.items
     if(this.state.public){
-      object = this.state.public_items
+      object = this.state.saved_items
     }
     this.setState({
       page:index,
@@ -463,10 +367,21 @@ async loadSavedPublicNotes(){
     console.log(this.state.public)
     var object = this.state.items
     if(this.state.public){
-      object = this.state.public_items
+      object = this.state.saved_items
     }
-    this.setState({notebook:index});
+    if(object[index].pages.length < 1){
+      console.log('yes')
+      this.setState({
+        pages: {},
+        transcript: '',
+        audio: {},
+        images: [],
+        pages: []
+      })
+      return
+    }
     this.setState({
+      notebook:index,
       page:0,
       transcript: object[index].pages[0] != {} && object[index].pages[0] != undefined  ? object[index].pages[0].transcript: '',
       audio: object[index].pages[0] != {} && object[index].pages[0] != undefined ? object[index].pages[0].audio : undefined
@@ -484,9 +399,7 @@ async loadSavedPublicNotes(){
       }
     }
   await this.loadPublicNotes(this.state.items[index].class_name)
-  this.setState({images:is});
-  this.setState({pages:ps});
-  this.setState({state:this.state});
+  this.setState({images:is, pages:ps});
   }
 
   getImgSrc = (imageName) => {
@@ -517,8 +430,8 @@ async loadSavedPublicNotes(){
     var notes = this.state.items;
     if(notes != undefined){
       if(this.state.public){
-        var notelist = self.state.public_items.map(function(note){
-          return <NotebookCard parent={self} notes={self.state.public_items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
+        var notelist = self.state.saved_items.map(function(note){
+          return <NotebookCard parent={self} notes={self.state.saved_items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
         })}
       else{
         var notelist = self.state.items.map(function(note){
@@ -542,7 +455,7 @@ async loadSavedPublicNotes(){
       <MuiThemeProvider>
       <Navbar style={{'height': '2vh'}} username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
-    <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}{this.state.public ? <Button onClick={(event)=>this.Toggle_public_notebooks(event)}>View Your Notebooks</Button> : <Button onClick={(event)=>this.Toggle_public_notebooks(event)}>View Public Notebooks</Button>}</div>
+    <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}<this.NotebookToggle></this.NotebookToggle></div>
         <div style={carstyle}>
           {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
         </div>

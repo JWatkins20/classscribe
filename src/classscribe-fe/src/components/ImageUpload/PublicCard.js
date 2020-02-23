@@ -18,8 +18,10 @@ import { base_url } from "../../App"
 import Axios from 'axios';
 import Popup from "reactjs-popup";
 import { SelectableGroup, createSelectable } from 'react-selectable';
-import List from 'react-list-select';
-
+import { ListItem } from "@material-ui/core";
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import {List} from '@material-ui/core';
+import Divider from '@material-ui/core/Divider';
 
 const selectedStyle = {
   background: 'blue',
@@ -53,7 +55,7 @@ class PublicCard extends Component{
         super(props);
         this.state = {
           name: props.name,
-          key: props.key,
+          id: props.id,
           sharedBy: props.sharedBy,
           selectableRef: props.selectableRef,
           isSelected: props.isSelected,
@@ -63,13 +65,10 @@ class PublicCard extends Component{
         };
     }
 
-    toggleHover = () => {
-      this.setState({hover: !this.state.hover})
-    }
+    // toggleHover = () => {
+    //   this.setState({hover: !this.state.hover})
+    // }
 
-    favorite = () => {
-
-    }
 
     render(){
     var self = this;
@@ -80,26 +79,17 @@ class PublicCard extends Component{
     else{
       cardStyle = {backgroundColor: 'white'}
     }
+    console.log(this.state.isSelected)
       return(
-        <div ref={this.state.selectableRef}>
-        {this.state.isSelected ? <Card onMouseOut={(event)=>this.toggleHover()} onMouseOver={(event)=>this.toggleHover()} style={cardStyle} border={1} borderColor={"#09d3ac"}> 
-        <CardContent>
+        <ListItem divider={Divider} button selected={this.props.isSelected} onClick={(event)=>{this.props.onClick(event, this.state.id); this.setState({state: this.state})}}>
           <Typography style={{padding: "0"}} align={'center'} variant={"h6"}>
             {this.state.name}
           </Typography>
-            <Avatar>{self.state.sharedBy.charAt(0)}</Avatar> 
-        </CardContent>
-      </Card>: <Card onClick={(event) => this.favorite()} onMouseOut={(event)=>this.toggleHover()} onMouseOver={(event)=>this.toggleHover()} style={cardStyle} border={1} borderColor={"#09d3ac"}>
-      <CardContent>
-          <Typography style={{padding: "0"}} align={'center'} variant={"h6"}>
-            {this.state.name}
-          </Typography>
-            <Avatar style={avatarr[this.state.sharedBy.pk % 5]}>{self.state.sharedBy.username.charAt(0)}</Avatar> 
-        </CardContent>
-      </Card>}
-        
-      </div>
+          <ListItemAvatar>
+          <Avatar style={avatarr[this.state.sharedBy.pk % 5]}>{self.state.sharedBy.username.charAt(0)}</Avatar> 
+          </ListItemAvatar>
+      </ListItem> 
             )
     }
 }
-export default createSelectable(PublicCard);
+export default PublicCard;

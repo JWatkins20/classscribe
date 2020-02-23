@@ -18,6 +18,8 @@ import Popup from "reactjs-popup";
 import PublicCard from './PublicCard'
 import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
+import {List} from '@material-ui/core';
+import axios from "axios";
 
 
   const notestyle = {
@@ -148,6 +150,20 @@ class NotebookCard extends React.Component{
       this.setState({notebookname: event.target.value})
     }
 
+    handleSelection = (event, id) => {
+      var dummy = this.state.selectedKeys
+      if(this.state.selectedKeys.indexOf(id) < 0){
+        dummy.unshift(id)
+        console.log(id)
+        this.setState({selectedKeys: dummy})
+      }
+      else{
+        dummy.splice(dummy.indexOf(id), 1)
+        this.setState({selectedKeys: dummy})
+      }
+      console.log(this.state.selectedKeys)
+    }
+
 
     async handleSubmit(event){
       event.preventDefault();
@@ -197,12 +213,38 @@ class NotebookCard extends React.Component{
       console.log(this.state.selectedKeys)
     }
 
+    async favorite(){
+      var self = this
+      if(this.state.selectedKeys.length > 0){
+        const url = `${base_url}notebooks/favorite/`;
+        var data2 = {
+          'user_pk': this.state.parent.state.user.pk,
+          'books_pk': this.state.selectedKeys
+        }
+        await Axios.post(url, data2).then(function(res){
+          if(res.status == 201){
+            self.setState({selectedKeys: []})
+          }
+          else{
+            alert('Was unable to add books!')
+          }
+        })
+      }
+    }
+
     render(){
       var self = this
     if(this.state.parent != undefined){
       var pageslist = self.state.parent.state.pages.map(function(page){
         return (<PageCard parent={self.state.parent} page={page} pages={self.state.parent.state.pages}  />) //onClick={() => self.switchPage(pages.indexOf(page))}
       })
+      var publics = this.state.parent.state.public_items.map((item, i) => {
+        let selected = this.state.selectedKeys !== undefined ? this.state.selectedKeys.indexOf(item.pk) > -1 : false;
+        console.log(selected)
+        return (
+          <PublicCard name={item.name} sharedBy={item.owner} id={item.pk} isSelected={selected} onClick={this.handleSelection} selectableKey={item.pk} />
+        );
+        })
       return(
     <div>
         <div style={notestyle}>  
@@ -244,16 +286,11 @@ class NotebookCard extends React.Component{
                           <h5 style={{alignSelf: 'flex-end', color: 'gray', margin: 0}}>Select a notebook to save to it your collection</h5>
                         </div>
                         <div style={ContentModalStyle} >
-                        {this.state.parent.state.public_items.map((item, i) => {
-          	              let selected = this.state.selectedKeys !== undefined ? this.state.selectedKeys.indexOf(item.pk) > -1 : false;
-          	              return (
-          		              <PublicCard name={item.name} sharedBy={item.owner} key={i} isSelected={selected} selectableKey={item.pk} />
-          	              );
-                          })}
+                        <List children={publics}></List>
                           {/* <List items={self.state.parent.state.public_items} /> */}
                         </div>
                         <div style={ButtonModalStyle}>
-                          <Button style={{backgroundColor: '#3f51b5', color: 'white', textAlign: 'center'}}>Add to collection</Button>
+                          <Button onClick={(event)=>{this.favorite()}} style={{backgroundColor: '#3f51b5', color: 'white', textAlign: 'center'}}>Add to collection</Button>
                         </div>
                         </div>
                       </Popup>
