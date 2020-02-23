@@ -94,7 +94,7 @@ class NotebookCard extends React.Component{
             notebookname: "",
             notebookprivate: false,
             selectedKeys: [],
-            checked: props.note.Private,
+            checked: props.note!==undefined ? props.note.Private : false,
             edit: false,
         };
 
