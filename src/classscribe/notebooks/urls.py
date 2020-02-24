@@ -16,5 +16,6 @@ urlpatterns = [
    	path('send/page/<int:pk>', send_page_to_prof, name="send_page_to_prof"),
    	path('get/public/<slug:pk>/<str:class_name>/', retrieve_public_notebooks, name="public"),
 	path('favorite/', favorite_notebook_view, name="favorite"),
+	path('unfavorite/', unfavorite_notebook_view, name='unfavorite'),
 	path('user/', UserBooksandDetailsView.as_view())
 ]

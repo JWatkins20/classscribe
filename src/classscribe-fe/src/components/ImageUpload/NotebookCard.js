@@ -9,6 +9,7 @@ import CardActions from '@material-ui/core/CardActions';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
+import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import Avatar from '@material-ui/core/Avatar';
 import Toggle from './toggle';
 import PageCard from './PageCard';
@@ -230,6 +231,27 @@ class NotebookCard extends React.Component{
           }
         })
       }
+      await this.props.public()
+    }
+
+    async removeSavedNotebook(key){
+      var self = this
+        const url = `${base_url}notebooks/unfavorite/`;
+        var data2 = {
+          'user_pk': this.state.parent.state.user.pk,
+          'book_pk': key.pk
+        }
+        await Axios.post(url, data2).then(function(res){
+          if(res.status == 201){
+            console.log('successfully removed item')
+          }
+          else{
+            alert('Was unable to remove books!')
+          }
+        })
+        await this.props.onUpdateUser()
+        // dummy = dummy.favoritedBooks.splice(dummy.favoritedBooks.indexOf())
+        // this.setState({state: this.state})
     }
 
     render(){
@@ -254,7 +276,7 @@ class NotebookCard extends React.Component{
                   <CardContent>
                     <form>
                       <TextField style={textfieldstyle} id="standard-basic" label="new name" onChange={(event)=>self.handleNameChange(event)} />
-                      <Button style={buttonstyle} variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
+                      <Button className="submit-name" style={buttonstyle} aria-label="submit name change" variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
                     </form> 
                   </CardContent>
                   </div>:
@@ -265,13 +287,15 @@ class NotebookCard extends React.Component{
                     </Typography> 
                   </CardContent>
                   <CardActions style={{justifyContent: 'center'}}>
-                    {self.state.parent.state.public ? <div>Shared by: {self.state.note.owner.username}</div> :
+                    {self.state.parent.state.public ? <div>Shared by: {self.state.note.owner.username}<IconButton className='remove' aria-label="remove icon" onClick={(event) => this.removeSavedNotebook(self.state.note)}>
+                    <HighlightOffRoundedIcon />
+                    </IconButton></div> :
                     <div>
                     <Toggle parent={self} />
-                    <IconButton aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
+                    <IconButton className='edit' aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
                     <EditIcon />
                     </IconButton>
-                    <IconButton aria-label="delete icon" onClick={(event) => self.deleteNotebook(self.state.note.pk)}>
+                    <IconButton className='delete' aria-label="delete icon" onClick={(event) => self.deleteNotebook(self.state.note.pk)}>
                       <DeleteForeverIcon/>
                     </IconButton>
                     <Popup modal contentStyle={{borderRadius: '20px'}} trigger={

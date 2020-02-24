@@ -212,12 +212,26 @@ def favorite_notebook_view(request):
 			notebook = Notebook.objects.get(pk=int(n))
 			if(user not in notebook.FavoritedBy.all()):
 				notebook.FavoritedBy.add(user)
+				number_added += 1
 			else:
 				return Response(status.HTTP_400_BAD_REQUEST)
-		return Response(status=status.HTTP_201_CREATED)
+		if number_added == len(note_pks):
+			return Response(status=status.HTTP_201_CREATED)
+		else:
+			Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Was only able to add '+str(number_added)+ ' notebooks'})
 	except Exception as e:
 		return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': str(e)})
 
+@api_view(["POST"])
+def unfavorite_notebook_view(request):
+	data = request.data
+	user = User.objects.get(pk=data["user_pk"])
+	notebook = Notebook.objects.get(pk=data["book_pk"])
+	try:
+		notebook.FavoritedBy.remove(user)
+		return Response(status=status.HTTP_201_CREATED)
+	except Exception as e:
+		return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': str(e)})
 
 
 class ProcessingView(APIView):

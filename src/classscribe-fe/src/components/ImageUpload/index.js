@@ -147,6 +147,7 @@ export default class ImageCarousel extends Component {
     this.changePrivacy = this.changePrivacy.bind(this);
     this.updateCards = this.updateCards.bind(this);
     this.Toggle_public_notebooks = this.Toggle_public_notebooks.bind(this);
+    this.updatePublicNotebooks = this.updatePublicNotebooks.bind(this)
   }
 
   
@@ -170,6 +171,21 @@ export default class ImageCarousel extends Component {
   async componentDidMount() {
     await this.loadUser();
     this.setState({loaded: true});
+  }
+
+  async updateUser(){
+    const res = await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
+    if(res.status === 200){
+        const user = res.data;
+        this.setState({
+          user:user,
+          saved_items: user.favoritedBooks,
+        });
+      }
+  }
+
+  async updatePublicNotebooks(){
+    //await this.loadPublicNotes(this.state.items[this.state.note].class_name)
   }
 
   async loadUser(){
@@ -246,6 +262,7 @@ async getAudioDuration(src){
   })
   return p
 }
+
 
   NotebookToggle = () => {
     var self = this
@@ -403,7 +420,11 @@ async loadSavedPublicNotes(){
   }
 
   getImgSrc = (imageName) => {
-    return base_url + imageName.substring(1);
+    var img = imageName.substring(1)
+    if(imageName.includes('localhost')){
+      img = imageName.substring(imageName.indexOf('m'))
+    }
+    return base_url + img;
   }
 
   updateAudioTime = (time) => {
@@ -431,7 +452,7 @@ async loadSavedPublicNotes(){
     if(notes != undefined){
       if(this.state.public){
         var notelist = self.state.saved_items.map(function(note){
-          return <NotebookCard parent={self} notes={self.state.saved_items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
+          return <NotebookCard onUpdateUser={()=>self.updateUser()} public={()=>{this.updatePublicNotebooks()}} parent={self} notes={self.state.saved_items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
         })}
       else{
         var notelist = self.state.items.map(function(note){
