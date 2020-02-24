@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Carousel } from 'react-responsive-carousel';
+import { Carousel } from '../../student/react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { base_url } from "../../App"
 import AudioPlayer from "../../student/AudioPlayer"
@@ -15,6 +15,16 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import TextField from 'material-ui/TextField';
 
+var currentImage;
+
+(function(){
+  var oldLog = console.log;
+  console.log = function (message) {
+      if (message.substring(0,13)== "CURRENT PAGE:")
+      currentImage=parseInt(message.substring(13))+1
+      oldLog.apply(console, arguments);
+  };
+})();
 
 const carstyle = {
   width: '50vw',
@@ -153,6 +163,7 @@ export default class ImageCarousel extends Component {
 
   split_page = async () =>{
     var image_pks = [];
+    this.state.current_image=currentImage;
     for(var i = this.state.current_image-1; i < this.state.pages[this.state.page].snapshots.length; i++){
       image_pks.push(this.state.pages[this.state.page].snapshots[i].pk)
     }
@@ -160,9 +171,12 @@ export default class ImageCarousel extends Component {
       "page_pk": this.state.pages[this.state.page].pk, 
       "image_pks": JSON.stringify(image_pks)
     }
-    await Axios.get(base_url + "notebooks/split/page/", data)
+    await Axios.post(base_url + "notebooks/split/page/", data)
+    this.loadNotes();
   }
 
+
+  
   
   // handlePrivacyChange(event){
   //   this.setState({private: event.target.value})
@@ -479,15 +493,15 @@ async loadSavedPublicNotes(){
           {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
-         {this.state.loaded && this.state.audio != undefined && this.state.audio.pk != undefined  ? <AudioPlayer updateTime={this.updateAudioTime} audio_url={'http://localhost:8000/audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div>}
+         {this.state.loaded && this.state.audio != undefined && this.state.audio.pk != undefined  ? <AudioPlayer updateTime={this.updateAudioTime} audio_url={'http://localhost:3000/audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div>}
          <Button>Sync audio to page</Button>
          <Button>Sync page to audio</Button>
          <Button onClick={this.split_page}>Split into new page</Button>
-         <TextField
+         {/*<TextField
                     hintText="Enter your current page number"
                     floatingLabelText="Current Page Number"
                     onChange = {(event) => this.setState({current_image:event.target.value})}
-                />
+         />*/}
           <br/>
          </div>
          <Button onClick={(event)=>console.log(this.state.time)} >see time</Button>
