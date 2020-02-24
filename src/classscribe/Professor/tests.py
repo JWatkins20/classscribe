@@ -69,3 +69,8 @@ class CourseTests(TestCase):
         student = User.objects.get(type="student")
         response = view_professor_notebooks(student.pk)
         self.assertEqual(401, response.status_code)
+
+    def test_view_prof_notebooks_fails_on_unknown_user(self):
+        badpk = 999
+        response = view_professor_notebooks(-1)
+        self.assertEqual(404, response.status_code)

@@ -3,6 +3,7 @@ from notebooks.models import Notebook, Page
 from users.models import User
 from imageupload.models import File
 from audioupload.models import AudioFile
+from custom_admin.models import Course
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 from .urls import notebook_page_view
@@ -16,7 +17,8 @@ import json
 
 class NotebookTests(TestCase):
     def setUp(self):
-        notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes")
+        user = User.objects.create(email="testemail@gmail.com")
+        notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes", owner=user)
         file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1", lampSN=1)
         file2 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test2", class_name="Something else", page_num="2", lampSN=1)
         file3 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test3", class_name="Practicum", page_num="3", lampSN=1)
@@ -26,6 +28,9 @@ class NotebookTests(TestCase):
         page1.snapshots.add(file2)
         page1.snapshots.add(file3)
         page1.notebook = notebook1
+        course = Course.objects.create(room="testRoom", name="testCourse", time="MWF 8:00-8:50", building="testBuilding", professorID="henryweber@email.virginia.edu", lamp_serial="0123456789abcdef", semester="Spring 2020")
+        notebook1.course = course
+        profNotebook = Notebook.objects.create(Private=False, class_name="testCourse", name="testCourse Professor Notebook", owner=None, course=course)
 
     def testfindnotebook(self):
         notebook = None
@@ -66,8 +71,15 @@ class NotebookTests(TestCase):
         notebook = Notebook.objects.get(class_name="Capstone Practicum")
         notebook_pk = notebook.pk
         c = Client()
-        response = c.delete('/notebooks/delete/' + str(notebook_pk+1))
+        response = c.delete('/notebooks/delete/' + str(notebook_pk+2))
         self.assertEqual(response.data["message"], "Couldn't find the specified notebook to delete!")
+
+    # def test_send_to_prof_succeeds(self): // getting that page1 notebook is None?
+    #     page_to_send = Page.objects.get(name="Page name")
+    #     print("PAGE TO SEND PK = ", page_to_send.pk)
+    #     c = Client()
+    #     response = c.get('/notebooks/send/page/' + str(page_to_send.pk))
+    #     self.assertEqual(response.status_code, 200)
 
 class NotebookCreationEndpointTest(APITestCase):
     def setUp(self):

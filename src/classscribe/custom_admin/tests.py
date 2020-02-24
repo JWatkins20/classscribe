@@ -24,6 +24,39 @@ class CourseTests(TestCase):
             semester="Fall 2019"
         )
 
+    def test_submit_course_succeeds(self):
+        c = Client()
+        response = c.post('/courses/create', data={"room": "testRoom1",
+                                                 "time": "MWF 8:00-8:50",
+                                                 "courseName": "Unit Course",
+                                                 "building": "testBuilding",
+                                                 "professorId": "henryweber@email.virginia.edu",
+                                                 "lamp_serial": "testLamp_serial",
+                                                 "semester": "Fall 2019"})
+        self.assertEqual(response.status_code, 200)
+
+    def test_submit_course_fails_on_conflict(self):
+        c = Client()
+        response = c.post('/courses/create', data={"room": "testRoom1",
+                                                 "time": "MTWF 8:00-8:50",
+                                                 "courseName": "Unit Course",
+                                                 "building": "testBuilding",
+                                                 "professorId": "henryweber@email.virginia.edu",
+                                                 "lamp_serial": "testLamp_serial",
+                                                 "semester": "Fall 2019"})
+        self.assertEqual(response.status_code, 400)
+
+    def test_submit_course_fails_on_bad_time(self):
+        c = Client()
+        response = c.post('/courses/create', data={"room": "testRoom1",
+                                                 "time": "MTWF8:00-8:50",
+                                                 "courseName": "Unit Course",
+                                                 "building": "testBuilding",
+                                                 "professorId": "henryweber@email.virginia.edu",
+                                                 "lamp_serial": "testLamp_serial",
+                                                 "semester": "Fall 2019"})
+        self.assertEqual(response.status_code, 400)
+
     def test_finds_course(self):
         found_course = None
         found_course = Course.objects.get(
