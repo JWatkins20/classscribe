@@ -39,7 +39,7 @@ Follow the instructions on-screen to login to your Heroku account in the web bro
 2. git remote add heroku INSERT_HEROKU_GIT_URL_FROM_HEROKU_APP_DASHBOARD_HERE  
 ![image](herokugiturl.png)  
 3. git subtree split --prefix src/classscribe master  
-(this command generates an alphanumeric string of characters you will use in the next step) 
+(this command generates an alphanumeric string of characters you will use in step 5) 
 4. heroku config:set DISABLE_COLLECTIONSTATIC=1 
 5. git push heroku ABOVE_GENERATED_STRING_OF_CHARACTERS:refs/heads/master
 6. heroku run python manage.py migrate --run-syncdb  
@@ -57,7 +57,7 @@ change the the text in the quotes on that line to the url of your BACKEND heroku
 example, https://classscribe-be.herokuapp.com/), make sure to include the slash at the end of the url when
 you paste it.  
 
-In terminal:  
+In terminal, pointed to the root of the git repo you downloaded:  
 
 1. switch the git heroku repo to the new git heroku repo of the frontend app by running the following commands:     
 2. git remote rm heroku
@@ -65,7 +65,7 @@ In terminal:
 5. git subtree split --prefix src/classscribe-fe master  
 (this command generates an alphanumeric string of characters you will use in the next step)
 6. git push heroku ABOVE_GENERATED_STRING_OF_CHARACTERS:refs/heads/master   
-7. Refresh the herokuapps URL for the frontend should any errors occur initially when testing after successful deployment.
+7. Refresh the yourFrontEndAppName.herokuapp.com URL for the frontend should any errors occur initially when testing after successful deployment.
 
 Happy Notetaking :)
 

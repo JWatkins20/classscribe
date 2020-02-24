@@ -4,10 +4,11 @@ from .models import User
 from .models import AudioFile
 from django.db.models import Q
 from notebooks.models import Notebook, Page
-from notebooks.serializers import NotebookSerializer, PageSerializer
+from notebooks.serializers import NotebookSerializer, PageSerializer, UserBooksandDetailsSerializer
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from django.shortcuts import HttpResponse
+from rest_auth.views import UserDetailsView as DefaultUserDetailsView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -44,14 +45,13 @@ def notebook_page_view(request, pk):
 	return Response(status=status.HTTP_200_OK, data={"data": objs})
 
 @api_view(["GET"])
-def retrieve_public_notebooks(request, pk):
-    obj = Notebook.objects.filter(~Q(owner__pk__exact=pk) & Q(Private=False))# finds pages with remark matching parameter
-    objs = []
-    for book in obj:
-        objs.append(NotebookSerializer(book).data)
-    if not objs:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-    return Response(status=status.HTTP_200_OK, data={"data": objs})
+def retrieve_public_notebooks(request, pk, class_name):
+	user = User.objects.get(pk=pk)
+	obj = Notebook.objects.filter(~Q(owner__pk__exact=pk) & ~Q(FavoritedBy=user) & Q(Private=False) & Q(class_name=class_name.replace("%20", " ")))# finds pages with remark matching parameter
+	objs = []
+	for book in obj:
+    		objs.append(NotebookSerializer(book).data)
+	return Response(status=status.HTTP_200_OK, data={"data": objs})
 
 
 '''
@@ -69,11 +69,11 @@ class NotebookCreateView(APIView):
 		serializer = NotebookSerializer(data=request.data)
 		if serializer.is_valid():
 			try:
-				notebook = Notebook.objects.get(class_name=request.data["class_name"], name=request.data["name"])
+				notebook = Notebook.objects.get(name=request.data["name"])
 				return Response({"key": notebook.pk}, status=status.HTTP_200_OK)
 			except ObjectDoesNotExist:
 				serializer.save()
-				notebook = Notebook.objects.get(class_name=request.data["class_name"])
+				notebook = Notebook.objects.get(name=request.data["name"])
 				notebook.owner = User.objects.get(pk=request.data["pk"])
 				notebook.save()
 				return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)
@@ -105,7 +105,6 @@ class PageCreateView(APIView):
 				page.save()
 				return Response({"key": page.pk}, status=status.HTTP_201_CREATED)
 			except:
-				print(serializer.save())
 				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -162,10 +161,8 @@ def split_page(request):
 @api_view(["POST"])
 def edit_notebook_view(request):
     data = request.data
-    #print(data.keys())
     notebook = Notebook.objects.get(pk=data["pk"])
     notebook.name = data["name"]
-    #notebook.private = data["private"]
     try:
         notebook.save()
         return Response(status=status.HTTP_200_OK, data={})
@@ -199,6 +196,27 @@ def add_audio_and_transcript_view(request):
 		return Response(status=status.HTTP_201_CREATED)
 	else:
 		return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+def favorite_notebook_view(request):
+	data = request.data
+	#notebooks = Notebook.objects.filter(pk in data["book_pks"])
+	user = User.objects.get(pk=data["user_pk"])
+	number_added = 0
+	note_pks = str(data["books_pk"])
+	note_pks=note_pks.replace("]","")
+	note_pks=note_pks.replace("[","")
+	note_pks = note_pks.split(',')
+	try:
+		for n in note_pks:
+			notebook = Notebook.objects.get(pk=int(n))
+			if(user not in notebook.FavoritedBy.all()):
+				notebook.FavoritedBy.add(user)
+			else:
+				return Response(status.HTTP_400_BAD_REQUEST)
+		return Response(status=status.HTTP_201_CREATED)
+	except Exception as e:
+		return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': str(e)})
 
 
 
@@ -242,7 +260,6 @@ def send_page_to_prof(request, pk):
 
 	return Response(status=status.HTTP_200_OK)
 
-
 @api_view(["GET"])
 def toggle_sdac_ready(request, pk):  #pk is the pk of the notebook to toggle the sdac_ready attribute
 	try:
@@ -254,4 +271,6 @@ def toggle_sdac_ready(request, pk):  #pk is the pk of the notebook to toggle the
 	except Notebook.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)
 
+class UserBooksandDetailsView(DefaultUserDetailsView):
+	serializer_class = UserBooksandDetailsSerializer
 
