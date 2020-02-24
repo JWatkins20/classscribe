@@ -13,6 +13,7 @@ import Navbar from '../Navbar';
 import NotebookCard from './NotebookCard';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import TextField from 'material-ui/TextField';
 
 
 const carstyle = {
@@ -139,6 +140,7 @@ export default class ImageCarousel extends Component {
       public: false,
       recording: undefined,
       showModal: false,
+      current_image: undefined
     };
     this.loadNotes = this.loadNotes.bind(this);
     this.loadPublicNotes = this.loadPublicNotes.bind(this);
@@ -147,6 +149,18 @@ export default class ImageCarousel extends Component {
     this.changePrivacy = this.changePrivacy.bind(this);
     this.updateCards = this.updateCards.bind(this);
     this.Toggle_public_notebooks = this.Toggle_public_notebooks.bind(this);
+  }
+
+  split_page = async () =>{
+    var image_pks = [];
+    for(var i = this.state.current_image-1; i < this.state.pages[this.state.page].snapshots.length; i++){
+      image_pks.push(this.state.pages[this.state.page].snapshots[i].pk)
+    }
+    var data ={
+      "page_pk": this.state.pages[this.state.page].pk, 
+      "image_pks": JSON.stringify(image_pks)
+    }
+    await Axios.get(base_url + "notebooks/split/page/", data)
   }
 
   
@@ -465,10 +479,16 @@ async loadSavedPublicNotes(){
           {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
-         {this.state.loaded && this.state.audio.pk != undefined  ? <AudioPlayer updateTime={this.updateAudioTime} audio_url={'http://localhost:8000/audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div>}
+         {this.state.loaded && this.state.audio != undefined && this.state.audio.pk != undefined  ? <AudioPlayer updateTime={this.updateAudioTime} audio_url={'http://localhost:8000/audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div>}
          <Button>Sync audio to page</Button>
          <Button>Sync page to audio</Button>
-         <Button>Split into new page</Button>
+         <Button onClick={this.split_page}>Split into new page</Button>
+         <TextField
+                    hintText="Enter your current page number"
+                    floatingLabelText="Current Page Number"
+                    onChange = {(event) => this.setState({current_image:event.target.value})}
+                />
+          <br/>
          </div>
          <Button onClick={(event)=>console.log(this.state.time)} >see time</Button>
          </div>
