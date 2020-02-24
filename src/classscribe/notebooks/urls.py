@@ -15,6 +15,7 @@ urlpatterns = [
 	path('privacy-toggle/', toggle_privacy_view, name="toggle"),
 	path('send/page/<int:pk>', send_page_to_prof, name="send_page_to_prof"),
 	path('get/public/<slug:pk>/', retrieve_public_notebooks, name="public"),
+	path('get/public/<slug:pk>/<str:class_name>/', retrieve_public_notebooks, name="public"),
 	path('toggle_sdac/<int:pk>', toggle_sdac_ready, name="toggle_sdac_ready"),
 	path('favorite/', favorite_notebook_view, name="favorite"),
 	path('user/', UserBooksandDetailsView.as_view())
