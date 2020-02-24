@@ -275,7 +275,7 @@ class NotebookCard extends React.Component{
                   <CardContent>
                     <Typography style={{padding: "0"}} align={'center'} variant={"h6"}>
                       {self.state.note.name}
-                    </Typography> 
+                    </Typography>
                   </CardContent>
                   <CardActions style={{justifyContent: 'center'}}>
                     {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <div>Shared by: {self.state.note.owner.username}</div> :
@@ -308,8 +308,7 @@ class NotebookCard extends React.Component{
                         </div>
                       </Popup>
                     </div>
-                    }
-                    </CardActions> 
+                    } 
                     {self.state.parent.state.public && self.state.parent.state.user.type == "teacher" ?
                       !self.state.note.sdac_ready ?
                         <div align={'center'}>
