@@ -22,7 +22,7 @@ def view_professor_notebooks(userPK):  # request data should contain logged in u
     try:
         user = User.objects.get(pk=userPK)
 
-    except Professor.DoesNotExist:
+    except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND,
                         data={"message": "Couldn't find a matching professor"})
 

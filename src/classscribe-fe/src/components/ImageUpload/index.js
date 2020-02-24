@@ -148,6 +148,7 @@ export default class ImageCarousel extends Component {
       time: 0,
       transcript: "",
       public: false,
+      sdac_ready: false,
       recording: undefined,
       showModal: false,
       current_image: undefined

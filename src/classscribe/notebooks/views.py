@@ -268,6 +268,17 @@ def send_page_to_prof(request, pk):
 
 	return Response(status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+def toggle_sdac_ready(request, pk):  #pk is the pk of the notebook to toggle the sdac_ready attribute
+	try:
+		notebook = Notebook.objects.get(pk=pk)
+		notebook.sdac_ready = not notebook.sdac_ready
+		notebook.save()
+		return Response(status=status.HTTP_200_OK)
+
+	except Notebook.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+
 class UserBooksandDetailsView(DefaultUserDetailsView):
 	serializer_class = UserBooksandDetailsSerializer
 

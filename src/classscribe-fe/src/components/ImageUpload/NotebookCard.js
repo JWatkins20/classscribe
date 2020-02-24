@@ -14,6 +14,7 @@ import Toggle from './toggle';
 import PageCard from './PageCard';
 import { base_url } from "../../App"
 import Axios from 'axios';
+import Chip from '@material-ui/core/Chip';
 import Popup from "reactjs-popup";
 import PublicCard from './PublicCard'
 import Favorite from '@material-ui/icons/Favorite';
@@ -208,6 +209,18 @@ class NotebookCard extends React.Component{
         }
     }
 
+    async toggleSDAC(pk) {
+      let that = this;
+      if (window.confirm("Are you sure you want to change the SDAC status of this notebook?")) {
+        const getUrl = `${base_url}notebooks/toggle_sdac/${pk}`;
+        Axios.get(getUrl)
+          .catch(function (error) {
+            alert("Couldn't find the notebook.");
+          });
+        that.state.note.sdac_ready = !that.state.note.sdac_ready;
+      }
+    }
+
     handleSelection (key) {
       this.setState({ selectedKeys: this.state.selectedKeys.shift(key) });
       console.log(this.state.selectedKeys)
@@ -262,10 +275,10 @@ class NotebookCard extends React.Component{
                   <CardContent>
                     <Typography style={{padding: "0"}} align={'center'} variant={"h6"}>
                       {self.state.note.name}
-                    </Typography> 
+                    </Typography>
                   </CardContent>
                   <CardActions style={{justifyContent: 'center'}}>
-                    {self.state.parent.state.public ? <div>Shared by: {self.state.note.owner.username}</div> :
+                    {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <div>Shared by: {self.state.note.owner.username}</div> :
                     <div>
                     <Toggle parent={self} />
                     <IconButton aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
@@ -295,6 +308,32 @@ class NotebookCard extends React.Component{
                         </div>
                       </Popup>
                     </div>
+                    } 
+                    {self.state.parent.state.public && self.state.parent.state.user.type == "teacher" ?
+                      !self.state.note.sdac_ready ?
+                        <div align={'center'}>
+                          <Chip
+                            label="Mark as SDAC ready"
+                            clickable
+                            color="primary"
+                            onClick={() => this.toggleSDAC(self.state.note.pk)}
+                          />
+                        </div> : 
+                        <div align={'center'}>
+                        <Chip
+                          label="Remove SDAC ready"
+                          clickable
+                          color="secondary"
+                          onClick={() => this.toggleSDAC(self.state.note.pk)}
+                        />
+                      </div> :
+                      self.state.note.sdac_ready &&
+                      <div align={'center'}>
+                        <Chip
+                          label="SDAC Ready!"
+                          color="primary"
+                        />
+                      </div>
                     }
                     </CardActions>
                     </div>

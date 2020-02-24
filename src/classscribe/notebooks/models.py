@@ -15,6 +15,7 @@ class Notebook(models.Model):
     #rating = models.FloatField(blank=True)
     FavoritedBy = models.ManyToManyField(User, related_name='favoritedBooks', null=True)
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='notebook')  # helpful for sending pages from student to prof
+    sdac_ready = models.BooleanField(default=False)  # used to indicate if notebook is sdac ready
 
 class Page(models.Model):
     snapshots = models.ManyToManyField(File, null=True, blank=True)
