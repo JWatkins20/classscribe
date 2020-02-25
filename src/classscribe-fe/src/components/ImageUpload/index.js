@@ -4,7 +4,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { base_url } from "../../App"
 import AudioPlayer from "../../student/AudioPlayer"
 import Sound from 'react-sound'
-import Axios from 'axios';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -122,7 +122,6 @@ export default class ImageCarousel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pagename: props.match.params.page_name,
       images:[],
       items: [], //Loaded Notebooks for User
       public_items: [], //Loaded notebooks for Modal view
@@ -174,7 +173,7 @@ export default class ImageCarousel extends Component {
   }
 
   async updateUser(){
-    const res = await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
+    const res = await axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
         const user = res.data;
         this.setState({
@@ -189,23 +188,24 @@ export default class ImageCarousel extends Component {
   }
 
   async loadUser(){
-    const res = await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
+    const res = await axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
         const user = res.data;
+        console.log(user)
         this.setState({
           user:user,
           saved_items: user.FavoritedBooks,
-        });
+        }, ()=>{
+          if(this.state.user.type == "student" || this.state.user.type == "teacher"){
+            this.loadNotes();
+          }
+        })
     }
-    if(this.state.user.type == "student" || this.state.user.type == "teacher"){
-      this.loadNotes();
-    }
-
 }
 
 async loadNotes()
   {
-    await Axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/").then((res) =>{
+    await axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/").then((res) =>{
     
     if(res.status===200){
       const data = res.data.data;
@@ -256,7 +256,6 @@ async getAudioDuration(src){
 
   let p = new Promise((resolve, reject)=>{
     audio.onloadedmetadata = () => {
-      console.log(audio.duration)
       resolve(audio)
     }
   })
@@ -335,7 +334,7 @@ changePrivacy(notebook){
   // }
 
 async loadPublicNotes(class_name){
-  await Axios.get(base_url + "notebooks/get/public/"+String(this.state.user.pk)+"/"+String(class_name)+"/").then((res) =>{
+  await axios.get(base_url + "notebooks/get/public/"+String(this.state.user.pk)+"/"+String(class_name)+"/").then((res) =>{
         
     if(res.status===200){
       const data = res.data.data;
@@ -463,7 +462,8 @@ async loadSavedPublicNotes(){
     else{
           return(<div>Unable to display notebooks</div>);
         }
-    if(this.state.user.type !="student" && this.state.user.type != "teacher"){
+    console.log(this.state.user.type)
+    if(this.state.user.type !='student' && this.state.user.type != 'teacher'){
       return (
             <>
               <Navbar username={this.state.user && this.state.user.username}/>

@@ -21,10 +21,8 @@ jobs:
         directories:
           - node_modules
       before_script:
-        - cd src/classscribe
-        - python manage.py runserver 127.0.0.1:8000 &
-        - cd ..  
-        - cd classscribe-fe
+        - cd src/classscribe-fe
         - npm install
       script:
+        - npm run build
         - npm run test

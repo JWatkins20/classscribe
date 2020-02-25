@@ -267,7 +267,7 @@ class NotebookCard extends React.Component{
       return(
     <div>
         <div style={notestyle}>  
-            <Card style={notecardstyle} border={1} borderColor={"#09d3ac"} onClick={(event) => self.state.parent.switchNote(this.state.notes.indexOf(this.state.note))}>
+            <Card style={notecardstyle} label='notebookcard' border={1} borderColor={"#09d3ac"} onClick={(event) => self.state.parent.switchNote(this.state.notes.indexOf(this.state.note))}>
                 {self.state.edit ? //conditional render based on whether editing process has been initiated
                 <div style={{display: 'inline-block'}}>
                   <CardContent>
