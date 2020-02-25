@@ -1,7 +1,7 @@
 import React from 'react';
 import Toggle from './toggle';
 import { render } from '@testing-library/react';
-
+//https://testing-library.com/docs/intro
 let state = {
     'state' : {
       images:[],

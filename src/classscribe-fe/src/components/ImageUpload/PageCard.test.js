@@ -2,7 +2,7 @@
 import React from 'react';
 import PageCard from './PageCard';
 import { render } from '@testing-library/react';
-
+//https://testing-library.com/docs/intro
 let state = {
     'state' : {
     pagename: '',

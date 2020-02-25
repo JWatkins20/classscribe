@@ -14,13 +14,12 @@ import Avatar from '@material-ui/core/Avatar';
 import Toggle from './toggle';
 import PageCard from './PageCard';
 import { base_url } from "../../App"
-import Axios from 'axios';
+import axios from 'axios';
 import Popup from "reactjs-popup";
 import PublicCard from './PublicCard'
 import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import {List} from '@material-ui/core';
-import axios from "axios";
 
 
   const notestyle = {
@@ -116,7 +115,7 @@ class NotebookCard extends React.Component{
       let that = this;
       if (window.confirm("Are you sure you want to delete this notebook?")) {
         const deleteUrl = `${base_url}notebooks/delete/${pk}`;
-        Axios.delete(deleteUrl)
+        axios.delete(deleteUrl)
           .catch(function (error) {
             alert(error.response.data["message"]);
           });
@@ -131,7 +130,7 @@ class NotebookCard extends React.Component{
         'pk' : this.state.note.pk,
       }
       const url = `${base_url}notebooks/privacy-toggle/`;
-      await Axios.post(url, data)
+      await axios.post(url, data)
           .then(function (response) {
               if (response.status === 200) {
                   
@@ -181,7 +180,7 @@ class NotebookCard extends React.Component{
         //'private': this.state.notebookprivate
       }
       const url = `${base_url}notebooks/edit/`;
-      await Axios.post(url, data)
+      await axios.post(url, data)
           .then(function (response) {
               if (response.status === 200) {
                   
@@ -220,7 +219,7 @@ class NotebookCard extends React.Component{
           'user_pk': this.state.parent.state.user.pk,
           'books_pk': this.state.selectedKeys
         }
-        await Axios.post(url, data2).then(async function(res){
+        await axios.post(url, data2).then(async function(res){
           if(res.status == 201){
             self.setState({selectedKeys: []})
             await self.props.onUpdatePublic()
@@ -239,7 +238,7 @@ class NotebookCard extends React.Component{
           'user_pk': this.state.parent.state.user.pk,
           'book_pk': key.pk
         }
-        await Axios.post(url, data2).then(function(res){
+        await axios.post(url, data2).then(function(res){
           if(res.status == 201){
             console.log('successfully removed item')
           }
@@ -272,8 +271,8 @@ class NotebookCard extends React.Component{
                 <div style={{display: 'inline-block'}}>
                   <CardContent>
                     <form>
-                      <TextField style={textfieldstyle} id="standard-basic" label="new name" onChange={(event)=>self.handleNameChange(event)} />
-                      <Button className="submit-name" style={buttonstyle} aria-label="submit name change" variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
+                      <TextField inputProps={{"data-testid": "content-input"}} value={this.notebookname} style={textfieldstyle} id="standard-basic" label="new name" onChange={(event)=>self.handleNameChange(event)} />
+                      <Button role='edit-submit-button' className="submit-name" style={buttonstyle} aria-label="submit name change" variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
                     </form> 
                   </CardContent>
                   </div>:
@@ -289,7 +288,7 @@ class NotebookCard extends React.Component{
                     </IconButton></div> :
                     <div>
                     <Toggle parent={self} />
-                    <IconButton className='edit' aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
+                    <IconButton role="edit-button" className='edit' aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
                     <EditIcon />
                     </IconButton>
                     <IconButton className='delete' aria-label="delete icon" onClick={(event) => self.deleteNotebook(self.state.note.pk)}>

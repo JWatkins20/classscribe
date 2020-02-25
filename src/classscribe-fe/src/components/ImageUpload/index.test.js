@@ -1,13 +1,17 @@
 
 import React from 'react';
 import ImageCarousel from './index';
-import { render, fireEvent, wait, waitForDomChange } from '@testing-library/react';
+import { render, fireEvent, wait, waitForDomChange, cleanup, getAllByTestId } from '@testing-library/react';
 // import axiosMock from './__mocks__/axios'
-
+//https://testing-library.com/docs/intro
 import axios from 'axios'
 import 'jest';
 
-jest.mock('axios');
+jest.mock('axios', () => {
+  return {
+    post: jest.fn(() => Promise.resolve({ data: {} })),
+    get: jest.fn(() => Promise.resolve({ data: {} })),
+  }})
 
 let state = {
     'state' : {
@@ -30,6 +34,7 @@ let state = {
 
   let notes = state.state.items
   let note = notes[state.state.notebook]
+afterEach(cleanup)
 
 it('render student ui', async () => {
   /**
@@ -40,7 +45,23 @@ it('render student ui', async () => {
   axios.get.mockResolvedValueOnce({data: {data: [{"Private":true,"class_name":"STS 4500","name":"Capstone Practicum","pages":[{"time":"2019-12-12","snapshots":[{"file":"/media/linear3_off_azhLcWo.jpg","remark":"bfb3ab18","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:23.766416Z","lampSN":34957,"pk":3},{"file":"/media/linear3_off_jpGHkWP.jpg","remark":"bfb3ab19","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:45.387858Z","lampSN":34957,"pk":4},{"file":"/media/linear3_off_rFhGXAn.jpg","remark":"bfb3ab20","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:54.000557Z","lampSN":34957,"pk":5}],"audio":{"file":"/media/Section1_mp3cut.net_2_ZndfqE4.mp3","remark":"bfb3ab6","class_name":"who cares","length":"3000","timestamp":null,"pk":10},"name":"FD2Kp2","transcript":"I am the teacher this is what I say!","pk":1,"submitted":true},{"time":"2020-01-17","snapshots":[{"file":"/media/linear3_off_azhLcWo.jpg","remark":"bfb3ab18","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:23.766416Z","lampSN":34957,"pk":3},{"file":"/media/linear3_off_jpGHkWP.jpg","remark":"bfb3ab19","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:45.387858Z","lampSN":34957,"pk":4},{"file":"/media/linear3_off_rFhGXAn.jpg","remark":"bfb3ab20","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:54.000557Z","lampSN":34957,"pk":5}],"audio":null,"name":"FD2Kp2","transcript":"","pk":2,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/bg1_92NGGin.png","remark":"bfb3ab@virginia.edu","class_name":"example","page_num":"1","timestamp":"2020-01-16T12:52:13.438682Z","lampSN":1,"pk":2}],"audio":null,"name":"Databs","transcript":"","pk":3,"submitted":false}],"pk":1,"owner":{"pk":1,"username":"bfb3ab@virginia.edu","email":"bfb3ab@virginia.edu","first_name":"Benjamin","last_name":"Brown","type":"student","university":"University of Virginia","verification_password":"AgFyT5ZUJX","verified":true,"type_object":null}}]}, status: 200})
   axios.get.mockResolvedValueOnce({data: {data: [{"Private":false,"class_name":"STS 4500","name":"Anotha one 2","pages":[],"pk":9,"owner":{"pk":4,"username":"jimbofisher@jimbofisher.edu","email":"bfb3ab@virginia.edu","first_name":"Jimbo","last_name":"Fisher","type":null,"university":"","verification_password":"","verified":false,"type_object":null}}]}, status: 200})
   const { getAllByText, getByText } = render(<ImageCarousel />);
-  expect(getAllByText('')).toHaveLength(10);
+  expect(getAllByText('')).toHaveLength(10); //expect used to evaluate expression
   const card = await waitForDomChange(()=>getByText("Capstone Practicum")) // wait for rerender after setstate, then find element with specified text(Notebook Card)
   fireEvent.click(getByText("Capstone Practicum")) // run switchnote() function
+  fireEvent.click(getByText("Page 1")) // run switchnote() function
 });
+
+it('test notebook edit button', async ()=> {
+  axios.get.mockResolvedValueOnce({data: {"pk":1,"username":"bfb3ab@virginia.edu","email":"bfb3ab@virginia.edu","first_name":"Benjamin","last_name":"Brown","type":"student","university":"University of Virginia","verification_password":"AgFyT5ZUJX","verified":true,"type_object":null}, status: 200})
+  axios.get.mockResolvedValueOnce({data: {data: [{"Private":true,"class_name":"STS 4500","name":"Capstone Practicum","pages":[{"time":"2019-12-12","snapshots":[{"file":"/media/linear3_off_azhLcWo.jpg","remark":"bfb3ab18","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:23.766416Z","lampSN":34957,"pk":3},{"file":"/media/linear3_off_jpGHkWP.jpg","remark":"bfb3ab19","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:45.387858Z","lampSN":34957,"pk":4},{"file":"/media/linear3_off_rFhGXAn.jpg","remark":"bfb3ab20","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:54.000557Z","lampSN":34957,"pk":5}],"audio":{"file":"/media/Section1_mp3cut.net_2_ZndfqE4.mp3","remark":"bfb3ab6","class_name":"who cares","length":"3000","timestamp":null,"pk":10},"name":"FD2Kp2","transcript":"I am the teacher this is what I say!","pk":1,"submitted":true},{"time":"2020-01-17","snapshots":[{"file":"/media/linear3_off_azhLcWo.jpg","remark":"bfb3ab18","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:23.766416Z","lampSN":34957,"pk":3},{"file":"/media/linear3_off_jpGHkWP.jpg","remark":"bfb3ab19","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:45.387858Z","lampSN":34957,"pk":4},{"file":"/media/linear3_off_rFhGXAn.jpg","remark":"bfb3ab20","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:54.000557Z","lampSN":34957,"pk":5}],"audio":null,"name":"FD2Kp2","transcript":"","pk":2,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/bg1_92NGGin.png","remark":"bfb3ab@virginia.edu","class_name":"example","page_num":"1","timestamp":"2020-01-16T12:52:13.438682Z","lampSN":1,"pk":2}],"audio":null,"name":"Databs","transcript":"","pk":3,"submitted":false}],"pk":1,"owner":{"pk":1,"username":"bfb3ab@virginia.edu","email":"bfb3ab@virginia.edu","first_name":"Benjamin","last_name":"Brown","type":"student","university":"University of Virginia","verification_password":"AgFyT5ZUJX","verified":true,"type_object":null}}]}, status: 200})
+  axios.get.mockResolvedValueOnce({data: {data: [{"Private":false,"class_name":"STS 4500","name":"Anotha one 2","pages":[],"pk":9,"owner":{"pk":4,"username":"jimbofisher@jimbofisher.edu","email":"bfb3ab@virginia.edu","first_name":"Jimbo","last_name":"Fisher","type":null,"university":"","verification_password":"","verified":false,"type_object":null}}]}, status: 200})
+  axios.post.mockResolvedValueOnce({status: 200}) // post request from edit notebook
+  const { getAllByText, getByText, getAllByRole, getByTestId } = render(<ImageCarousel />);
+  await waitForDomChange(()=>getByText("Capstone Practicum"))
+  expect(getAllByRole('edit-button')).toHaveLength(1)
+  fireEvent.click(getAllByRole('edit-button')[0])
+  //await waitForDomChange(()=>getAllByRole('edit-textfield'))
+  fireEvent.change(getByTestId('content-input'), {target: {value: 'Test Name'}})
+  fireEvent.click(getAllByRole('edit-submit-button')[0])
+  expect(getAllByText('Test Name')).toHaveLength(1)
+})
