@@ -9,6 +9,7 @@ from .urls import notebook_page_view
 from django.test.client import Client
 from rest_framework import status
 from rest_framework.test import APITestCase
+from notebooks.serializers import NotebookSerializer
 import json
 
 
@@ -78,20 +79,23 @@ class NotebookCreationEndpointTest(APITestCase):
         response2 = self.client.post(reverse('create'),{"Private": False, "class_name": 'CS 1112', "name": 'jw2vp CS 1112', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
         self.assertTrue(response2.status_code==201, msg=response.data)
         self.assertTrue(response.data["key"] == response2.data["key"]-1)
-
+    def testbadserializer(self):
+        response = self.client.post(reverse('create'),{})
+        self.assertTrue(response.status_code==400, msg=response.data)
 
 
 class NotebookGetViewTests(APITestCase):
     def setUp(self):
         user1 = User.objects.create(username='username134', password='pa$$word12466')
-        # user1.save()
-        notebook1 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes1")
-        notebook2 = Notebook.objects.create(Private=False, class_name="Class2", name="bfb3ab_notes2")
-        notebook3 = Notebook.objects.create(Private=False, class_name="Class3", name="bfb3ab_notes3")
+        user2 = User.objects.create(username='username124', password='pa$$word123')
+        user3 = User.objects.create(username='username114', password='pa$$word323')
+        notebook1 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes1", owner=user1)
+        notebook2 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes2", owner=user1)
+        notebook3 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes3", owner=user3)
         file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1", lampSN=1)
         audiofile1 = AudioFile.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", length="1")
         page1 = Page.objects.create(name="Page1 name") 
-
+        
         page2 = Page.objects.create(name="Page2 name") 
         notebook1.owner = user1
         page1.notebook = notebook1
@@ -137,6 +141,13 @@ class NotebookGetViewTests(APITestCase):
         data = json.loads(response.content)
         self.assertTrue(response.status_code==200)
         self.assertTrue(len(data["data"][0]["pages"]) == 2 , msg=str(response.context))
+    def testBadPageSerializer(self):
+        user = User.objects.get(username='username134')
+        notebook = Notebook.objects.get(name='bfb3ab_notes1')
+        response = self.client.post(reverse('create_page'), {})
+        self.assertTrue(response.status_code == 400)
+        response = self.client.post(reverse('create_page'), {"name": "added_page", "pk": "32"})
+        self.assertTrue(response.status_code == 400)
     def testaddaudio(self):
         user = User.objects.get(username='username134')
         notebook = Notebook.objects.get(name='bfb3ab_notes1')
@@ -167,23 +178,57 @@ class NotebookGetViewTests(APITestCase):
         notebook1 = Notebook.objects.get(pk=pk)
         self.assertTrue(response.status_code==200)
         self.assertTrue(notebook1.name == 'new notebook name')
-    # def favorite(self):
-    #     notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
-    #     notebook2 =  Notebook.objects.get(name='bfb3ab_notes2')
-    #     notebook3 =  Notebook.objects.get(name='bfb3ab_notes3')
-    #     user = User.objects.get(username='username134')  
-    #     response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [notebook1.pk, notebook2.pk, notebook3.pk]})
-    #     self.assertTrue(response.status_code==201)
-    #     self.assertTrue(notebook1 and notebook2 and notebook3 in user.favoritedBooks)
-    # def unfavorite(self):
-    #     notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
-    #     notebook2 =  Notebook.objects.get(name='bfb3ab_notes2')
-    #     notebook3 =  Notebook.objects.get(name='bfb3ab_notes3')
-    #     user = User.objects.get(username='username134') 
-    #     response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [notebook1.pk, notebook2.pk, notebook3.pk]}) 
-    #     self.assertTrue(response.status_code==201)
-    #     self.assertTrue(notebook1 and notebook2 and notebook3 in user.favoritedBooks)
-    #     response = self.client.post(reverse('unfavorite'), {"user_pk": user.pk, "book_pk": notebook1.pk})
-    #     self.assertTrue(response.status_code==201)
-    #     self.assertTrue(notebook2 and notebook3 in user.favoritedBooks)
-    #     self.assertTrue(notebook1 not in user.favoritedBooks)
+    def testfavorite(self):
+        notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
+        notebook2 =  Notebook.objects.get(name='bfb3ab_notes2')
+        notebook3 =  Notebook.objects.get(name='bfb3ab_notes3')
+        user = User.objects.get(username='username134')  
+        response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [notebook1.pk, notebook2.pk, notebook3.pk]})
+        self.assertTrue(response.status_code==201)
+        notebook3 = Notebook.objects.get(name='bfb3ab_notes3')
+        user = User.objects.get(username='username134')
+        self.assertTrue(notebook3 in user.favoritedBooks.all())
+    def testFavoriteFails(self):
+        notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
+        notebook2 =  Notebook.objects.get(name='bfb3ab_notes2')
+        notebook3 =  Notebook.objects.get(name='bfb3ab_notes3')
+        user = User.objects.get(username='username134')  
+        notebook3.FavoritedBy.add(user)
+        response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [notebook1.pk, notebook2.pk, notebook3.pk]})
+        self.assertTrue(response.status_code==400, msg=str(response.status_code))
+    def testunfavorite(self):
+        notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
+        notebook2 =  Notebook.objects.get(name='bfb3ab_notes2')
+        notebook3 =  Notebook.objects.get(name='bfb3ab_notes3')
+        user = User.objects.get(username='username134')  
+        response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [notebook1.pk, notebook2.pk, notebook3.pk]})
+        self.assertTrue(response.status_code==201)
+        notebook3 = Notebook.objects.get(name='bfb3ab_notes3')
+        user = User.objects.get(username='username134')
+        self.assertTrue(notebook3 in user.favoritedBooks.all())
+        response = self.client.post(reverse('unfavorite'), {"user_pk": user.pk, "book_pk": notebook3.pk})
+        self.assertTrue(response.status_code==201)
+        self.assertTrue(notebook3 not in user.favoritedBooks.all())
+    def testRetrievePublicBooks(self):
+        user = User.objects.get(username='username134')
+        notebook2 = Notebook.objects.get(name='bfb3ab_notes2')
+        notebook3 = Notebook.objects.get(name='bfb3ab_notes3')
+        notebook = Notebook.objects.get(name='bfb3ab_notes1')
+        response = self.client.get(reverse('public', args=[user.pk, notebook.class_name]), format=json)
+        self.assertTrue(response.status_code == 200)
+        self.assertTrue(notebook3.pk == response.data["data"][0]["pk"], msg={str(response.data["data"])})
+    def testAddFile(self):
+        file1 = File.objects.get(remark='test1')
+        page1 = Page.objects.get(name="Page1 name")
+        response = self.client.post(reverse('add_file'), {"pk": page1.pk, "image_pks": [file1.pk]})
+        page1 = Page.objects.get(name="Page1 name")
+        self.assertTrue(response.status_code==201)
+        self.assertTrue(file1 in page1.snapshots.all(), msg=str(page1.snapshots.all()))
+    def testBadAddFile(self):
+        file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1", lampSN=1)
+        file2 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test2", class_name="Something else", page_num="2", lampSN=1)
+        file3 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test3", class_name="Practicum", page_num="3", lampSN=1)
+        file4 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test4", class_name="Something else", page_num="4", lampSN=1)
+        page1 = Page.objects.create(name="Page1 name") 
+        response = self.client.post(reverse('add_file'), {"pk": page1.pk, "image_pks": [99]})
+        self.assertTrue(response.status_code==400)

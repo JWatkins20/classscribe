@@ -18,6 +18,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.base import ObjectDoesNotExist
 from Professor.views import view_professor_notebooks
 import requests
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 
@@ -132,7 +133,7 @@ def add_file_view(request):
 	for pk in image_pks:
 		try:
 			files.append(File.objects.get(pk=int(pk)))
-		except:
+		except ObjectDoesNotExist:
 			return Response({"type": image_pks}, status=status.HTTP_400_BAD_REQUEST)
 	
 	print ("Files added:", files)
@@ -143,10 +144,7 @@ def add_file_view(request):
 
 
 	page.save()
-	if len(added_files) > 0:
-		return Response({"num_added": (data["image_pks"],image_pks)}, status=status.HTTP_201_CREATED)
-	else:
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+	return Response({"num_added": (data["image_pks"],image_pks)}, status=status.HTTP_201_CREATED)
 
 @api_view(["POST"])
 def split_page(request):
@@ -212,13 +210,14 @@ def favorite_notebook_view(request):
 			notebook = Notebook.objects.get(pk=int(n))
 			if(user not in notebook.FavoritedBy.all()):
 				notebook.FavoritedBy.add(user)
+				notebook.save()
 				number_added += 1
-			else:
-				return Response(status.HTTP_400_BAD_REQUEST)
-		if number_added == len(note_pks):
+		if len(note_pks) == number_added:
 			return Response(status=status.HTTP_201_CREATED)
 		else:
-			Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Was only able to add '+str(number_added)+ ' notebooks'})
+			return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Did not get all notebooks'})
+	except ObjectDoesNotExist:
+		return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': str(e)})
 	except Exception as e:
 		return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': str(e)})
 
@@ -229,24 +228,25 @@ def unfavorite_notebook_view(request):
 	notebook = Notebook.objects.get(pk=data["book_pk"])
 	try:
 		notebook.FavoritedBy.remove(user)
+		notebook.save()
 		return Response(status=status.HTTP_201_CREATED)
 	except Exception as e:
 		return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': str(e)})
 
 
-class ProcessingView(APIView):
-	def get(self, request):
-		notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes")
-		file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1")
-		file2 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test2", class_name="Something else", page_num="2")
-		file3 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test3", class_name="Practicum", page_num="3")
-		file4 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test4", class_name="Something else", page_num="4")
-		page1 = Page.objects.create(name="Page name")
-		page1.snapshots.add(file1)
-		page1.snapshots.add(file2)
-		page1.snapshots.add(file3)
-		page1.notebook = notebook1
-		return Response()
+# class ProcessingView(APIView):
+# 	def get(self, request):
+# 		notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes")
+# 		file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1")
+# 		file2 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test2", class_name="Something else", page_num="2")
+# 		file3 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test3", class_name="Practicum", page_num="3")
+# 		file4 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test4", class_name="Something else", page_num="4")
+# 		page1 = Page.objects.create(name="Page name")
+# 		page1.snapshots.add(file1)
+# 		page1.snapshots.add(file2)
+# 		page1.snapshots.add(file3)
+# 		page1.notebook = notebook1
+# 		return Response()
 
 
 @api_view(["GET"])

@@ -185,7 +185,7 @@ export default class ImageCarousel extends Component {
   }
 
   async updatePublicNotebooks(){
-    //await this.loadPublicNotes(this.state.items[this.state.note].class_name)
+    await this.loadPublicNotes(this.state.items[this.state.notebook].class_name)
   }
 
   async loadUser(){
@@ -381,13 +381,11 @@ async loadSavedPublicNotes(){
   }
 
   async switchNote(index) {
-    console.log(this.state.public)
     var object = this.state.items
     if(this.state.public){
       object = this.state.saved_items
     }
     if(object[index].pages.length < 1){
-      console.log('yes')
       this.setState({
         pages: {},
         transcript: '',
@@ -415,7 +413,10 @@ async loadSavedPublicNotes(){
         }
       }
     }
-  await this.loadPublicNotes(this.state.items[index].class_name)
+  console.log(String(this.state.items) + ' and index: '+String(index))
+  if(!this.state.public){
+    await this.loadPublicNotes(this.state.items[index].class_name)
+  }
   this.setState({images:is, pages:ps});
   }
 
@@ -452,11 +453,11 @@ async loadSavedPublicNotes(){
     if(notes != undefined){
       if(this.state.public){
         var notelist = self.state.saved_items.map(function(note){
-          return <NotebookCard onUpdateUser={()=>self.updateUser()} public={()=>{this.updatePublicNotebooks()}} parent={self} notes={self.state.saved_items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
+          return <NotebookCard onUpdateUser={()=>self.updateUser()} onUpdatePublic={()=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.saved_items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
         })}
       else{
         var notelist = self.state.items.map(function(note){
-          return <NotebookCard showModal={(event)=>self.showModal(event)} parent={self} notes={self.state.items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
+          return <NotebookCard showModal={(event)=>self.showModal(event)} onUpdatePublic={()=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
         })}
       }            
     else{
@@ -491,7 +492,6 @@ async loadSavedPublicNotes(){
          <Button>Sync page to audio</Button>
          <Button>Split into new page</Button>
          </div>
-         <Button onClick={(event)=>console.log(this.state.time)} >see time</Button>
          </div>
       </div>
       </MuiThemeProvider>

@@ -155,14 +155,12 @@ class NotebookCard extends React.Component{
       var dummy = this.state.selectedKeys
       if(this.state.selectedKeys.indexOf(id) < 0){
         dummy.unshift(id)
-        console.log(id)
         this.setState({selectedKeys: dummy})
       }
       else{
         dummy.splice(dummy.indexOf(id), 1)
         this.setState({selectedKeys: dummy})
       }
-      console.log(this.state.selectedKeys)
     }
 
 
@@ -199,8 +197,8 @@ class NotebookCard extends React.Component{
   
     }
 
-    componentDidUpdate(props) {
-        if (props.note != this.state.note) {
+    componentDidUpdate(props, state) {
+        if (props.notes != state.notes) {
             this.setState({
               note: props.note,
               notes: props.notes,
@@ -211,27 +209,27 @@ class NotebookCard extends React.Component{
 
     handleSelection (key) {
       this.setState({ selectedKeys: this.state.selectedKeys.shift(key) });
-      console.log(this.state.selectedKeys)
     }
 
     async favorite(){
       var self = this
+      
       if(this.state.selectedKeys.length > 0){
         const url = `${base_url}notebooks/favorite/`;
         var data2 = {
           'user_pk': this.state.parent.state.user.pk,
           'books_pk': this.state.selectedKeys
         }
-        await Axios.post(url, data2).then(function(res){
+        await Axios.post(url, data2).then(async function(res){
           if(res.status == 201){
             self.setState({selectedKeys: []})
+            await self.props.onUpdatePublic()
           }
           else{
             alert('Was unable to add books!')
           }
         })
       }
-      await this.props.public()
     }
 
     async removeSavedNotebook(key){
@@ -262,7 +260,6 @@ class NotebookCard extends React.Component{
       })
       var publics = this.state.parent.state.public_items.map((item, i) => {
         let selected = this.state.selectedKeys !== undefined ? this.state.selectedKeys.indexOf(item.pk) > -1 : false;
-        console.log(selected)
         return (
           <PublicCard name={item.name} sharedBy={item.owner} id={item.pk} isSelected={selected} onClick={this.handleSelection} selectableKey={item.pk} />
         );
