@@ -72,7 +72,7 @@ const contentStyle = {
     if(this.state.page != undefined){
       return(
       <div>
-        <Card border={1} label='pagecard' style={pagestyle} onClick={() => self.state.parent.switchPage(self.state.pages.indexOf(self.state.page))}>
+        <Card border={1} label='pagecard' style={pagestyle} onClick={(event) => self.state.parent.switchPage(self.state.pages.indexOf(self.state.page))}>
             <CardContent style={contentStyle}>
                 <Typography align={'center'}>
                     Page {self.state.pages.indexOf(self.state.page)+1}

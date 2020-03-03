@@ -238,15 +238,15 @@ class NotebookCard extends React.Component{
           'user_pk': this.state.parent.state.user.pk,
           'book_pk': key.pk
         }
-        await axios.post(url, data2).then(function(res){
+        await axios.post(url, data2).then(async function(res){
           if(res.status == 201){
             console.log('successfully removed item')
+            await self.props.onUpdateUser()
           }
           else{
             alert('Was unable to remove books!')
           }
         })
-        await this.props.onUpdateUser()
         // dummy = dummy.favoritedBooks.splice(dummy.favoritedBooks.indexOf())
         // this.setState({state: this.state})
     }

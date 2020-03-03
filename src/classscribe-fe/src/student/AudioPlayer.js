@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {default as BuiltinAudioPlayer} from "react-h5-audio-player";
 import Button from '@material-ui/core/Button'
 
-const AudioPlayer = ({updateTime, audio_url}) => {
+const AudioPlayer = ({parent, getAudioDuration,updateTime, audio_url, syncToPage}) => {
     var myaudio = {}
     const [currentTime, setCurrentTime] = useState(0)
     const [playing, setPlaying] = useState(false)
@@ -12,10 +12,12 @@ const AudioPlayer = ({updateTime, audio_url}) => {
     // }
     useEffect(() => {
         if(playing){
+            // 
             const timer = setTimeout(() => {updateTime(myaudio.currentTime)}, 1000);
             return () => clearTimeout(timer);
         }
     })
+
 
     // function changeTime(time){
     //     myaudio.currentTime = currentTime + time
@@ -25,13 +27,12 @@ const AudioPlayer = ({updateTime, audio_url}) => {
         <div>
             <audio id="audioPlayer" 
                 preload="auto" 
-                onPlay={(event)=>setPlaying(true)}
+                onPlay={(event)=>{setPlaying(true); getAudioDuration(myaudio)}}
                 onPause={(event)=>setPlaying(false)}
                 onSeeked={(event)=>{updateTime(myaudio.currentTime);}}
                 src={audio_url}  controls ref={audio=>{myaudio = audio}}>
             </audio>
-            {/* <Button onClick={(event)=>changeTime(10)}>Skip 10 seconds</Button>
-            <Button onClick={(event)=>changeTime(-10)}>Rewind 10 seconds</Button> */}
+            <Button onClick={(event)=>{myaudio.currentTime = syncToPage(parent); updateTime(myaudio.currentTime)}}>Sync audio to page</Button>
         </div>
     );
 }
