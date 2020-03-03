@@ -3,7 +3,6 @@ from imageupload.serializers import FileSerializer
 from audioupload.serializers import AudioFileSerializer
 from users.serializers import UserDetailsSerializer
 from rest_auth.serializers import UserDetailsSerializer as DefaultUserDetailsSerializer
-
 from .models import Notebook, Page
 from .models import File
 from .models import User
@@ -15,7 +14,6 @@ class PageSerializer(serializers.ModelSerializer):
         model = Page
         fields = ('time', 'snapshots', 'audio', 'name', 'transcript', 'pk', 'submitted')
 
-
 class NotebookSerializer(serializers.ModelSerializer):
     #pages = PageSerializer(many=True, read_only=True)
     owner = UserDetailsSerializer(read_only=True)
@@ -24,6 +22,13 @@ class NotebookSerializer(serializers.ModelSerializer):
         model = Notebook
         depth = 1
         fields = ('Private', 'class_name', 'name', 'pages', 'pk', 'owner')
+
+# class NotebookRatingSerializer(serializers.ModelSerializer):
+#     user = UserDetailsSerializer(read_only=True)
+#     notebook = NotebookSerializer(read_only=True)
+#     class Meta:
+#         model = NotebookRating
+#         fields = ('rating', 'user', 'notebook')
 
 class UserBooksandDetailsSerializer(DefaultUserDetailsSerializer):
 	favoritedBooks = NotebookSerializer(read_only=True, many=True)
