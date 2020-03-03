@@ -150,11 +150,19 @@ def add_file_view(request):
 def split_page(request):
 	data = request.data
 
-	notebook = Notebook.objects.get(pk=data["notebook_pk"])
-	page1 = Page.objects.get(pk=data["page1_pk"])
-	page2 = Page.objects.get(pk=data["page2_pk"])
-	image = Page.objects.get(pk=data["image_pk"])
+	image_pks = str(data["image_pks"])
+	image_pks=image_pks.replace("]","")
+	image_pks=image_pks.replace("[","")
+	image_pks = image_pks.split(',')
 
+	page = Page.objects.get(pk=data["page_pk"])
+	new_page = Page.objects.create(name=page.name, notebook=page.notebook, time=page.time, submitted=False)
+
+	for pk in image_pks:
+		page.snapshots.remove(File.objects.get(pk=int(pk)))
+		new_page.snapshots.add(File.objects.get(pk=int(pk)))
+
+	return Response(status=status.HTTP_200_OK, data={})
 
 @api_view(["POST"])
 def edit_notebook_view(request):
@@ -273,6 +281,17 @@ def send_page_to_prof(request, pk):
 	to_send.save()
 
 	return Response(status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def toggle_sdac_ready(request, pk):  #pk is the pk of the notebook to toggle the sdac_ready attribute
+	try:
+		notebook = Notebook.objects.get(pk=pk)
+		notebook.sdac_ready = not notebook.sdac_ready
+		notebook.save()
+		return Response(status=status.HTTP_200_OK)
+
+	except Notebook.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
 
 class UserBooksandDetailsView(DefaultUserDetailsView):
 	serializer_class = UserBooksandDetailsSerializer

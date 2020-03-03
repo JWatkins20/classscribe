@@ -21,3 +21,5 @@ markdown==3.1.1
 gunicorn==19.9.0
 dj-database-url 
 psycopg2
+django-nose
+django-ranged-fileresponse

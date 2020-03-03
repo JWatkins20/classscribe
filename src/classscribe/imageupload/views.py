@@ -39,45 +39,45 @@ def scan_view(request, page_name=""):
     return Response(status=status.HTTP_200_OK, data={"data": names})
 
 
-@api_view(["GET"])
-def download_notebook(request):
-    scans = File.objects.filter(remark="hank")
-    class_to_page_num = {}  # helps us decide when we've actually reached the last page
-    class_to_last_scan = {}  # helps us track the last page scan of each class
+# @api_view(["GET"])
+# def download_notebook(request):
+#     scans = File.objects.filter(remark="hank")
+#     class_to_page_num = {}  # helps us decide when we've actually reached the last page
+#     class_to_last_scan = {}  # helps us track the last page scan of each class
 
-    for scan in scans:  # builds a map from the class name to the corresponding last page number
-        if scan.class_name in class_to_page_num:
-            if int(scan.page_num) > class_to_page_num[scan.class_name]:
-                class_to_page_num[scan.class_name] = int(scan.page_num)
-                class_to_last_scan[scan.class_name] = scan.file.name
-        else:
-            class_to_page_num[scan.class_name] = int(scan.page_num)
-            class_to_last_scan[scan.class_name] = scan.file.name
+#     for scan in scans:  # builds a map from the class name to the corresponding last page number
+#         if scan.class_name in class_to_page_num:
+#             if int(scan.page_num) > class_to_page_num[scan.class_name]:
+#                 class_to_page_num[scan.class_name] = int(scan.page_num)
+#                 class_to_last_scan[scan.class_name] = scan.file.name
+#         else:
+#             class_to_page_num[scan.class_name] = int(scan.page_num)
+#             class_to_last_scan[scan.class_name] = scan.file.name
 
-    classes = class_to_last_scan.keys()
-    files = class_to_last_scan.values()
+#     classes = class_to_last_scan.keys()
+#     files = class_to_last_scan.values()
 
-    zip_subdir = "notebooks"
-    zip_filename = "%s.zip" % zip_subdir
+#     zip_subdir = "notebooks"
+#     zip_filename = "%s.zip" % zip_subdir
 
-    s = BytesIO()
+#     s = BytesIO()
 
-    zf = zipfile.ZipFile(s, "w")
+#     zf = zipfile.ZipFile(s, "w")
 
-    for name in files:
-        fpath = os.path.join(settings.MEDIA_ROOT, name)
-        fdir, fname = os.path.split(fpath)
-        zip_path = os.path.join(zip_subdir, fname)
+#     for name in files:
+#         fpath = os.path.join(settings.MEDIA_ROOT, name)
+#         fdir, fname = os.path.split(fpath)
+#         zip_path = os.path.join(zip_subdir, fname)
 
-        zf.write(fpath, zip_path)
+#         zf.write(fpath, zip_path)
 
-    zf.close()
+#     zf.close()
 
-    resp = HttpResponse(s.getvalue())
-    resp['Content-Type'] = 'application/x-zip-compressed'
-    resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+#     resp = HttpResponse(s.getvalue())
+#     resp['Content-Type'] = 'application/x-zip-compressed'
+#     resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
 
-    return resp
+#     return resp
 
 # Use the following code to POST from python
 # import requests
