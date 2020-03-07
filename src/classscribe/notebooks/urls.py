@@ -18,5 +18,6 @@ urlpatterns = [
 	path('get/public/<slug:pk>/<str:class_name>/', retrieve_public_notebooks, name="public"),
 	path('toggle_sdac/<int:pk>', toggle_sdac_ready, name="toggle_sdac_ready"),
 	path('favorite/', favorite_notebook_view, name="favorite"),
-	path('user/', UserBooksandDetailsView.as_view())
+	path('user/', UserBooksandDetailsView.as_view()),
+	path('export_final_snapshot/<int:page_pk>', export_final_snapshot, name="export_final_snapshot")
 ]
