@@ -45,7 +45,7 @@ def submit_course(request):
 
     if request.data.get("lamp_serial") in serial_to_building and request.data.get("building") != serial_to_building[request.data.get("lamp_serial")]:
         return Response(status=status.HTTP_400_BAD_REQUEST,
-                        data={'message': 'The lamp youre using already is being used in a different room!'})
+                        data={'message': 'The lamp youre using already is being used in a different building!'})
 
     if request.data.get("lamp_serial") in serial_to_room and request.data.get("room") != serial_to_room[request.data.get("lamp_serial")]:
         return Response(status=status.HTTP_400_BAD_REQUEST,
@@ -156,7 +156,7 @@ def edit_course(request, semester=None, course_name=None, building=None, room=No
 
         if to_edit.lamp_serial in serial_to_building and to_edit.building != serial_to_building[to_edit.lamp_serial]:
             return Response(status=status.HTTP_400_BAD_REQUEST,
-                            data={'message': 'The lamp youre using already is being used in a different room!'})
+                            data={'message': 'The lamp youre using already is being used in a different building!'})
 
         if to_edit.lamp_serial in serial_to_room and to_edit.room != serial_to_room[to_edit.lamp_serial]:
             return Response(status=status.HTTP_400_BAD_REQUEST,
