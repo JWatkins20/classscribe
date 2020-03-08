@@ -18,6 +18,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.base import ObjectDoesNotExist
 from Professor.views import view_professor_notebooks
 import requests
+import os
+from django.conf import settings
 
 # Create your views here.
 
@@ -278,6 +280,26 @@ def toggle_sdac_ready(request, pk):  #pk is the pk of the notebook to toggle the
 
 	except Notebook.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(["GET"])
+def export_final_snapshot(request, page_pk=None):
+	try:
+		page = Page.objects.get(pk=page_pk)
+		if len(page.snapshots.all()) == 0:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+
+		final_snap = page.snapshots.latest('timestamp')
+
+		file_path = os.path.join(settings.MEDIA_ROOT, final_snap.file.name)  # creates the path to the last snapshot associated with the specified page
+		if os.path.exists(file_path):
+			with open(file_path, 'rb') as fh:
+				response = HttpResponse(fh.read(), content_type="image/jpeg")
+				response['Content-Disposition'] = 'attachment; filename=' + page.name + ".jpeg"
+				return response
+
+	except Page.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 class UserBooksandDetailsView(DefaultUserDetailsView):
 	serializer_class = UserBooksandDetailsSerializer

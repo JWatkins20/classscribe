@@ -5,6 +5,7 @@ import Card from '@material-ui/core/Card';
 
 import IconButton from '@material-ui/core/IconButton';
 import SendIcon from '@material-ui/icons/Send';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 import { base_url } from "../../App";
 import Axios from 'axios';
@@ -63,6 +64,10 @@ const contentStyle = {
         }
     }
 
+    downloadFinalSnap = (pk) => {
+        window.location.replace(`${base_url}notebooks/export_final_snapshot/${pk}`);
+    }
+
     render(){
     var self = this;
     if(self.state.parent ===undefined){
@@ -81,6 +86,9 @@ const contentStyle = {
                             <SendIcon/>
                         </IconButton>
                     }
+                    <IconButton aria-label="download icon" onClick={() => self.downloadFinalSnap(self.state.page.pk)}>
+                        <CloudDownloadIcon/>
+                    </IconButton>
                 </Typography>
                 
             </CardContent>

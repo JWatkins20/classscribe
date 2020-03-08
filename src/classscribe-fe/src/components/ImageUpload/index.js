@@ -17,14 +17,14 @@ import TextField from 'material-ui/TextField';
 
 var currentImage;
 
-(function(){
-  var oldLog = console.log;
-  console.log = function (message) {
-      if (message.substring(0,13)== "CURRENT PAGE:")
-      currentImage=parseInt(message.substring(13))+1
-      oldLog.apply(console, arguments);
-  };
-})();
+// (function(){
+//   var oldLog = console.log;
+//   console.log = function (message) {
+//       if (message.substring(0,13)== "CURRENT PAGE:")
+//       currentImage=parseInt(message.substring(13))+1
+//       oldLog.apply(console, arguments);
+//   };
+// })();
 
 const carstyle = {
   width: '50vw',
