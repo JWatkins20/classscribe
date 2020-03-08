@@ -285,6 +285,9 @@ def toggle_sdac_ready(request, pk):  #pk is the pk of the notebook to toggle the
 def export_final_snapshot(request, page_pk=None):
 	try:
 		page = Page.objects.get(pk=page_pk)
+		if len(page.snapshots.all()) == 0:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+
 		final_snap = page.snapshots.latest('timestamp')
 
 		file_path = os.path.join(settings.MEDIA_ROOT, final_snap.file.name)  # creates the path to the last snapshot associated with the specified page
@@ -293,9 +296,6 @@ def export_final_snapshot(request, page_pk=None):
 				response = HttpResponse(fh.read(), content_type="image/jpeg")
 				response['Content-Disposition'] = 'attachment; filename=' + page.name + ".jpeg"
 				return response
-		
-		else:
-			return Response(status=status.HTTP_404_NOT_FOUND)
 
 	except Page.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)

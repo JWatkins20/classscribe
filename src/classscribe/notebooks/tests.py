@@ -29,6 +29,7 @@ class NotebookTests(TestCase):
         page1.snapshots.add(file3)
         page1.notebook = notebook1
         page1.save()
+        page2 = Page.objects.create(name="empty page")
         course = Course.objects.create(room="testRoom", name="testCourse", time="MWF 8:00-8:50", building="testBuilding", professorID="henryweber@email.virginia.edu", lamp_serial="0123456789abcdef", semester="Spring 2020")
         notebook1.course = course
         notebook1.save()
@@ -85,7 +86,7 @@ class NotebookTests(TestCase):
     def test_send_to_prof_fails_on_bad_page_pk(self):
         page_to_send = Page.objects.get(name="Page name")
         c = Client()
-        response = c.get('/notebooks/send/page/' + str(page_to_send.pk+1))
+        response = c.get('/notebooks/send/page/' + str(page_to_send.pk+2))
         self.assertEqual(response.status_code, 404)
 
     def test_send_to_prof_fail_on_no_prof_notebook(self):
@@ -108,6 +109,22 @@ class NotebookTests(TestCase):
         c = Client()
         response = c.get('/notebooks/toggle_sdac/999')
         self.assertEqual(response.status_code, 404)
+
+    def test_export_snapshot_succeeds(self):
+        page = Page.objects.get(name="Page name")
+        c = Client()
+        response = c.get('/notebooks/export_final_snapshot/' + str(page.pk))
+        self.assertEqual(response.get('Content-Disposition'), 'attachment; filename=' + page.name + '.jpeg')
+
+    def test_export_snapshot_fails(self):
+        page = Page.objects.get(name="empty page")
+        c = Client()
+        response = c.get('/notebooks/export_final_snapshot/' + str(page.pk))
+        self.assertEqual(response.status_code, 400)
+
+        response = c.get('/notebooks/export_final_snapshot/' + str(page.pk+1))
+        self.assertEqual(response.status_code, 404)
+
 
 class NotebookCreationEndpointTest(APITestCase):
     def setUp(self):
