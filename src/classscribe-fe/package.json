@@ -44,7 +44,7 @@
     "dev": "npm start",
     "tests": "npm start & cypress run",
     "test": "react-scripts test",
-    "test:coverage": "react-scripts test --coverage --watchAll",
+    "test:coverage": "react-scripts test --coverage --coverageDirectory=output/coverage --watchAll",
     "eject": "react-scripts eject",
     "flush": "pipenv run python ./Class-Scribe/src/classscribe/manage.py flush --no-input",
     "e2e": "cypress open --project ./Class-Scribe/src/classscribe-fe/"
