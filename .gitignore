@@ -28,3 +28,5 @@ url.txt
 src/classscribe/classscribe/urls.py
 src/classscribe/cover/**
 src/classscribe/.coverage
+src/classscribe-fe/output/**
+
