@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import WeekCalendar from 'react-week-calendar';
 import ClassEvent from './ClassEvent';
-import classModal from './classModal';
+import ClassModal from './ClassModal';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -294,7 +294,7 @@ export default class CourseCalendar extends React.Component {
                         onIntervalSelect = {this.handleSelect}
                         onIntervalUpdate = {this.handleEventUpdate}
                         onIntervalRemove = {this.handleEventRemove}
-                        modalComponent = {classModal}
+                        modalComponent = {ClassModal}
                         eventComponent = {ClassEvent}
                     />
                 </>
