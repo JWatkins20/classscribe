@@ -70,6 +70,7 @@
     ]
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.17.0",
     "chai": "^4.2.0",
     "cypress": "^3.5.0",
     "enzyme": "^3.11.0",
