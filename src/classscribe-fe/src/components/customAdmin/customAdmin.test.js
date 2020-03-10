@@ -6,8 +6,8 @@ import MockAdapter from 'axios-mock-adapter';
 import { render, unmountComponentAtNode } from "react-dom";
 import {act} from "react-dom/test-utils";
 
-import ClassEvent from "./ClassEvent";
-import ClassModal from "./ClassModal";
+import ClassEvent from './ClassEvent.js';
+import ClassModal from './ClassModal.js';
 import CourseCalendar from "./viewAll";
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
