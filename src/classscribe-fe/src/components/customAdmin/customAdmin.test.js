@@ -1,38 +1,24 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import 'jest';
 import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 import { render, unmountComponentAtNode } from "react-dom";
 import {act} from "react-dom/test-utils";
 
 import ClassEvent from "./ClassEvent";
 import ClassModal from "./ClassModal";
+import CourseCalendar from "./viewAll";
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { ExpansionPanelActions, jssPreset } from '@material-ui/core';
 import moment from 'moment';
 import Enzyme from "enzyme";
-import { CardTitle } from 'material-ui';
 import Adapter from 'enzyme-adapter-react-16';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
+import { base_url, url } from "../../App";
 
 Enzyme.configure({ adapter: new Adapter() });
-
-// jest.mock('./ClassModal', () => ({
-//     get: jest.fn(() => Promise.resolve({ data: {
-//         data: {
-//             course_name: "test course",
-//             professorID: "Test Professor",
-//             building: "Test Building",
-//             room: "Test Room",
-//             time: "MWF 8:00-12:00",
-//             serial: "123456789abcdef",
-//             semester: "Fall 2020",
-//         }}}))
-// }));
+global.alert = jest.fn();
 
 let container = null;
 beforeEach(() => {
@@ -124,7 +110,6 @@ it("modal renders with info", () => {
     let values = ['Fall 2020', 'course', 'professor', 'building', 'room', '8:00-12:00', '0123456789abcdef'];
     for (let i = 0; i < ids.length; i++) {
         let element = wrapper.find('#'+ids[i]);
-        console.log(element)
         if (element) {
             element.simulate('focus');
             element.simulate('blur', {target: {value: values[i]}});
@@ -140,4 +125,37 @@ it("modal renders with info", () => {
         let element = wrapper.find('#' + toggledIds[i] + 'Toggle');
         element.simulate('click');
     }
+});
+
+it("CourseCalendar renders and behaves correctly", () => {
+    window.alert = jest.fn();
+    var mock = new MockAdapter(axios);
+    const user = {username:"testuser", type:"admin"};
+    mock.onGet(url + 'user/').reply(200, user);
+    const semesters = {semesters: ["Fall 2020"]};
+    mock.onGet(`${base_url}courses/semesters`).reply(200, semesters);
+    const buildings = {buildings: ["building1", "building2"]};
+    mock.onGet(`${base_url}courses/buildings`).reply(200, buildings);
+    const rooms = {rooms: ["room1", "room2", "room3"]};
+    mock.onGet(new RegExp('rooms$')).reply(200, rooms);
+    const classes = {courses: [{fields: {lamp_serial:"0123456789abcdef",
+                                         time: "MWF 8:00-12:00",
+                                         name: "testCourse",
+                                         professorID: "testProfessor",
+                                         building: "testBuilding",
+                                         room: "testRoom"}}]};
+    mock.onGet(new RegExp('classes$')).reply(200, classes);
+
+    let wrapper = Enzyme.mount(<CourseCalendar/>, {attachTo: container});
+    let instance = wrapper.instance();
+    instance.loadUser();
+    instance.handleBuildingChange(null, null, "buildingChange");
+    instance.handleRoomChange(null, null, "roomChange");
+    instance.handleSemesterChange(null, null, "Fall 2021");
+    instance.loadSemesters();
+    instance.loadBuildings();
+    instance.loadRooms();
+    instance.getIntervals("MWF 8:00-12:00");
+    instance.loadClasses("roomChange");
+    expect(container.textContent).toContain("You must be logged in as an admin");
 });

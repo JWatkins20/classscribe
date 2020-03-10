@@ -42,15 +42,15 @@ export default class CourseCalendar extends React.Component {
             user: null
         }
 
-        this.loadUser();
-
         this.loadBuildings = this.loadBuildings.bind(this);
         this.loadSemesters = this.loadSemesters.bind(this);
+        this.loadUser = this.loadUser.bind(this);
+        this.loadUser();
         this.loadSemesters();
         this.loadBuildings();
     }
 
-    loadUser() {
+    loadUser = () => {
         const that = this;
         Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})
             .then(function (response) {
