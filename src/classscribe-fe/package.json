@@ -44,7 +44,7 @@
     "dev": "npm start",
     "tests": "npm start & cypress run",
     "test": "react-scripts test",
-    "test:coverage": "react-scripts test --coverage --watchAll",
+    "test:coverage": "react-scripts test --coverage --coverageDirectory=output/coverage --watchAll",
     "eject": "react-scripts eject",
     "flush": "pipenv run python ./Class-Scribe/src/classscribe/manage.py flush --no-input",
     "e2e": "cypress open --project ./Class-Scribe/src/classscribe-fe/"
@@ -70,6 +70,7 @@
     ]
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.17.0",
     "chai": "^4.2.0",
     "cypress": "^3.5.0",
     "enzyme": "^3.11.0",

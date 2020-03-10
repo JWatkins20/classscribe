@@ -14,7 +14,7 @@ const propTypes = {
 };
 
 
-class classEvent extends React.PureComponent {
+class ClassEvent extends React.PureComponent {
   render() {
     const {
       start,
@@ -34,5 +34,5 @@ class classEvent extends React.PureComponent {
   }
 }
 
-classEvent.propTypes = propTypes;
-export default classEvent;
+ClassEvent.propTypes = propTypes;
+export default ClassEvent;
