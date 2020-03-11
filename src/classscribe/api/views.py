@@ -6,7 +6,7 @@ import string
 import random
 from rest_framework.decorators import api_view
 
-server_url = "http://128.143.67.97:44104/"#"https://classscribe-fe.herokuapp.com/"
+server_url = "https://classscribe-fe.herokuapp.com/"
 
 @api_view(['POST'])
 def SendVerificationEmailView(request, email):
