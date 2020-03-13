@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from custom_admin.models import Course
+from .models import Professor
 from users.models import User
 from notebooks.models import Notebook
 from .views import view_professor_notebooks
@@ -49,6 +50,7 @@ class CourseTests(TestCase):
             email="12345@virginia.edu",
             username="Student Account"
         )
+        Professor.objects.create(idNumber="0123456789012345", email="test@virginia.edu")
         Notebook.objects.create(Private=False,
                                 class_name="Test Class",
                                 name="Test Class 12345@virginia.edu",
@@ -74,3 +76,18 @@ class CourseTests(TestCase):
         badpk = 999
         response = view_professor_notebooks(-1)
         self.assertEqual(404, response.status_code)
+
+    def test_view_prof_notebooks_fails_on_multiple_books(self):
+        teacher = User.objects.get(email="abcde@virginia.edu")
+        course1 = Course.objects.get(room="testRoom")
+        Notebook.objects.create(Private=True,
+                                class_name="Test Class",
+                                name="Test Class Professor Notebook",
+                                owner=None,
+                                course=course1)
+        response = view_professor_notebooks(teacher.pk)
+        self.assertEqual(409, response.status_code)
+
+    def test_prof_to_string_returns_expected(self):
+        prof = Professor.objects.get(pk=1)
+        self.assertEqual(str(prof), "test@virginia.edu")
