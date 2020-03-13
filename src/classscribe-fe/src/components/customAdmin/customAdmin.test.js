@@ -107,24 +107,49 @@ it("modal renders with info", () => {
                                              building="building"
                                              room="room"/>);
     let ids = ['courseSemester', 'courseName', 'professorId', 'building', 'room', 'time', 'serial'];
-    let values = ['Fall 2020', 'course', 'professor', 'building', 'room', '8:00-12:00', '0123456789abcdef'];
+    let goodValues = ['Fall 2020', 'course', 'professor', 'building', 'room', '8:00-12:00', '0123456789abcdef'];
+    let badValues = ['Fall', '', '', '', '', '8:0012:00', '012345678'];
     for (let i = 0; i < ids.length; i++) {
         let element = wrapper.find('#'+ids[i]);
         if (element) {
             element.simulate('focus');
-            element.simulate('blur', {target: {value: values[i]}});
-            element.value = values[i];
+            element.simulate('blur', {target: {value: goodValues[i]}});
+            element.value = goodValues[i];
         }
     }
 
     let button = wrapper.find('#submitButton');
     button.simulate('click');
 
-    let toggledIds = ['mon', 'tue', 'wed', 'thu', 'fri'];
+    for (let i = 0; i < badValues.length; i++) {
+        for (let j = 0; j < badValues.length; j++) {
+            let element = wrapper.find('#'+ids[j]);
+            if (j === i) {
+                if (element) {
+                    element.simulate('focus');
+                    element.simulate('change', {target: {value: badValues[j]}});
+                    element.simulate('blur', {target: {value: badValues[j]}});
+                    element.value = goodValues[j];
+                }
+            }
+            else {
+                if (element) {
+                    element.simulate('focus');
+                    element.simulate('change', {target: {value: goodValues[j]}})
+                    element.simulate('blur', {target: {value: goodValues[j]}});
+                    element.value = goodValues[j];
+                }
+            }
+        }
+        button.simulate('click');
+    }
+
+    let toggledIds = ['mon', 'wed', 'fri'];
     for (let i = 0; i < toggledIds.length; i++) {
         let element = wrapper.find('#' + toggledIds[i] + 'Toggle');
         element.simulate('click');
     }
+    button.simulate('click');
 });
 
 it("CourseCalendar renders and behaves correctly", () => {
