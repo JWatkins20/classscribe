@@ -78,7 +78,7 @@ class ClassModal extends React.Component {
         if (this.state.name !== "") {
             const getUrl = `${base_url}courses/edit/${this.state.semester}/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.days} ${this.state.time}`;
             axios.get(getUrl)
-                .then(function (response) {
+                .then(function (response) { // Not tested because this return is mocked.
                     that.setState({
                         name: response.data["course_name"],
                         professorId: response.data["professorID"],
@@ -93,7 +93,7 @@ class ClassModal extends React.Component {
         }
     }
 
-    handleRemove = () => {
+    handleRemove = () => { // Not tested because it is something set by the react package
         this.props.onRemove();
     }
 
@@ -150,7 +150,7 @@ class ClassModal extends React.Component {
         }
         
         axios.post(putUrl, data)
-            .then(function (response) {
+            .then(function (response) { // Not tested because return is mocked.
                 if (response.status === 200) {
                     alert("Edits have been saved!");
                 }
