@@ -4,15 +4,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from notebooks.models import Page
 from rest_framework.decorators import api_view
-from django.conf import settings
-import os
-import zipfile
-from io import BytesIO
-from django.shortcuts import HttpResponse
 
 from .serializers import FileSerializer
-from .models import File
-
 
 class FileUploadView(APIView):
     parser_class = (FileUploadParser,)
@@ -32,7 +25,6 @@ class FileUploadView(APIView):
 def scan_view(request, page_name=""):
     page = Page.objects.get(name=page_name)
     obj = page.snapshots.all()
-    #obj = File.objects.filter(remark=user, class_name=class_name, timestamp__contains=date)
     names = []
     for image in obj:
         names.append(image.file.name)

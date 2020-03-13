@@ -195,23 +195,20 @@ def edit_course(request, semester=None, course_name=None, building=None, room=No
                 print(e)
                 return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 
-        try:
-            to_edit.save()
-            prof_notebook = None
-            if len(to_edit.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))) == 0:  # should only happen if the course existed before this change was made
-                prof_notebook = Notebook.objects.create(Private=True,
-                                                        class_name=to_edit.name,
-                                                        name=to_edit.name  + " Professor Notebook",
-                                                        owner=None,
-                                                        course=to_edit)
-            else:
-                prof_notebook = to_edit.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))[0]
-                prof_notebook.class_name = to_edit.name
-            prof_notebook.save()
-            return Response(status=status.HTTP_200_OK, data={})
-        except Exception as e:
-            print(e.message)
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+        to_edit.save()
+        notebooks = to_edit.notebook.filter(Q(owner=None) | Q(owner__type="teacher"))
+        prof_notebook = None
+        if len(notebooks) == 0:  # should only happen if the course existed before this change was made
+            prof_notebook = Notebook.objects.create(Private=True,
+                                                    class_name=to_edit.name,
+                                                    name=to_edit.name + " Professor Notebook",
+                                                    owner=None,
+                                                    course=to_edit)
+        else:
+            prof_notebook = notebooks[0]
+            prof_notebook.class_name = to_edit.name
+        prof_notebook.save()
+        return Response(status=status.HTTP_200_OK, data={})
 
 
 @api_view(["GET"])
