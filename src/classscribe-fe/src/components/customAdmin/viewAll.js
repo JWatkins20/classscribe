@@ -56,8 +56,6 @@ export default class CourseCalendar extends React.Component {
             .then(function (response) {
                 if (response.status === 200) {
                     const user = response.data;
-                    console.log(response);
-                    console.log(user.username);
                     that.setState({user});
                 }
                 else {
@@ -100,8 +98,6 @@ export default class CourseCalendar extends React.Component {
         const getUrl = `${base_url}courses/semesters`;
         Axios.get(getUrl)
             .then(function (response) {
-                console.log("semesters");
-                console.log(response.data["semesters"]);
                 that.setState({
                     semesters: response.data["semesters"]
                 });
