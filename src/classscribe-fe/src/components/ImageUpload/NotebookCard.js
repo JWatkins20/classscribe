@@ -6,11 +6,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import ExploreIcon from '@material-ui/icons/Explore';
 import CardActions from '@material-ui/core/CardActions';
+import { spacing } from '@material-ui/system';
 import IconButton from '@material-ui/core/IconButton';
+import { deepOrange, deepPurple, red, pink, blue, lightGreen } from '@material-ui/core/colors';
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-import Avatar from '@material-ui/core/Avatar';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Toggle from './toggle';
 import PageCard from './PageCard';
 import { base_url } from "../../App"
@@ -21,7 +24,9 @@ import PublicCard from './PublicCard'
 import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import {List} from '@material-ui/core';
-
+import Tooltip from '@material-ui/core/Tooltip';
+import Avatar from '@material-ui/core/Avatar';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
   const notestyle = {
     display: "block",
@@ -84,6 +89,34 @@ import {List} from '@material-ui/core';
      height: '100%'
   }
 
+  var avatarr =[ 
+    {
+      backgroundColor: deepOrange[500],
+      height: 30, 
+      width: 30,
+    },
+   {
+      backgroundColor: deepPurple[500],
+      height: 30, 
+      width: 30,
+    },
+    {
+      backgroundColor: blue[500],
+      height: 30, 
+      width: 30,
+    },
+    {
+      backgroundColor: lightGreen[500],
+      height: 30, 
+      width: 30,
+    },
+    {
+      backgroundColor: pink[500],
+      height: 30, 
+      width: 30,
+    },
+  ]
+
 class NotebookCard extends React.Component{
     constructor(props){
         super(props);
@@ -110,6 +143,14 @@ class NotebookCard extends React.Component{
       this.setState({edit:true})
       this.setState({state:this.state});
   
+    }
+
+    calculateRating = (note) => {
+      let sum = 0;
+      for(var i = 0; i < note.ratings.length; i++){
+        sum = sum + note.ratings[i].rating
+      }
+      return ((sum*(1.0))/note.ratings.length) * 5
     }
 
     deleteNotebook = (pk) => {
@@ -145,6 +186,26 @@ class NotebookCard extends React.Component{
               console.log(error);
           });
   
+    }
+
+    rateNotebook(note, user, rating){
+      console.log(user)
+      const payload= {
+        'note_pk': note.pk,
+        'user_pk': user.pk,
+        'rating': rating
+      }
+      axios.post(base_url+'notebooks/rate/', payload).then(function(res){
+        if(res.status === 201){
+          console.log('rating applies')
+        }
+        else if(res.status === 200){
+          console.log('user already rated notebook')
+        }
+        else{
+          console.log('rating was not applied :(')
+        }
+      }).then(async()=>this.state.parent.updateUser())
     }
 
     handleNameChange(event){
@@ -270,10 +331,23 @@ class NotebookCard extends React.Component{
       var pageslist = self.state.parent.state.pages.map(function(page){
         return (<PageCard parent={self.state.parent} page={page} pages={self.state.parent.state.pages}  />) //onClick={() => self.switchPage(pages.indexOf(page))}
       })
-      var publics = this.state.parent.state.public_items.map((item, i) => {
+      var self = this
+      var publics = this.state.parent.state.public_items.sort(function(a, b){
+        if(self.calculateRating(a) < self.calculateRating(b)){
+          return 1
+        }
+        else if(self.calculateRating(a) > self.calculateRating(b)){
+          return -1
+        }
+        else{
+          return 0
+        }
+      }).map((item, i) => {
         let selected = this.state.selectedKeys !== undefined ? this.state.selectedKeys.indexOf(item.pk) > -1 : false;
+        console.log(item)
+        let averageRating = item.ratings.length !== 0 ? this.calculateRating(item) : 0
         return (
-          <PublicCard name={item.name} sharedBy={item.owner} id={item.pk} isSelected={selected} onClick={this.handleSelection} selectableKey={item.pk} />
+          <PublicCard name={item.name} sharedBy={item.owner} id={item.pk} isSelected={selected} onClick={this.handleSelection} selectableKey={item.pk} numberOfRatings={item.ratings.length} rating={averageRating} precision={0.5} />
         );
         })
       return(
@@ -295,10 +369,34 @@ class NotebookCard extends React.Component{
                       {self.state.note.name}
                     </Typography>
                   </CardContent>
-                  <CardActions style={{justifyContent: 'center'}}>
-                    {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <div>Shared by: {self.state.note.owner.username}<IconButton className='remove' aria-label="remove icon" onClick={(event) => this.removeSavedNotebook(self.state.note)}>
+                  <CardActions style={{justifyContent: 'flex-start', alignItems: 'center'}}>
+                    {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <div>
+                    <IconButton className='remove' aria-label="remove icon" onClick={(event) => this.removeSavedNotebook(self.state.note)}>
                     <HighlightOffRoundedIcon />
-                    </IconButton></div> :
+                    </IconButton>
+                    {self.state.parent.state.user.ratings.filter(function(item){
+                      return item.notebook.pk === self.state.note.pk
+                    }).length !== 0 ? self.state.parent.state.user.ratings.filter(function(item){
+                      return item.notebook.pk === self.state.note.pk
+                    })[0].rating === 1 
+                    ? 
+                    <div>
+                    <IconButton className='Up' color={'primary'} aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    <ThumbUpIcon />
+                    </IconButton>
+                    <IconButton className='Down' aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
+                    <ThumbDownIcon />
+                    </IconButton> </div>:
+                    <div><IconButton className='Up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    <ThumbUpIcon />
+                    </IconButton>
+                    <IconButton className='Down' color={'primary'} aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
+                    <ThumbDownIcon />
+                    </IconButton></div> : null}
+                    <Tooltip title={'Shared By: '+this.state.parent.state.user.username}>
+                        <Avatar m={0} style={avatarr[this.state.parent.state.user.pk % 5]}>{self.state.parent.state.user.username.charAt(0)}</Avatar> 
+                      </Tooltip>
+                    </div> :
                     <div>
                     <Toggle parent={self} />
                     <IconButton role="edit-button" className='edit' aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>

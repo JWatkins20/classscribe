@@ -3,8 +3,8 @@ from imageupload.models import File
 from .models import User
 from .models import AudioFile
 from django.db.models import Q
-from notebooks.models import Notebook, Page
-from notebooks.serializers import NotebookSerializer, PageSerializer, UserBooksandDetailsSerializer
+from notebooks.models import Notebook, Page, NotebookRating
+from notebooks.serializers import NotebookSerializer, PageSerializer, UserBooksandDetailsSerializer, RatingsSerializer
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from django.shortcuts import HttpResponse
@@ -80,6 +80,22 @@ class NotebookCreateView(APIView):
 				return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class NotebookRatingCreateView(APIView):
+	def post(self, request, *args, **kwargs):
+		try:
+				user = User.objects.get(pk=request.data["user_pk"])
+				notebook = Notebook.objects.get(pk=request.data["note_pk"])
+				rating = NotebookRating.objects.get(user=user, notebook=notebook)
+				rating.rating = request.data["rating"]
+				rating.save()
+				return Response({"msg": f'Rating changed to {request.data["rating"]}'}, status=status.HTTP_200_OK)
+		except ObjectDoesNotExist:
+				rating = NotebookRating.objects.create(rating=request.data["rating"])
+				rating.notebook = Notebook.objects.get(pk=request.data["note_pk"])
+				rating.user = User.objects.get(pk=request.data["user_pk"])
+				rating.save()
+				return Response({"key": rating.pk}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["DELETE"])

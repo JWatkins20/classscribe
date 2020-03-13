@@ -13,18 +13,18 @@ import Navbar from '../Navbar';
 import NotebookCard from './NotebookCard';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import TextField from 'material-ui/TextField';
+
 
 var currentImage;
 
-(function(){
-  var oldLog = console.log;
-  console.log = function (message) {
-      if (message.substring(0,13)== "CURRENT PAGE:")
-      currentImage=parseInt(message.substring(13))+1
-      oldLog.apply(console, arguments);
-  };
-})();
+// (function(){
+//   var oldLog = console.log;
+//   console.log = function (message) {
+//       if (message.substring(0,13)== "CURRENT PAGE:")
+//       currentImage=parseInt(message.substring(13))+1
+//       oldLog.apply(console, arguments);
+//   };
+// })();
 
 const carstyle = {
   width: '50vw',
@@ -96,7 +96,9 @@ const divstyle = {
   //border: "2px solid black",
   'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
   'border-radius': '0.5em',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
+  display: 'flex',
+  flexDirection: 'column',
 }
 
 
@@ -248,9 +250,6 @@ async loadNotes()
           transcript: data[this.state.notebook].pages[this.state.page].transcript,
           saved_items: this.state.user.favoritedBooks,
         });
-        // this.setState({
-        //   recording: new Audio('http://localhost:8000'+this.state.audio.file)
-        // });
         this.setState({
           audio: data[this.state.notebook].pages[this.state.page].audio
         });
@@ -277,7 +276,7 @@ async loadNotes()
 
   NotebookToggle = () => {
     var self = this
-    return(<ToggleButtonGroup
+    return(<div style={{alignSelf:'flex-end', flex: 1, paddingTop: 10}}><ToggleButtonGroup
           aria-label="Notebook Toggle"
           id="Notebooks"
           exclusive
@@ -313,6 +312,7 @@ async loadNotes()
             Saved Notebooks
         </ToggleButton>
       </ToggleButtonGroup>
+      </div>
     )
   }
   
@@ -417,6 +417,39 @@ async loadNotes()
     })
   }
 
+  compareSnapshots(a,b){
+    if (a.hours > b.hours) {
+      return 1;
+    }
+    if (a.hours < b.hours) {
+      return -1;
+    }
+    if(a.hours === b.hours){
+      if(a.minute > b.minute){
+        console.log('hours greater')
+        return 1;
+      }
+      if(a.minute < b.minute){
+        console.log('hours less')
+        return -1;
+      }
+      if(a.minute === b.minute){
+        if(a.seconds > b.seconds){
+          return 1;
+        }
+        if(a.seconds < b.seconds){
+          return -1;
+        }
+        if(a.seconds === b.seconds){
+          return 0
+        }
+      }
+    }
+    // a must be equal to b
+    return 0;
+  }
+
+
   syncToAudio(){
     let targetI = undefined
     let targetJ = undefined
@@ -434,6 +467,9 @@ async loadNotes()
         let snaptime = new Date(x.timestamp)
         return t.parseDate(snaptime)
       })
+      console.log(snap_times)
+      snap_times = snap_times.sort((a, b)=>{return this.compareSnapshots(a, b)})
+      console.log(snap_times)
     }
       for(var j = 0; j < snap_times.length; j++){
         if(this.calculateOffsetSeconds(snap_times[j], currentTime) > 0){
@@ -608,7 +644,10 @@ async loadPublicNotes(class_name){
       <MuiThemeProvider>
       <Navbar style={{'height': '2vh'}} username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
-    <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}<this.NotebookToggle></this.NotebookToggle></div>
+    <div style={divstyle}><p style={{flex: .5,
+   fontSize: "30px",
+   textAlign: "center",
+   lineHeight: "1.0"}}>Notebooks{'\n'}</p><div style={{flex: 6, overflow: 'auto'}}>{notelist}</div><this.NotebookToggle></this.NotebookToggle></div>
         <div style={carstyle}>
           {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
         </div>

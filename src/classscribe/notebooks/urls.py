@@ -19,5 +19,6 @@ urlpatterns = [
 	path('toggle_sdac/<int:pk>', toggle_sdac_ready, name="toggle_sdac_ready"),
 	path('favorite/', favorite_notebook_view, name="favorite"),
 	path('unfavorite/', unfavorite_notebook_view, name='unfavorite'),
-	path('user/', UserBooksandDetailsView.as_view())
+	path('user/', UserBooksandDetailsView.as_view()),
+	path('rate/', NotebookRatingCreateView.as_view(), name='rate')
 ]
