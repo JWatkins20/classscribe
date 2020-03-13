@@ -58,9 +58,6 @@ export default class CourseCalendar extends React.Component {
                     const user = response.data;
                     that.setState({user});
                 }
-                else {
-                    alert("Something went wrong with call");
-                }
             })
             .catch(function (error) {
                 alert(error);
@@ -73,24 +70,29 @@ export default class CourseCalendar extends React.Component {
             room: "",
             selectedIntervals: [],
             serial: ""
+        }, () => {
+            this.loadRooms(value);
         });
-        this.loadRooms(value);
     }
 
     handleRoomChange = (event, index, value) => {
         this.setState({
             room: value,
             selectedIntervals: []
+        }, () => {
+            this.loadClasses(value);
         });
-        this.loadClasses(value);
+        
     }
 
     handleSemesterChange = (event, index, value) => {
         this.setState({
             semester: value,
             selectedIntervals: []
+        }, () => {
+            this.loadBuildings();
         });
-        this.loadBuildings();
+        
     }
 
     loadSemesters = () => {
@@ -169,18 +171,13 @@ export default class CourseCalendar extends React.Component {
         let intervals = [];
         let finalIntervals = [];
         let curSerial = "";
-        let allMatch = true;
         const getUrl = `${base_url}courses/${this.state.semester}/${curBuilding}/${room}/classes`;
         Axios.get(getUrl)
             .then(function (response) {
                 courses = response.data["courses"]
                 for (let i = 0; i < courses.length; i++) {
-                    if (allMatch && curSerial === "") {
+                    if (curSerial === "") {
                         curSerial = courses[i].fields["lamp_serial"];
-                    }
-                    else if (curSerial !== courses[i].fields["lamp_serial"]) {
-                        curSerial = "";
-                        allMatch = false;
                     }
 
                     intervals = that.getIntervals(courses[i].fields["time"]);
@@ -218,11 +215,12 @@ export default class CourseCalendar extends React.Component {
             semester: event.semester,
             room: event.room,
             building: event.building
-        })
-        this.loadSemesters();
-        this.loadBuildings();
-        this.loadRooms();
-        this.loadClasses(this.state.room);
+        }, () => {
+            this.loadSemesters();
+            this.loadBuildings();
+            this.loadRooms();
+            this.loadClasses(this.state.room);
+        });
     }
 
     handleSelect = (newIntervals) => {
@@ -230,16 +228,17 @@ export default class CourseCalendar extends React.Component {
             semester: newIntervals[0].semester,
             room: newIntervals[0].room,
             building: newIntervals[0].building
-        })
-        this.loadSemesters();
-        this.loadBuildings();
-        this.loadRooms();
-        this.loadClasses(this.state.room);
+        }, () => {
+            this.loadSemesters();
+            this.loadBuildings();
+            this.loadRooms();
+            this.loadClasses(this.state.room);
+        });
     }
 
     render() {
         if (this.state.user && this.state.user.type === "admin") {
-            return (
+            return ( // lines within this return that weren't covered due to problems with the testing suite
                 <>
                     <Navbar username={this.state.user.username}></Navbar>
                     <MuiThemeProvider>

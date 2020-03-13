@@ -78,7 +78,7 @@ class ClassModal extends React.Component {
         if (this.state.name !== "") {
             const getUrl = `${base_url}courses/edit/${this.state.semester}/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.days} ${this.state.time}`;
             axios.get(getUrl)
-                .then(function (response) { // Not tested because this return is mocked.
+                .then(function (response) {
                     that.setState({
                         name: response.data["course_name"],
                         professorId: response.data["professorID"],
@@ -140,7 +140,7 @@ class ClassModal extends React.Component {
             return;
         }
         var putUrl;
-        if (this.state.pk !== 0) {
+        if (this.state.pk !== 0) { // Not tested because frontend doesn't have access to backend to use pks during testing
             alert("editing course");
             putUrl = `${base_url}courses/edit/${this.state.pk}`;
         }
@@ -150,7 +150,7 @@ class ClassModal extends React.Component {
         }
         
         axios.post(putUrl, data)
-            .then(function (response) { // Not tested because return is mocked.
+            .then(function (response) {
                 if (response.status === 200) {
                     alert("Edits have been saved!");
                 }
