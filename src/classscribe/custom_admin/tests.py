@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from .models import Course
+from notebooks.models import Notebook
 from rest_framework import status
 
 class CourseTests(TestCase):
@@ -23,6 +24,38 @@ class CourseTests(TestCase):
             lamp_serial="testLamp_serial",
             semester="Fall 2019"
         )
+
+    def test_to_string(self):
+        course = Course.objects.get(room="testRoom")
+        courseString = str(course)
+        self.assertEqual("testName MWF 8:00-8:50 testProfessorID", courseString)
+
+    def test_get_semesters(self):
+        c = Client()
+        response = c.get('/courses/semesters')
+        self.assertEqual(response.data["semesters"], ["Fall 2019"])
+
+    def test_submit_course_fails_on_SN(self):
+        c = Client()
+        response = c.post('/courses/create', data={"room": "testRoom1",
+                                                   "time": "MWF 8:00-8:50",
+                                                   "courseName": "Unit Course",
+                                                   "building": "testBuilding2",
+                                                   "professorId": "henryweber@email.virginia.edu",
+                                                   "lamp_serial": "testLamp_serial",
+                                                   "semester": "Fall 2019"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["message"], "The lamp youre using already is being used in a different building!")
+
+        response = c.post('/courses/create', data={"room": "testRoom2",
+                                                   "time": "MWF 8:00-8:50",
+                                                   "courseName": "Unit Course",
+                                                   "building": "testBuilding",
+                                                   "professorId": "henryweber@email.virginia.edu",
+                                                   "lamp_serial": "testLamp_serial",
+                                                   "semester": "Fall 2019"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["message"], "The lamp youre using already is being used in a different room!")
 
     def test_submit_course_succeeds(self):
         c = Client()
@@ -127,6 +160,22 @@ class CourseTests(TestCase):
 
         self.assertEqual(response.data["message"], "Conflicting Times!")
 
+    def test_edit_fails_on_bad_time(self):
+        c = Client()
+        course2 = Course.objects.get(time="TThu 8:00-9:15")
+        path = '/courses/edit/' + str(course2.pk)
+        response = c.post(path, {
+            'semester': course2.semester,
+            'courseName': course2.name,
+            'building': course2.building,
+            'room': "testRoom",
+            'professorId': course2.professorID,
+            'lamp_serial': course2.lamp_serial,
+            'time': "MTThu8:00-9:15"
+        })
+
+        self.assertEqual(response.status_code, 400)
+
     def test_edit_to_conflicting_lamp_fails(self):
         c = Client()
         course2 = Course.objects.get(time="TThu 8:00-9:15")
@@ -143,6 +192,18 @@ class CourseTests(TestCase):
         })
 
         self.assertEqual(response.data["message"], "The lamp youre using already is being used in a different room!")
+
+        response = c.post(path, {
+            'semester': course2.semester,
+            'courseName': course2.name,
+            'building': "testBuilding9",
+            'room': course2.room,
+            'professorId': course2.professorID,
+            'lamp_serial': "testLamp_serial123",
+            'time': course2.time
+        })
+
+        self.assertEqual(response.data["message"], "The lamp youre using already is being used in a different building!")
 
     def test_edit_course_makes_successful_change(self):
         c = Client()
@@ -161,5 +222,7 @@ class CourseTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-
-
+    def test_get_semesters_returns_expected(self):
+        c = Client()
+        response = c.get('/courses/semesters')
+        self.assertEqual(response.data["semesters"], ["Fall 2019"])

@@ -1,8 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import WeekCalendar from 'react-week-calendar';
-import classEvent from './classEvent';
-import classModal from './classModal';
+import ClassEvent from './ClassEvent.js';
+import ClassModal from './ClassModal.js';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -42,15 +42,15 @@ export default class CourseCalendar extends React.Component {
             user: null
         }
 
-        this.loadUser();
-
         this.loadBuildings = this.loadBuildings.bind(this);
         this.loadSemesters = this.loadSemesters.bind(this);
+        this.loadUser = this.loadUser.bind(this);
+        this.loadUser();
         this.loadSemesters();
         this.loadBuildings();
     }
 
-    loadUser() {
+    loadUser = () => {
         const that = this;
         Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}})
             .then(function (response) {
@@ -294,8 +294,8 @@ export default class CourseCalendar extends React.Component {
                         onIntervalSelect = {this.handleSelect}
                         onIntervalUpdate = {this.handleEventUpdate}
                         onIntervalRemove = {this.handleEventRemove}
-                        modalComponent = {classModal}
-                        eventComponent = {classEvent}
+                        modalComponent = {ClassModal}
+                        eventComponent = {ClassEvent}
                     />
                 </>
             );

@@ -1,8 +1,6 @@
 import React from 'react';
 import axios from "axios";
 
-import * as $ from 'jquery';
-
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
@@ -11,18 +9,20 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 import { base_url } from "../../App";
 
-class classModal extends React.Component {
+const $ = require('jquery');
+
+class ClassModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             name:  props.name || "",
             professorId: props.professor,
-            building: $('#building-select')[0].innerText,
-            room: $('#room-select')[0].innerText,
+            building: props.building || $('#building-select')[0] && $('#building-select')[0].innerText,
+            room: props.room || $('#room-select')[0] && $('#room-select')[0].innerText,
             days: props.days && props.days || "",
-            time: props.start.format('H:mm') + "-" + props.end.format('H:mm'),
-            serial: props.lamp || $('#lamp-serial')[0].value,
-            semester: props.semester || $('#semester-select')[0].innerText,
+            time: props.start && props.end && props.start.format('H:mm') + "-" + props.end.format('H:mm'),
+            serial: props.lamp || $('#lamp-serial')[0] && $('#lamp-serial')[0].value,
+            semester: props.semester || $('#semester-select')[0] && $('#semester-select')[0].innerText,
             pk: 0,
             mondaySelected: props.days && props.days.indexOf("M") > -1,
             tuesdaySelected: props.days && props.days.indexOf("Tu") > -1,
@@ -30,24 +30,29 @@ class classModal extends React.Component {
             thursdaySelected: props.days && props.days.indexOf("Thu") > -1,
             fridaySelected: props.days && props.days.indexOf("F") > -1
         };
-
+        
         this.getValues();
         this.getValues = this.getValues.bind(this);
     }
 
     
 
-    checkInput(field) {
-        let check = $('#'+field)[0];
-        if (!check) {
-            return true;
-        }
+    checkInput = (field) => {
         let map = {  // Regular expressions to match time format and serial number
             "time": "[0-9]{1,2}:[0-9]{2,2}-[0-9]{1,2}:[0-9]{2,2}$",
             "days": "[M\@WF\!]{1,}",
             "serial": "[0-9a-f]{16,16}$",
             "courseSemester": "(Fall|Spring) [0-9]{4,4}$"
-        }
+        };
+        let valMap = {
+            "courseSemester": this.state.semester,
+            "courseName": this.state.name,
+            "professorId": this.state.professorId,
+            "building": this.state.building,
+            "room": this.state.room,
+            "time": this.state.time,
+            "serial": this.state.serial
+        };
 
         if (field === "days") {
             let val = this.state.days;
@@ -57,26 +62,18 @@ class classModal extends React.Component {
         }
 
         if (field === "time" || field === "serial" || field === "courseSemester") {
-            let val = $('#'+field)[0].value;
-            if (val === "") {
-                return true;
-            }
+            let val = valMap[field];
             val = val.replace("Thu", "!");
             val = val.replace("Tu", "@");
-            return val.search(RegExp(map[field], 'g')) == 0;
+            return val === "" || val.search(RegExp(map[field], 'g')) == 0;
         }
         else {
-            let val = $('#'+field)[0].value;
-            if (val.length > 0) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            let val = valMap[field];
+            return val && val.length > 0;
         }
     }
     
-    getValues() {
+    getValues = () => {
         var that = this;
         if (this.state.name !== "") {
             const getUrl = `${base_url}courses/edit/${this.state.semester}/${this.state.name}/${this.state.building}/${this.state.room}/${this.state.days} ${this.state.time}`;
@@ -100,7 +97,7 @@ class classModal extends React.Component {
         this.props.onRemove();
     }
 
-    handleSubmit() {
+    handleSubmit = () => {
         let that = this;
         const data = new FormData();
         data.append("courseName", this.state.name);
@@ -320,7 +317,7 @@ class classModal extends React.Component {
                         />
                         <br/>
 
-                        <RaisedButton label="Submit" primary={true} onClick={(event) => this.handleSubmit()}/>
+                        <RaisedButton id="submitButton" label="Submit" primary={true} onClick={(event) => this.handleSubmit()}/>
                     </div>
                 </MuiThemeProvider>
             </div>
@@ -328,4 +325,4 @@ class classModal extends React.Component {
     }
 }
 
-export default classModal;
+export default ClassModal;

@@ -20,5 +20,6 @@ urlpatterns = [
 	path('favorite/', favorite_notebook_view, name="favorite"),
 	path('unfavorite/', unfavorite_notebook_view, name='unfavorite'),
 	path('user/', UserBooksandDetailsView.as_view()),
-	path('rate/', NotebookRatingCreateView.as_view(), name='rate')
+	path('rate/', NotebookRatingCreateView.as_view(), name='rate'),
+	path('export_final_snapshot/<int:page_pk>', export_final_snapshot, name="export_final_snapshot")
 ]
