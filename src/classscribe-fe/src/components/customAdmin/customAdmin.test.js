@@ -1,10 +1,14 @@
 import React from 'react';
 
 import 'jest';
+import sinon from 'sinon';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { render, unmountComponentAtNode } from "react-dom";
 import {act} from "react-dom/test-utils";
+import Enzyme from "enzyme";
+import Adapter from 'enzyme-adapter-react-16';
+import { base_url, url } from "../../App";
 
 import ClassEvent from './ClassEvent.js';
 import ClassModal from './ClassModal.js';
@@ -13,25 +17,28 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import moment from 'moment';
-import Enzyme from "enzyme";
-import Adapter from 'enzyme-adapter-react-16';
-import { base_url, url } from "../../App";
-import { ButtonBase } from '@material-ui/core';
-import TextField from 'material-ui/TextField/TextField';
 
 Enzyme.configure({ adapter: new Adapter() });
 global.alert = jest.fn();
 
 let container = null;
+var confirmStub;
+var alertStub;
 beforeEach(() => {
     container = document.createElement("div");
     document.body.appendChild(container);
+    confirmStub = sinon.stub(global, 'confirm');
+    confirmStub.returns(true);
+    alertStub = sinon.stub(global, 'alert');
+    alertStub.returns(true);
 });
 
 afterEach(() => {
     unmountComponentAtNode(container);
     container.remove();
     container = null;
+    confirmStub.restore();
+    alertStub.restore();
 });
 
 it("event renders with class info", () => {
