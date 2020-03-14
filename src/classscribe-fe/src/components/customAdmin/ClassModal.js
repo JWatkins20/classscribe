@@ -93,7 +93,7 @@ class ClassModal extends React.Component {
         }
     }
 
-    handleRemove = () => {
+    handleRemove = () => { // Not tested because it is something set by the react package
         this.props.onRemove();
     }
 
@@ -140,7 +140,7 @@ class ClassModal extends React.Component {
             return;
         }
         var putUrl;
-        if (this.state.pk !== 0) {
+        if (this.state.pk !== 0) { // Not tested because frontend doesn't have access to backend to use pks during testing
             alert("editing course");
             putUrl = `${base_url}courses/edit/${this.state.pk}`;
         }

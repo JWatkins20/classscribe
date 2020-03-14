@@ -7,7 +7,6 @@ import WelcomeScreen from './login_registration/WelcomeScreen';
 import 'react-week-calendar/dist/style.css';
 import CourseCalendar from "./components/customAdmin/viewAll";
 import ImageCarousel from "./components/ImageUpload/index";
-import NotebookDownload from "./components/ImageUpload/download";
 import CardIDRegistration from "./login_registration/CardIDRegistration";
 import AudioPlayer from './student/AudioPlayer'
 import { is } from '@babel/types';
@@ -40,7 +39,6 @@ const Routes =  () => {
         <Route path="/registration" component={Register} />
         <PrivateRoute path="/dashboard" component={WelcomeScreen} />
         <Route path="/view-all-courses" exact component={CourseCalendar} />
-        <Route path="/download-notebooks" exact component={NotebookDownload} />
         <Route path="/notebook-carousel/" exact component={ImageCarousel} />
         <Route path="/link_your_id/:user_id" component = {CardIDRegistration} />
         <Route path="/audioplayer/:pk" component = {AudioPlayer} />
