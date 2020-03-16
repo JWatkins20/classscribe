@@ -200,6 +200,13 @@ export default class ImageCarousel extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState){
+    if(this.state.loaded != nextState.loaded){
+      return false
+    }
+    return true
+  }
+
   async updateUser(){
     const res = await axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
@@ -545,6 +552,9 @@ async loadPublicNotes(class_name){
   }
 
   async switchNote(index) {
+    if(index === this.state.notebook){
+      return
+    }
     var object = this.state.items
     if(this.state.public){
       object = this.state.saved_items
