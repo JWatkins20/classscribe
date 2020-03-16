@@ -275,10 +275,12 @@ async loadNotes()
         snapshot_index: is.length-1, // sets initial page upon render to last page in snapshot history
         pages:ps,
         checked: data[this.state.notebook].Private
-      });
+      })
     }
     await this.loadPublicNotes(this.state.items[this.state.notebook].class_name)}
     }
+}).catch((err)=>{
+  console.log(err)
 })
   }
 
@@ -524,6 +526,8 @@ async loadPublicNotes(class_name){
     }
   
   
+  }).catch((err)=>{
+    console.log(err)
   })
 }
   async switchPage(index){
