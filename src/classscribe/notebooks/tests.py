@@ -130,6 +130,7 @@ class NotebookTests(TestCase):
 class NotebookCreationEndpointTest(APITestCase):
     def setUp(self):
         user1 = User.objects.create(username='a.i@virginia.edu', password='johnny', type='student')
+        notebook1 = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes", owner=user1)
     def testendpoint(self):
         response = self.client.post(reverse('create'),{"Private": False, "class_name": 'CS 1111', "name": 'jw2vp CS 1111', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
         self.assertTrue(response.status_code==201, msg=response.data)
@@ -139,8 +140,14 @@ class NotebookCreationEndpointTest(APITestCase):
     def testbadserializer(self):
         response = self.client.post(reverse('create'),{})
         self.assertTrue(response.status_code==400, msg=response.data)
-
-
+    def testNotebookRatingCreate(self):
+        user = User.objects.get(username='a.i@virginia.edu')
+        notebook = Notebook.objects.get(name="bfb3ab_11/4/2019_notes")
+        response = self.client.post(reverse('rate'),{"user_pk": user.pk, "note_pk": notebook.pk, "rating": 1})
+        self.assertTrue(response.status_code==201, msg=response.data)
+        response = self.client.post(reverse('rate'),{"user_pk": user.pk, "note_pk": notebook.pk, "rating": 0})
+        self.assertTrue(response.status_code==200, msg=response.data)
+        self.assertTrue(response.data["msg"]=="Rating changed to 0")
 class NotebookGetViewTests(APITestCase):
     def setUp(self):
         user1 = User.objects.create(username='username134', password='pa$$word12466')
@@ -246,12 +253,8 @@ class NotebookGetViewTests(APITestCase):
         user = User.objects.get(username='username134')
         self.assertTrue(notebook3 in user.favoritedBooks.all())
     def testFavoriteFails(self):
-        notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
-        notebook2 =  Notebook.objects.get(name='bfb3ab_notes2')
-        notebook3 =  Notebook.objects.get(name='bfb3ab_notes3')
         user = User.objects.get(username='username134')  
-        notebook3.FavoritedBy.add(user)
-        response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [notebook1.pk, notebook2.pk, notebook3.pk]})
+        response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [1, 2, 27]})
         self.assertTrue(response.status_code==400, msg=str(response.status_code))
     def testunfavorite(self):
         notebook1 = Notebook.objects.get(name='bfb3ab_notes1')

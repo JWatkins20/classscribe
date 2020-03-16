@@ -161,14 +161,15 @@ export default class ImageCarousel extends Component {
     this.loadPublicNotes = this.loadPublicNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
     this.updateCards = this.updateCards.bind(this);
+    this.switchNote = this.switchNote.bind(this);
+    this.switchPage = this.switchPage.bind(this);
     this.Toggle_public_notebooks = this.Toggle_public_notebooks.bind(this);
     this.updatePublicNotebooks = this.updatePublicNotebooks.bind(this)
   }
 
   split_page = async () =>{
     var image_pks = [];
-    this.state.current_image=currentImage;
-    for(var i = this.state.current_image-1; i < this.state.pages[this.state.page].snapshots.length; i++){
+    for(var i = this.state.snapshot_index; i < this.state.pages[this.state.page].snapshots.length; i++){
       image_pks.push(this.state.pages[this.state.page].snapshots[i].pk)
     }
     var data ={
@@ -191,8 +192,12 @@ export default class ImageCarousel extends Component {
   }
 
   async componentDidMount() {
-    await this.loadUser();
+    try{
+      await this.loadUser();
     this.setState({loaded: true});
+    } catch(err){
+      console.log(err)
+    }
   }
 
   async updateUser(){
@@ -222,12 +227,12 @@ export default class ImageCarousel extends Component {
     const res = await axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
         const user = res.data;
-        this.setState({
+        await this.setState({
           user:user,
           saved_items: user.FavoritedBooks,
-        }, ()=>{
+        }, async()=>{
           if(this.state.user.type == "student" || this.state.user.type == "teacher"){
-            this.loadNotes();
+            await this.loadNotes();
           }
         })
     }
@@ -412,9 +417,11 @@ async loadNotes()
 
   findEligiblePages(){
     let t = this
-    return this.state.items[this.state.notebook].pages.filter(function(item){
-      return item.audio === t.state.audio
+    let pages = this.state.items[this.state.notebook].pages.filter(function(item){
+      return item.audio.pk === t.state.audio.pk
     })
+    console.log(pages)
+    return pages;
   }
 
   compareSnapshots(a,b){
@@ -426,11 +433,9 @@ async loadNotes()
     }
     if(a.hours === b.hours){
       if(a.minute > b.minute){
-        console.log('hours greater')
         return 1;
       }
       if(a.minute < b.minute){
-        console.log('hours less')
         return -1;
       }
       if(a.minute === b.minute){
@@ -450,7 +455,7 @@ async loadNotes()
   }
 
 
-  syncToAudio(){
+  async syncToAudio(){
     let targetI = undefined
     let targetJ = undefined
     let currentTime = Math.floor(this.state.time)
@@ -459,17 +464,23 @@ async loadNotes()
     let t = this
     let page_arr = this.findEligiblePages()
     let audio_duration = Math.floor(this.state.duration)
+
     let start_time = this.subtractDuration(audio_time, audio_duration)
     currentTime = this.addCurrentTime(start_time, currentTime)
+    console.log(audio_duration)
+    console.log(audio_time)
+    console.log(this.state.audio.timestamp)
+    console.log(start_time)
+    console.log(this.state.duration)
     for(var i = page_arr.length-1; i >= 0; i-- ){
       if(page_arr[i].snapshots !== undefined){
       snap_times = page_arr[i].snapshots.map(function(x){
         let snaptime = new Date(x.timestamp)
         return t.parseDate(snaptime)
       })
-      console.log(snap_times)
+      //console.log(snap_times)
       snap_times = snap_times.sort((a, b)=>{return this.compareSnapshots(a, b)})
-      console.log(snap_times)
+      //console.log(snap_times)
     }
       for(var j = 0; j < snap_times.length; j++){
         if(this.calculateOffsetSeconds(snap_times[j], currentTime) > 0){
@@ -481,9 +492,9 @@ async loadNotes()
         }
       }
       if(targetI !== undefined && targetJ !== undefined){
+        await this.switchPage(targetI)
         this.setState({
           snapshot_index: targetJ,
-          page: targetI
         })
         break
       }
@@ -508,19 +519,20 @@ async loadPublicNotes(class_name){
   
   })
 }
-  switchPage = (index) =>{
-    console.log(index)
+  async switchPage(index){
+    //console.log(index)
     var object = this.state.items
     if(this.state.public){
       object = this.state.saved_items
     }
-    console.log(object)
-    console.log(this.state.notebook)
+    //console.log(object)
+    //console.log(this.state.notebook)
     this.setState({
       page:index,
       transcript: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].transcript: '',
       audio: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].audio : {}
     });
+    
     var is = [];
       if(object[this.state.notebook].pages[index] !== undefined && object[this.state.notebook].pages[index].snapshots.length !== 0){
         for(var i = 0; i<object[this.state.notebook].pages[index].snapshots.length; i++){
@@ -528,8 +540,8 @@ async loadPublicNotes(class_name){
         }
       }
   
-  this.setState({images:is});
-  this.setState({state:this.state});
+  await this.setState({images:is})
+  this.setState({snapshot_index: is.length-1});
   }
 
   async switchNote(index) {
@@ -578,7 +590,7 @@ async loadPublicNotes(class_name){
   if(!this.state.public){
     await this.loadPublicNotes(this.state.items[index].class_name)
   }
-  this.setState({images:is, pages:ps});
+  this.setState({images:is, pages:ps, snapshot_index: is.length-1});
   }
 
   getImgSrc = (imageName) => {
@@ -624,7 +636,7 @@ async loadPublicNotes(class_name){
         })}
       else{
         var notelist = self.state.items.map(function(note){
-          return <NotebookCard showModal={(event)=>self.showModal(event)} onUpdatePublic={()=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.items} note={note}/>
+          return <NotebookCard showModal={(event)=>self.showModal(event)} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.items} note={note}/>
         })}
       }            
     else{

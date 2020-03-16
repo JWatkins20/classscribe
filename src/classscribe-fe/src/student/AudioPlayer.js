@@ -16,6 +16,7 @@ const AudioPlayer = ({parent, getAudioDuration,updateTime, audio_url, syncToPage
             const timer = setTimeout(() => {updateTime(myaudio.currentTime)}, 1000);
             return () => clearTimeout(timer);
         }
+        
     })
 
 
@@ -29,7 +30,7 @@ const AudioPlayer = ({parent, getAudioDuration,updateTime, audio_url, syncToPage
                 preload="auto" 
                 onPlay={(event)=>{setPlaying(true); getAudioDuration(myaudio)}}
                 onPause={(event)=>setPlaying(false)}
-                onSeeked={(event)=>{updateTime(myaudio.currentTime);}}
+                onSeeked={(event)=>{updateTime(myaudio.currentTime);getAudioDuration(myaudio)}}
                 src={audio_url}  controls ref={audio=>{myaudio = audio}}>
             </audio>
             <Button onClick={(event)=>{myaudio.currentTime = syncToPage(parent); updateTime(myaudio.currentTime)}}>Sync audio to page</Button>

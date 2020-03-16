@@ -94,26 +94,31 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
       backgroundColor: deepOrange[500],
       height: 30, 
       width: 30,
+      marginRight: 0
     },
    {
       backgroundColor: deepPurple[500],
       height: 30, 
       width: 30,
+      marginRight: 0,
     },
     {
       backgroundColor: blue[500],
       height: 30, 
       width: 30,
+      marginRight: 0,
     },
     {
       backgroundColor: lightGreen[500],
       height: 30, 
       width: 30,
+      marginRight: 0,
     },
     {
       backgroundColor: pink[500],
       height: 30, 
       width: 30,
+      marginRight: 0
     },
   ]
 
@@ -297,6 +302,7 @@ class NotebookCard extends React.Component{
           if(res.status == 201){
             self.setState({selectedKeys: []})
             await self.props.onUpdatePublic()
+            self.state.parent.switchNote(self.state.notes.indexOf(self.state.note))
           }
           else{
             alert('Was unable to add books!')
@@ -316,6 +322,7 @@ class NotebookCard extends React.Component{
           if(res.status == 201){
             console.log('successfully removed item')
             await self.props.onUpdateUser()
+            self.state.parent.switchNote(self.state.notes.indexOf(self.state.note))
           }
           else{
             alert('Was unable to remove books!')
@@ -344,7 +351,6 @@ class NotebookCard extends React.Component{
         }
       }).map((item, i) => {
         let selected = this.state.selectedKeys !== undefined ? this.state.selectedKeys.indexOf(item.pk) > -1 : false;
-        console.log(item)
         let averageRating = item.ratings.length !== 0 ? this.calculateRating(item) : 0
         return (
           <PublicCard name={item.name} sharedBy={item.owner} id={item.pk} isSelected={selected} onClick={this.handleSelection} selectableKey={item.pk} numberOfRatings={item.ratings.length} rating={averageRating} precision={0.5} />
@@ -353,7 +359,7 @@ class NotebookCard extends React.Component{
       return(
     <div>
         <div style={notestyle}>  
-            <Card style={notecardstyle} label='notebookcard' border={1} borderColor={"#09d3ac"} onClick={(event) => self.state.parent.switchNote(this.state.notes.indexOf(this.state.note))}>
+            <Card style={notecardstyle} label='notebookcard' border={1} borderColor={"#09d3ac"} onClick={async(event) => { await self.state.parent.switchNote(this.state.notes.indexOf(this.state.note))}}>
                 {self.state.edit ? //conditional render based on whether editing process has been initiated
                 <div style={{display: 'inline-block'}}>
                   <CardContent>
@@ -369,8 +375,8 @@ class NotebookCard extends React.Component{
                       {self.state.note.name}
                     </Typography>
                   </CardContent>
-                  <CardActions style={{justifyContent: 'flex-start', alignItems: 'center'}}>
-                    {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <div>
+                  <CardActions style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                    {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <div style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
                     <IconButton className='remove' aria-label="remove icon" onClick={(event) => this.removeSavedNotebook(self.state.note)}>
                     <HighlightOffRoundedIcon />
                     </IconButton>
@@ -393,7 +399,7 @@ class NotebookCard extends React.Component{
                     <IconButton className='Down' color={'primary'} aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
                     <ThumbDownIcon />
                     </IconButton></div> : null}
-                    <Tooltip title={'Shared By: '+this.state.parent.state.user.username}>
+                    <Tooltip  style={{margin: 0}} title={'Shared By: '+this.state.parent.state.user.username}>
                         <Avatar m={0} style={avatarr[this.state.parent.state.user.pk % 5]}>{self.state.parent.state.user.username.charAt(0)}</Avatar> 
                       </Tooltip>
                     </div> :
@@ -409,6 +415,7 @@ class NotebookCard extends React.Component{
                       <IconButton aria-label="explore icon" onClick={this.props.showModal}>
                         <ExploreIcon />
                       </IconButton>}>
+                        {close=>(
                         <div style={modalStyle}>
                         <div style={HeaderModalStyle}>
                           <h2>Public notebooks for course: {this.state.note.class_name}</h2>
@@ -421,9 +428,10 @@ class NotebookCard extends React.Component{
                           {/* <List items={self.state.parent.state.public_items} /> */}
                         </div>
                         <div style={ButtonModalStyle}>
-                          <Button onClick={(event)=>{this.favorite()}} style={{backgroundColor: '#3f51b5', color: 'white', textAlign: 'center'}}>Add to collection</Button>
+                          <Button onClick={(event)=>{this.favorite(); setTimeout(()=>{close()}, 400)}} style={{backgroundColor: '#3f51b5', color: 'white', textAlign: 'center'}}>Add to collection</Button>
                         </div>
                         </div>
+                        )}
                       </Popup>
                     </div>
                     } 
