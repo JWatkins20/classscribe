@@ -243,8 +243,8 @@ async loadNotes()
     await axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/").then(async(res) =>{
     if(res.status===200){
       const data = res.data.data;
-      this.setState({items:data});
       if(data !== [] && data !== undefined){
+        await this.setState({items:data});
       if(!data[this.state.notebook].pages.length == 0){
           var ps = [];
           var is = [];
@@ -269,9 +269,9 @@ async loadNotes()
         pages:ps,
         checked: data[this.state.notebook].Private
       });
-      this.setState({state:this.state});
     }
-    }await this.loadPublicNotes(this.state.items[this.state.notebook].class_name)}
+    await this.loadPublicNotes(this.state.items[this.state.notebook].class_name)}
+    }
 })
   }
 
