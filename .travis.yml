@@ -24,5 +24,4 @@ jobs:
         - cd src/classscribe-fe
         - npm install
       script:
-        - npm run build
         - npm run test

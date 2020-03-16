@@ -107,7 +107,7 @@ it('render student ui and switch notebook and pages', async (done) => {
   done()
 });
 
-it('render student ui switch to public notebooks', async () => {
+it('render student ui switch to public notebooks', async (done) => {
   /**
    * mockResolvedValueOnce allows for setting mocked api call returns for multiple different api calls.
    * This example handles the first 3 axios requests made when student notebook view loads
