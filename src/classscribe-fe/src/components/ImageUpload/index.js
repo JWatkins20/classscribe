@@ -286,7 +286,11 @@ async loadNotes()
 
 
 
-
+  changePrivacy = (notebook) =>{
+    let dummy = this.state.items;
+    dummy[notebook].Private = !this.state.items[notebook].Private
+    this.setState({items: dummy})
+  }
 
   NotebookToggle = () => {
     var self = this
@@ -536,6 +540,9 @@ async loadPublicNotes(class_name){
     if(this.state.public){
       object = this.state.saved_items
     }
+    if(object[this.state.notebook]===undefined){
+      return
+    }
     //console.log(object)
     //console.log(this.state.notebook)
     this.setState({
@@ -556,9 +563,6 @@ async loadPublicNotes(class_name){
   }
 
   async switchNote(index) {
-    if(index === this.state.notebook){
-      return
-    }
     var object = this.state.items
     if(this.state.public){
       object = this.state.saved_items
@@ -622,6 +626,7 @@ async loadPublicNotes(class_name){
   getAudioDuration(audio){
     if(audio !== undefined){
       this.setState({duration: audio.duration})
+      console.log(audio.duration)
     }
   }
 

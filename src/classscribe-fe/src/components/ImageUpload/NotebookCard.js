@@ -171,16 +171,16 @@ class NotebookCard extends React.Component{
     }
 
     async handleSwitch(event){
-      this.setState({checked: event.target.checked})
-      this.state.parent.changePrivacy(this.state.parent.state.notebook)
       var data = {
         'pk' : this.state.note.pk,
       }
+      let self = this
       const url = `${base_url}notebooks/privacy-toggle/`;
       await axios.post(url, data)
           .then(function (response) {
               if (response.status === 200) {
-                  
+                self.setState({checked: event.target.checked})
+                self.state.parent.changePrivacy(this.state.parent.state.notebook)
               }
               else {
                   alert("Edits were not saved!");
@@ -231,7 +231,6 @@ class NotebookCard extends React.Component{
 
 
     async handleSubmit(event){
-      event.preventDefault();
       if(this.state.notebookname === ""){
         return
       }
@@ -285,9 +284,9 @@ class NotebookCard extends React.Component{
       }
     }
 
-    handleSelection (key) {
-      this.setState({ selectedKeys: this.state.selectedKeys.shift(key) });
-    }
+    // handleSelection (key) {
+    //   this.setState({ selectedKeys: this.state.selectedKeys.shift(key) });
+    // }
 
     async favorite(){
       var self = this
@@ -364,8 +363,8 @@ class NotebookCard extends React.Component{
                 <div style={{display: 'inline-block'}}>
                   <CardContent>
                     <form>
-                      <TextField inputProps={{"data-testid": "content-input"}} value={this.notebookname} style={textfieldstyle} id="standard-basic" label="new name" onChange={(event)=>self.handleNameChange(event)} />
-                      <Button role='edit-submit-button' className="submit-name" style={buttonstyle} aria-label="submit name change" variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
+                      <TextField id="newName" inputProps={{"data-testid": "content-input"}} value={this.notebookname} style={textfieldstyle} label="new name" onChange={(event)=>self.handleNameChange(event)} />
+                      <Button role='edit-submit-button' id="submit-name" style={buttonstyle} aria-label="submit name change" variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
                     </form> 
                   </CardContent>
                   </div>:
@@ -387,32 +386,38 @@ class NotebookCard extends React.Component{
                     })[0].rating === 1 
                     ? 
                     <div>
-                    <IconButton className='Up' color={'primary'} aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    <IconButton id='up' color={'primary'} aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
                     <ThumbUpIcon />
                     </IconButton>
-                    <IconButton className='Down' aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
+                    <IconButton id='down' aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
                     <ThumbDownIcon />
                     </IconButton> </div>:
-                    <div><IconButton className='Up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
-                    <ThumbUpIcon />
+                    <div><IconButton id='up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    <ThumbUpIcon/>
                     </IconButton>
-                    <IconButton className='Down' color={'primary'} aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
+                    <IconButton id='down' color={'primary'} aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
                     <ThumbDownIcon />
-                    </IconButton></div> : null}
+                    </IconButton></div> : 
+                    <div><IconButton id='up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    <ThumbUpIcon/>
+                    </IconButton>
+                    <IconButton id='down' aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
+                    <ThumbDownIcon />
+                    </IconButton></div>}
                     <Tooltip  style={{margin: 0}} title={'Shared By: '+this.state.parent.state.user.username}>
                         <Avatar m={0} style={avatarr[this.state.parent.state.user.pk % 5]}>{self.state.parent.state.user.username.charAt(0)}</Avatar> 
                       </Tooltip>
                     </div> :
                     <div>
                     <Toggle parent={self} />
-                    <IconButton role="edit-button" className='edit' aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
+                    <IconButton role="edit-button" id='editButton' aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
                     <EditIcon />
                     </IconButton>
                     <IconButton className='delete' aria-label="delete icon" onClick={(event) => self.deleteNotebook(self.state.note.pk)}>
                       <DeleteForeverIcon/>
                     </IconButton>
-                    <Popup modal contentStyle={{borderRadius: '20px'}} trigger={
-                      <IconButton aria-label="explore icon" onClick={this.props.showModal}>
+                    <Popup modal id="popup" contentStyle={{borderRadius: '20px'}} trigger={
+                      <IconButton id="ex" aria-label="explore icon">
                         <ExploreIcon />
                       </IconButton>}>
                         {close=>(
@@ -428,7 +433,7 @@ class NotebookCard extends React.Component{
                           {/* <List items={self.state.parent.state.public_items} /> */}
                         </div>
                         <div style={ButtonModalStyle}>
-                          <Button onClick={(event)=>{this.favorite(); setTimeout(()=>{close()}, 400)}} style={{backgroundColor: '#3f51b5', color: 'white', textAlign: 'center'}}>Add to collection</Button>
+                          <Button id="submitFavorite" onClick={(event)=>{this.favorite(); setTimeout(()=>{close()}, 400)}} style={{backgroundColor: '#3f51b5', color: 'white', textAlign: 'center'}}>Add to collection</Button>
                         </div>
                         </div>
                         )}
