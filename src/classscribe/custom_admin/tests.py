@@ -57,6 +57,26 @@ class CourseTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data["message"], "The lamp youre using already is being used in a different room!")
 
+        Course.objects.create(
+            room="testRoom2",
+            time="TThu 8:00-9:15",
+            name="test Name",
+            building="testBuilding",
+            professorID="testProfessorID",
+            lamp_serial="testLamp_serial",
+            semester="Fall 2019"
+        )
+
+        response = c.post('/courses/create', data={"room": "testRoom2",
+                                                   "time": "MWF 8:00-8:50",
+                                                   "courseName": "Unit Course",
+                                                   "building": "testBuilding",
+                                                   "professorId": "henryweber@email.virginia.edu",
+                                                   "lamp_serial": "testLamp_serial",
+                                                   "semester": "Fall 2019"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["message"], "Old courses have conflicting SNs!")
+
     def test_submit_course_succeeds(self):
         c = Client()
         response = c.post('/courses/create', data={"room": "testRoom1",
@@ -221,6 +241,51 @@ class CourseTests(TestCase):
         })
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_edit_course_makes_successful_change_with_existing_notebook(self):
+        c = Client()
+        course2 = Course.objects.get(time="TThu 8:00-9:15")
+        path = '/courses/edit/' + str(course2.pk)
+
+        response = c.post(path, {
+            'semester': course2.semester,
+            'courseName': course2.name,
+            'building': course2.building,
+            'room': "testRoom",
+            'professorId': course2.professorID,
+            'lamp_serial': "testLamp_serial1234",
+            'time': course2.time
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_edit_course_fails_on_existing_SNs(self):
+        Course.objects.create(
+            room="testRoom2",
+            time="TThuF 8:00-9:15",
+            name="test Name",
+            building="testBuilding",
+            professorID="testProfessorID",
+            lamp_serial="testLamp_serial123",
+            semester="Fall 2019"
+        )
+
+        c = Client()
+        course2 = Course.objects.get(time="TThu 8:00-9:15")
+        path = '/courses/edit/' + str(course2.pk)
+
+        response = c.post(path, {
+            'semester': course2.semester,
+            'courseName': course2.name,
+            'building': course2.building,
+            'room': "testRoom",
+            'professorId': course2.professorID,
+            'lamp_serial': "testLamp_serial123",
+            'time': course2.time
+        })
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["message"], "Old courses have conflicting SNs!")
 
     def test_get_semesters_returns_expected(self):
         c = Client()
