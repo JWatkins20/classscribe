@@ -146,7 +146,6 @@ class NotebookCard extends React.Component{
 
     handleEditNotebook = (notebook) => {
       this.setState({edit:true})
-      this.setState({state:this.state});
   
     }
 
@@ -182,9 +181,6 @@ class NotebookCard extends React.Component{
                 self.setState({checked: event.target.checked})
                 self.state.parent.changePrivacy(this.state.parent.state.notebook)
               }
-              else {
-                  alert("Edits were not saved!");
-              }
           })
           .catch(function (error) {
               alert("Edits were not saved. Check the console for the error!");
@@ -207,10 +203,7 @@ class NotebookCard extends React.Component{
         else if(res.status === 200){
           console.log('user already rated notebook')
         }
-        else{
-          console.log('rating was not applied :(')
-        }
-      }).then(async()=>this.state.parent.updateUser())
+      }).then(async()=>this.state.parent.updateUser()).catch((err)=>{console.log('rating was not applied :(')})
     }
 
     handleNameChange(event){
@@ -250,9 +243,6 @@ class NotebookCard extends React.Component{
           .then(function (response) {
               if (response.status === 200) {
                   
-              }
-              else {
-                  alert("Edits were not saved!");
               }
           })
           .catch(function (error) {
@@ -303,9 +293,8 @@ class NotebookCard extends React.Component{
             await self.props.onUpdatePublic()
             self.state.parent.switchNote(self.state.notes.indexOf(self.state.note))
           }
-          else{
-            alert('Was unable to add books!')
-          }
+        }).catch((err)=>{
+          alert('Was unable to add books!')
         })
       }
     }
@@ -323,10 +312,7 @@ class NotebookCard extends React.Component{
             await self.props.onUpdateUser()
             self.state.parent.switchNote(self.state.notes.indexOf(self.state.note))
           }
-          else{
-            alert('Was unable to remove books!')
-          }
-        })
+        }).catch((err)=>{alert('Was unable to remove books!')})
         // dummy = dummy.favoritedBooks.splice(dummy.favoritedBooks.indexOf())
         // this.setState({state: this.state})
     }

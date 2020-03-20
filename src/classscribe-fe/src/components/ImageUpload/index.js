@@ -433,7 +433,6 @@ async loadNotes()
     let pages = this.state.items[this.state.notebook].pages.filter(function(item){
       return item.audio.pk === t.state.audio.pk
     })
-    console.log(pages)
     return pages;
   }
 
@@ -480,20 +479,13 @@ async loadNotes()
 
     let start_time = this.subtractDuration(audio_time, audio_duration)
     currentTime = this.addCurrentTime(start_time, currentTime)
-    console.log(audio_duration)
-    console.log(audio_time)
-    console.log(this.state.audio.timestamp)
-    console.log(start_time)
-    console.log(this.state.duration)
     for(var i = page_arr.length-1; i >= 0; i-- ){
       if(page_arr[i].snapshots !== undefined){
       snap_times = page_arr[i].snapshots.map(function(x){
         let snaptime = new Date(x.timestamp)
         return t.parseDate(snaptime)
       })
-      //console.log(snap_times)
       snap_times = snap_times.sort((a, b)=>{return this.compareSnapshots(a, b)})
-      //console.log(snap_times)
     }
       for(var j = 0; j < snap_times.length; j++){
         if(this.calculateOffsetSeconds(snap_times[j], currentTime) > 0){
@@ -626,7 +618,6 @@ async loadPublicNotes(class_name){
   getAudioDuration(audio){
     if(audio !== undefined){
       this.setState({duration: audio.duration})
-      console.log(audio.duration)
     }
   }
 

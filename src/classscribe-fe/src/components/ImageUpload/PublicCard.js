@@ -73,7 +73,7 @@ class PublicCard extends Component{
     }
     console.log(this.state.isSelected)
       return(
-        <ListItem style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}} divider={Divider} button selected={this.props.isSelected} onClick={(event)=>{this.props.onClick(event, this.state.id); this.setState({state: this.state})}}>
+        <ListItem style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}} id={"public"+String(this.state.name)} divider={Divider} button selected={this.props.isSelected} onClick={(event)=>{this.props.onClick(event, this.state.id); this.setState({state: this.state})}}>
           <Tooltip title={'Shared By: '+this.state.sharedBy.username}>
           <ListItemAvatar style={{width: 35, height: 35}}>
           <Avatar style={avatarr[this.state.sharedBy.pk % 5]}>{self.state.sharedBy.username.charAt(0)}</Avatar> 

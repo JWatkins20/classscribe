@@ -10,7 +10,7 @@ import {act} from "react-dom/test-utils";
 import moment from 'moment';
 import Enzyme from "enzyme";
 import sinon from 'sinon'
-import NotebookCard from "./NotebookCard"
+import PublicCard from "./PublicCard"
 import Adapter from 'enzyme-adapter-react-16';
 import { base_url, url } from "../../App";
 import {waitForExpect} from 'wait-for-expect'
@@ -56,29 +56,24 @@ let state = {
       recording: undefined,
       sent: false,
   },
-  switchPage: (page)=>{state.state.page=1}
+  
 }  
 
   let pages = state.state.pages
   let page = pages[state.state.page]
 
-it('fails to render without input', () => {
-  let wrapper = Enzyme.shallow(<PageCard parent={state} page={undefined} pages={pages}></PageCard>)
-  expect(wrapper.text()).toBe('')
+it('renders ', async(done) => {
+    let wrapper = Enzyme.shallow(<PublicCard 
+    name="this"
+    id={1}
+    sharedBy={{username: "bob"}}
+    isSelected={true}
+    onClick={()=>{state.state.page=1}}
+    />)
+    let card = wrapper.find('#publicthis') 
+    card.simulate('click')
+    expect(state.state.page).toBe(1)
+    await wrapper.update().instance().setState({hover: true})
+    expect(wrapper.update().state('hover')).toBe(true)
+    done()
 });
-it('renders and presses buttons', ()=>{
-  let wrapper = Enzyme.shallow(<PageCard parent={state} page={page} pages={pages}></PageCard>)
-  expect(wrapper.text()).toContain('Page 1')
-  let card = wrapper.find('#pagecard')
-  card.simulate('click')
-  expect(state.state.page).toBe(1)
-  let send = wrapper.update().find('#sendpage')
-  send.simulate('click')
-  expect(confirmStub.called).toBe(true)
-  let download = wrapper.update().find('#download')
-  download.simulate('click')
-  expect(confirmStub.called).toBe(true)
-
-})
-
-
