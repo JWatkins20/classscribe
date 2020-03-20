@@ -4,7 +4,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { base_url } from "../../App"
 import AudioPlayer from "../../student/AudioPlayer"
 import Sound from 'react-sound'
-import Axios from 'axios';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 import { url } from '../../App';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -13,7 +13,7 @@ import Navbar from '../Navbar';
 import NotebookCard from './NotebookCard';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import TextField from 'material-ui/TextField';
+
 
 var currentImage;
 
@@ -96,7 +96,9 @@ const divstyle = {
   //border: "2px solid black",
   'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
   'border-radius': '0.5em',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
+  display: 'flex',
+  flexDirection: 'column',
 }
 
 
@@ -109,10 +111,6 @@ const notestyle = {
   marginRight: "auto",
   marginLeft: "auto",
  }
-
-//  ToggleButtonStyle = {
-   
-//  }
 
  const ToggleButtonGroupStyle = {
     height: 10,
@@ -133,7 +131,6 @@ export default class ImageCarousel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pagename: props.match.params.page_name,
       images:[],
       items: [], //Loaded Notebooks for User
       public_items: [], //Loaded notebooks for Modal view
@@ -145,84 +142,116 @@ export default class ImageCarousel extends Component {
       loaded: false,
       page: 0,
       notebook: 0,
+      duration: 0,
       time: 0,
       transcript: "",
       public: false,
       sdac_ready: false,
       recording: undefined,
       showModal: false,
-      current_image: undefined
+      snapshot_index: 0,
     };
+    this.findEligiblePages = this.findEligiblePages.bind(this);
+    this.syncToAudio = this.syncToAudio.bind(this);
+    this.syncToPage = this.syncToPage.bind(this);
+    this.parseDate = this.parseDate.bind(this);
+    this.getAudioDuration = this.getAudioDuration.bind(this);
+    this.updateAudioTime = this.updateAudioTime.bind(this);
     this.loadNotes = this.loadNotes.bind(this);
     this.loadPublicNotes = this.loadPublicNotes.bind(this);
-    this.loadSavedPublicNotes = this.loadSavedPublicNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
-    this.changePrivacy = this.changePrivacy.bind(this);
     this.updateCards = this.updateCards.bind(this);
+    this.switchNote = this.switchNote.bind(this);
+    this.switchPage = this.switchPage.bind(this);
     this.Toggle_public_notebooks = this.Toggle_public_notebooks.bind(this);
+    this.updatePublicNotebooks = this.updatePublicNotebooks.bind(this)
   }
 
   split_page = async () =>{
     var image_pks = [];
-    this.state.current_image=currentImage;
-    for(var i = this.state.current_image-1; i < this.state.pages[this.state.page].snapshots.length; i++){
+    for(var i = this.state.snapshot_index; i < this.state.pages[this.state.page].snapshots.length; i++){
       image_pks.push(this.state.pages[this.state.page].snapshots[i].pk)
     }
     var data ={
       "page_pk": this.state.pages[this.state.page].pk, 
       "image_pks": JSON.stringify(image_pks)
     }
-    await Axios.post(base_url + "notebooks/split/page/", data)
+    await axios.post(base_url + "notebooks/split/page/", data)
     this.loadNotes();
   }
 
 
   
   
-  // handlePrivacyChange(event){
-  //   this.setState({private: event.target.value})
-  // }
-
   async Toggle_public_notebooks(event){
     await this.setState({public: !this.state.public})
     this.switchNote(0) //opens public notebook with 0 index in array
   }
-
-  // shouldComponentUpdate(){
-    
-  // }
-
   updateCards(dummy){
     this.setState({items : dummy})
   }
 
   async componentDidMount() {
-    await this.loadUser();
+    try{
+      await this.loadUser();
     this.setState({loaded: true});
+    } catch(err){
+      console.log(err)
+    }
   }
 
-  async loadUser(){
-    const res = await Axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
+  shouldComponentUpdate(nextProps, nextState){
+    if(this.state.loaded != nextState.loaded){
+      return false
+    }
+    return true
+  }
+
+  async updateUser(){
+    const res = await axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
         const user = res.data;
         this.setState({
           user:user,
-          saved_items: user.FavoritedBooks,
+          saved_items: user.favoritedBooks,
         });
-    }
-    if(this.state.user.type == "student" || this.state.user.type == "teacher"){
-      this.loadNotes();
-    }
+      }
+  }
 
+  async updatePublicNotebooks(){
+    await this.loadPublicNotes(this.state.items[this.state.notebook].class_name)
+    const res = await axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
+    if(res.status === 200){
+        const user = res.data;
+        this.setState({
+          user:user,
+          saved_items: user.favoritedBooks,
+        });
+      }
+  }
+
+  async loadUser(){
+    const res = await axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
+    if(res.status === 200){
+        const user = res.data;
+        await this.setState({
+          user:user,
+          saved_items: user.FavoritedBooks,
+        }, async()=>{
+          if(this.state.user.type == "student" || this.state.user.type == "teacher"){
+            await this.loadNotes();
+          }
+        })
+    }
 }
 
 async loadNotes()
   {
-    await Axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/").then((res) =>{
-    
+    await axios.get(base_url + "notebooks/get/"+this.state.user.pk+"/").then(async(res) =>{
     if(res.status===200){
       const data = res.data.data;
-      this.setState({items:data});
+      if(data !== [] && data !== undefined){
+        await this.setState({items:data});
       if(!data[this.state.notebook].pages.length == 0){
           var ps = [];
           var is = [];
@@ -233,9 +262,6 @@ async loadNotes()
           transcript: data[this.state.notebook].pages[this.state.page].transcript,
           saved_items: this.state.user.favoritedBooks,
         });
-        // this.setState({
-        //   recording: new Audio('http://localhost:8000'+this.state.audio.file)
-        // });
         this.setState({
           audio: data[this.state.notebook].pages[this.state.page].audio
         });
@@ -246,39 +272,29 @@ async loadNotes()
           }
       this.setState({
         images:is,
+        snapshot_index: is.length-1, // sets initial page upon render to last page in snapshot history
         pages:ps,
         checked: data[this.state.notebook].Private
-      });
-      this.setState({state:this.state});
+      })
     }
+    await this.loadPublicNotes(this.state.items[this.state.notebook].class_name)}
     }
+}).catch((err)=>{
+  console.log(err)
 })
-
-await this.loadPublicNotes(this.state.items[this.state.notebook].class_name)
-// let audio = this.getAudioDuration('http://localhost:8000'+this.state.audio.file).then(function(val){
-//   return val
-// })
-// this.setState({audio_obj: audio})
   }
 
 
-async getAudioDuration(src){
-  var audio = new Audio(src)
-  var loaded = false;
-  let dur = 0
 
-  let p = new Promise((resolve, reject)=>{
-    audio.onloadedmetadata = () => {
-      console.log(audio.duration)
-      resolve(audio)
-    }
-  })
-  return p
-}
+  changePrivacy = (notebook) =>{
+    let dummy = this.state.items;
+    dummy[notebook].Private = !this.state.items[notebook].Private
+    this.setState({items: dummy})
+  }
 
   NotebookToggle = () => {
     var self = this
-    return(<ToggleButtonGroup
+    return(<div style={{alignSelf:'flex-end', flex: 1, paddingTop: 10}}><ToggleButtonGroup
           aria-label="Notebook Toggle"
           id="Notebooks"
           exclusive
@@ -286,6 +302,7 @@ async getAudioDuration(src){
           <ToggleButton
           id="userToggle"
           value="user_books"
+          role="your_switch"
           aria-label="Your Notebook"
           selected={!self.state.public}
           onClick={async function(event){
@@ -300,6 +317,7 @@ async getAudioDuration(src){
         <ToggleButton
             id="publicToggle"
             value="publicbooks"
+            role="saved_switch"
             aria-label="Saved Notebooks"
             selected={self.state.public}
             onClick={async function(event){
@@ -312,42 +330,191 @@ async getAudioDuration(src){
             Saved Notebooks
         </ToggleButton>
       </ToggleButtonGroup>
+      </div>
     )
-  } 
+  }
+  
+  parseDate = (audio_time) => {
+    let audio_minute = audio_time.getMinutes()
+    let audio_hours = audio_time.getHours()
+    let audio_day = audio_time.getDate()
+    let audio_seconds = audio_time.getSeconds()
+    let audio_month = audio_time.getMonth()
+    let audio_year = audio_time.getYear()
+    return ({
+      minute: audio_minute,
+      hours: audio_hours,
+      day: audio_day,
+      seconds: audio_seconds,
+      month: audio_month,
+      year: audio_year
+    }
+    )
+  }
+/**
+ * get time at which pi began recording
+ */
+  subtractDuration = (dateObj, duration) =>{
+    let secondChange = (duration%3600)%60
+    let hourChange = Math.floor(duration/3600)
+    let minuteChange = Math.floor((duration%3600)/60)
+    dateObj.seconds = dateObj.seconds - secondChange
+    dateObj.minute = dateObj.minute-minuteChange
+    dateObj.hours = dateObj.hours-hourChange
+    if(dateObj.seconds < 0){
+      dateObj.seconds = dateObj.seconds+60
+      dateObj.minutes = dateObj.minutes-1
+    }
+    if(dateObj.minute < 0){
+      dateObj.minute = dateObj.minute+60
+      dateObj.hours = dateObj.hours-1
+    }
+    if(dateObj.hours < 0){
+      dateObj.hours = dateObj.minute+24
+      dateObj.day = dateObj.day-1
+    }
+    return dateObj
+  }
 
-changePrivacy(notebook){
-  var dummy = this.state.items
-  dummy[notebook].Private = !dummy[notebook].Private
-  this.setState({items : dummy})
-}
+  /**
+ * get time at which audio is playing when syncing to audio
+ */
 
-  // async syncToPage(){
-  //   let audio_stamp = this.state.audio.timestamp
-  //   console.log(this.state.audio)
-  //   let audio_time = new Date(audio_stamp)
-  //   let audio_minute = audio_time.getMinutes()
-  //   let audio_day = audio_time.getDay()
-  //   let audio_seconds = audio_time.getSeconds()
-  //   console.log(await this.getAudioDuration('http://localhost:8000'+this.state.audio.file).then(function(val){
-  //     return val
-  //   }))
-  //   console.log(this.state.items[this.state.notebook].pages[this.state.page])
-  //   for(var i = 0; i < this.state.items[this.state.notebook].pages[this.state.page].snapshots.length; i++){
-  //     console.log(this.state.items[this.state.notebook].pages[this.state.page].snapshots[i])
-  //   }
-  // }
+  addCurrentTime = (dateObj, currentTime) =>{
+    let secondChange = (currentTime%3600)%60
+    let hourChange = Math.floor(currentTime/3600)
+    let minuteChange = Math.floor((currentTime%3600)/60)
+    dateObj.seconds = dateObj.seconds + secondChange
+    dateObj.minute = dateObj.minute+minuteChange
+    dateObj.hours = dateObj.hours+hourChange
+    if(dateObj.seconds > 59){
+      dateObj.seconds = dateObj.seconds%60
+      dateObj.minutes = dateObj.minutes+1
+    }
+    if(dateObj.minute > 59){
+      dateObj.minute = dateObj.minute%60
+      dateObj.hours = dateObj.hours+1
+    }
+    if(dateObj.hours > 23){
+      dateObj.hours = dateObj.minute%24
+      dateObj.day = dateObj.day+1
+    }
+    return dateObj
+  }
 
-  // syncToAudio(time){
-  //   let audio_stamp = this.state.audio.timestamp
-  //   let audio_time = new Date(audio_stamp)
-  //   console.log(audio_time.getDay)
-  //   var page_stamp = this.state.items[this.state.notebook].pages[this.state.page].timestamp
-  //   let page_time = new Date(page_stamp)
-  //   console.log(page_time.getDay)
-  // }
+  calculateOffsetSeconds = (dateObj, startTime) => {
+    let seconds = dateObj.seconds - startTime.seconds
+    seconds = seconds + ((dateObj.minute - startTime.minute)*60)
+    seconds = seconds + ((dateObj.hours - startTime.hours)*3600)
+    return seconds
+  }
+
+
+  syncToPage(){
+    let snap_times = {}
+    let audio_time = this.parseDate(new Date(this.state.audio.timestamp))//date object relating to stored audio
+    let t = this // to bring component state to map function scope
+    if(this.state.items[this.state.notebook].pages[this.state.page].snapshots !== undefined){
+      snap_times = this.state.items[this.state.notebook].pages[this.state.page].snapshots.map(function(x){
+        let snaptime = new Date(x.timestamp)
+        return t.parseDate(snaptime)
+      })
+    }
+    let audio_duration = Math.floor(this.state.duration)
+    let start_time = this.subtractDuration(audio_time, audio_duration)
+    if(snap_times[this.state.snapshot_index].day === audio_time.day && snap_times[this.state.snapshot_index].month === audio_time.month && snap_times[this.state.snapshot_index].year === audio_time.year){
+      return this.calculateOffsetSeconds(snap_times[this.state.snapshot_index], start_time)
+    }
+    return 0
+  }
+
+  findEligiblePages(){
+    let t = this
+    let pages = this.state.items[this.state.notebook].pages.filter(function(item){
+      return item.audio.pk === t.state.audio.pk
+    })
+    return pages;
+  }
+
+  compareSnapshots(a,b){
+    if (a.hours > b.hours) {
+      return 1;
+    }
+    if (a.hours < b.hours) {
+      return -1;
+    }
+    if(a.hours === b.hours){
+      if(a.minute > b.minute){
+        return 1;
+      }
+      if(a.minute < b.minute){
+        return -1;
+      }
+      if(a.minute === b.minute){
+        if(a.seconds > b.seconds){
+          return 1;
+        }
+        if(a.seconds < b.seconds){
+          return -1;
+        }
+        if(a.seconds === b.seconds){
+          return 0
+        }
+      }
+    }
+    // a must be equal to b
+    return 0;
+  }
+
+
+  async syncToAudio(){
+    let targetI = undefined
+    let targetJ = undefined
+    let currentTime = Math.floor(this.state.time)
+    let snap_times = {}
+    let audio_time = this.parseDate(new Date(this.state.audio.timestamp))
+    let t = this
+    let page_arr = this.findEligiblePages()
+    let audio_duration = Math.floor(this.state.duration)
+
+    let start_time = this.subtractDuration(audio_time, audio_duration)
+    currentTime = this.addCurrentTime(start_time, currentTime)
+    for(var i = page_arr.length-1; i >= 0; i-- ){
+      if(page_arr[i].snapshots !== undefined){
+      snap_times = page_arr[i].snapshots.map(function(x){
+        let snaptime = new Date(x.timestamp)
+        return t.parseDate(snaptime)
+      })
+      snap_times = snap_times.sort((a, b)=>{return this.compareSnapshots(a, b)})
+    }
+      for(var j = 0; j < snap_times.length; j++){
+        if(this.calculateOffsetSeconds(snap_times[j], currentTime) > 0){
+          break
+        }
+        else{
+          targetI = i
+          targetJ = j
+        }
+      }
+      if(targetI !== undefined && targetJ !== undefined){
+        await this.switchPage(targetI)
+        this.setState({
+          snapshot_index: targetJ,
+        })
+        break
+      }
+    }
+    if(targetI === undefined || targetJ === undefined){
+      this.setState({
+        snapshot_index: 0,
+        page: 0
+      })
+    }
+    
+  }
 
 async loadPublicNotes(class_name){
-  await Axios.get(base_url + "notebooks/get/public/"+String(this.state.user.pk)+"/"+String(class_name)+"/").then((res) =>{
+  await axios.get(base_url + "notebooks/get/public/"+String(this.state.user.pk)+"/"+String(class_name)+"/").then((res) =>{
         
     if(res.status===200){
       const data = res.data.data;
@@ -355,51 +522,54 @@ async loadPublicNotes(class_name){
     }
   
   
+  }).catch((err)=>{
+    console.log(err)
   })
 }
-
-async loadSavedPublicNotes(){
-  // await Axios.get(base_url + "notebooks/get/public/"+String(this.state.user.pk)+"/").then((res) =>{
-        
-  //   if(res.status===200){
-  //     const data = res.data.data;
-  //     this.setState({public_items: data});
-  //   }
-  
-  
-  // })
-}
-
-  switchPage = (index) =>{
-
+  async switchPage(index){
+    //console.log(index)
     var object = this.state.items
     if(this.state.public){
       object = this.state.saved_items
     }
+    if(object[this.state.notebook]===undefined){
+      return
+    }
+    //console.log(object)
+    //console.log(this.state.notebook)
     this.setState({
       page:index,
-      transcript: object[this.state.notebook].pages[index].transcript,
-      audio: object[this.state.notebook].pages[index].audio
+      transcript: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].transcript: '',
+      audio: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].audio : {}
     });
+    
     var is = [];
-      if(!object[this.state.notebook].pages[index].snapshots.length == 0){
+      if(object[this.state.notebook].pages[index] !== undefined && object[this.state.notebook].pages[index].snapshots.length !== 0){
         for(var i = 0; i<object[this.state.notebook].pages[index].snapshots.length; i++){
         is.push(object[this.state.notebook].pages[index].snapshots[i].file)
         }
       }
   
-  this.setState({images:is});
-  this.setState({state:this.state});
+  await this.setState({images:is})
+  this.setState({snapshot_index: is.length-1});
   }
 
   async switchNote(index) {
-    console.log(this.state.public)
     var object = this.state.items
     if(this.state.public){
       object = this.state.saved_items
     }
-    if(object[index].pages.length < 1){
-      console.log('yes')
+    if(object === undefined){
+      this.setState({
+        pages: {},
+        transcript: '',
+        audio: {},
+        images: [],
+        pages: []
+      })
+      return
+    }
+    if(object[index] === undefined || object[index].pages.length < 1){
       this.setState({
         pages: {},
         transcript: '',
@@ -427,16 +597,28 @@ async loadSavedPublicNotes(){
         }
       }
     }
-  await this.loadPublicNotes(this.state.items[index].class_name)
-  this.setState({images:is, pages:ps});
+  if(!this.state.public){
+    await this.loadPublicNotes(this.state.items[index].class_name)
+  }
+  this.setState({images:is, pages:ps, snapshot_index: is.length-1});
   }
 
   getImgSrc = (imageName) => {
-    return base_url + imageName.substring(1);
+    var img = imageName.substring(1)
+    if(imageName.includes('localhost')){
+      img = imageName.substring(imageName.indexOf('m'))
+    }
+    return base_url + img;
   }
 
   updateAudioTime = (time) => {
     this.setState({time: time})
+  }
+
+  getAudioDuration(audio){
+    if(audio !== undefined){
+      this.setState({duration: audio.duration})
+    }
   }
 
   createCarousel = () => {
@@ -458,19 +640,19 @@ async loadSavedPublicNotes(){
     const self = this;
     var notes = this.state.items;
     if(notes != undefined){
-      if(this.state.public){
+      if(this.state.public && this.state.saved_items !== undefined){
         var notelist = self.state.saved_items.map(function(note){
-          return <NotebookCard parent={self} notes={self.state.saved_items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
+          return <NotebookCard onUpdateUser={(event)=>self.updateUser()} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.saved_items} note={note}/>
         })}
       else{
         var notelist = self.state.items.map(function(note){
-          return <NotebookCard showModal={(event)=>self.showModal(event)} parent={self} notes={self.state.items} note={note}/> //onClick1={() => self.switchNote(notes.indexOf(note))} onclick2={(event) => self.handleSubmit()} onClick3={() => self.handleEditNotebook(note)} onChange={(event)=>self.handleNameChange(event)}
+          return <NotebookCard showModal={(event)=>self.showModal(event)} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.items} note={note}/>
         })}
       }            
     else{
           return(<div>Unable to display notebooks</div>);
         }
-    if(this.state.user.type !="student" && this.state.user.type != "teacher"){
+    if(this.state.user.type !='student' && this.state.user.type != 'teacher'){
       return (
             <>
               <Navbar username={this.state.user && this.state.user.username}/>
@@ -484,9 +666,12 @@ async loadSavedPublicNotes(){
       <MuiThemeProvider>
       <Navbar style={{'height': '2vh'}} username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
-    <div style={divstyle}><p style={headerstyle}>Notebooks{'\n'}</p>{notelist}<this.NotebookToggle></this.NotebookToggle></div>
+    <div style={divstyle}><p style={{flex: .5,
+   fontSize: "30px",
+   textAlign: "center",
+   lineHeight: "1.0"}}>Notebooks{'\n'}</p><div style={{flex: 6, overflow: 'auto'}}>{notelist}</div><this.NotebookToggle></this.NotebookToggle></div>
         <div style={carstyle}>
-          {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
+          {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
         </div>
         <div style={tandastyle}>
         <div style={transcriptStyle}>
@@ -494,18 +679,10 @@ async loadSavedPublicNotes(){
           {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
         </div>
           <div style={audiostyle}>
-         {this.state.loaded && this.state.audio != undefined && this.state.audio.pk != undefined  ? <AudioPlayer updateTime={this.updateAudioTime} audio_url={'http://localhost:3000/audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div>}
-         <Button>Sync audio to page</Button>
-         <Button>Sync page to audio</Button>
-         <Button onClick={this.split_page}>Split into new page</Button>
-         {/*<TextField
-                    hintText="Enter your current page number"
-                    floatingLabelText="Current Page Number"
-                    onChange = {(event) => this.setState({current_image:event.target.value})}
-         />*/}
-          <br/>
+         {this.state.loaded && this.state.audio != undefined  ? this.state.audio.pk !== undefined ? <AudioPlayer parent={this} getAudioDuration={this.getAudioDuration} updateTime={this.updateAudioTime} syncToPage={this.syncToPage} audio_url={'http://localhost:8000/audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div> : <div>Page has no audio</div>}
+         <Button onClick={(event)=>this.syncToAudio()}>Sync page to audio</Button>
+         <Button onClick={(event)=>this.split_page()}>Split into new page</Button>
          </div>
-         <Button onClick={(event)=>console.log(this.state.time)} >see time</Button>
          </div>
       </div>
       </MuiThemeProvider>

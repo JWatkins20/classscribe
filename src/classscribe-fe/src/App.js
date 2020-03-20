@@ -18,6 +18,8 @@ import FourOhFour from './components/404'
 export const base_url = "https://classscribe-be.herokuapp.com/"
 export const url = base_url+ "api/"
 
+// export const base_url = "http://localhost:8000/"
+// export const url = base_url+ "api/"
 // for testng: http://localhost:8000/api/
 // for server: http://128.143.67.97:44104/
 

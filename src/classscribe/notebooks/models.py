@@ -25,3 +25,8 @@ class Page(models.Model):
     time = models.DateField(default=datetime.now)
     notebook = models.ForeignKey(Notebook, on_delete=models.CASCADE, related_name='pages', null=True)
     submitted = models.BooleanField(default=False)
+
+class NotebookRating(models.Model):
+    rating = models.IntegerField(blank=False)
+    notebook = models.ForeignKey(Notebook, on_delete=models.PROTECT, related_name='ratings', null=True)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, related_name="ratings")

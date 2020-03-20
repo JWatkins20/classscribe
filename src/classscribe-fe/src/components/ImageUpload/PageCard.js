@@ -45,13 +45,6 @@ const contentStyle = {
         };
     }
 
-    componentDidUpdate(props) {
-        if (props.page.name !== this.state.page.name) {
-            this.setState({
-                page: props.page
-            });
-        }
-    }
 
     sendPage = (pk) => {
         if (window.confirm("Are you sure you want to send this page to the prof?")) {
@@ -77,16 +70,16 @@ const contentStyle = {
     if(this.state.page != undefined){
       return(
       <div>
-        <Card border={1} style={pagestyle} onClick={() => self.state.parent.switchPage(self.state.pages.indexOf(self.state.page))}>
+        <Card border={1} id="pagecard" label='pagecard' style={pagestyle} onClick={(event) => self.state.parent.switchPage(self.state.pages.indexOf(self.state.page))}>
             <CardContent style={contentStyle}>
                 <Typography align={'center'}>
                     Page {self.state.pages.indexOf(self.state.page)+1}
                     {isStudent && !self.state.page.submitted && 
-                        <IconButton aria-label="delete icon" onClick={() => self.sendPage(self.state.page.pk)}>
+                        <IconButton id="sendpage" aria-label="delete icon" onClick={() => self.sendPage(self.state.page.pk)}>
                             <SendIcon/>
                         </IconButton>
                     }
-                    <IconButton aria-label="download icon" onClick={() => self.downloadFinalSnap(self.state.page.pk)}>
+                    <IconButton id="download" aria-label="download icon" onClick={() => self.downloadFinalSnap(self.state.page.pk)}>
                         <CloudDownloadIcon/>
                     </IconButton>
                 </Typography>

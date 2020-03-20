@@ -6,22 +6,27 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import ExploreIcon from '@material-ui/icons/Explore';
 import CardActions from '@material-ui/core/CardActions';
+import { spacing } from '@material-ui/system';
 import IconButton from '@material-ui/core/IconButton';
+import { deepOrange, deepPurple, red, pink, blue, lightGreen } from '@material-ui/core/colors';
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card';
-import Avatar from '@material-ui/core/Avatar';
+import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Toggle from './toggle';
 import PageCard from './PageCard';
 import { base_url } from "../../App"
-import Axios from 'axios';
+import axios from 'axios';
 import Chip from '@material-ui/core/Chip';
 import Popup from "reactjs-popup";
 import PublicCard from './PublicCard'
 import Favorite from '@material-ui/icons/Favorite';
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import {List} from '@material-ui/core';
-import axios from "axios";
-
+import Tooltip from '@material-ui/core/Tooltip';
+import Avatar from '@material-ui/core/Avatar';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
   const notestyle = {
     display: "block",
@@ -84,6 +89,39 @@ import axios from "axios";
      height: '100%'
   }
 
+  var avatarr =[ 
+    {
+      backgroundColor: deepOrange[500],
+      height: 30, 
+      width: 30,
+      marginRight: 0
+    },
+   {
+      backgroundColor: deepPurple[500],
+      height: 30, 
+      width: 30,
+      marginRight: 0,
+    },
+    {
+      backgroundColor: blue[500],
+      height: 30, 
+      width: 30,
+      marginRight: 0,
+    },
+    {
+      backgroundColor: lightGreen[500],
+      height: 30, 
+      width: 30,
+      marginRight: 0,
+    },
+    {
+      backgroundColor: pink[500],
+      height: 30, 
+      width: 30,
+      marginRight: 0
+    },
+  ]
+
 class NotebookCard extends React.Component{
     constructor(props){
         super(props);
@@ -108,15 +146,22 @@ class NotebookCard extends React.Component{
 
     handleEditNotebook = (notebook) => {
       this.setState({edit:true})
-      this.setState({state:this.state});
   
+    }
+
+    calculateRating = (note) => {
+      let sum = 0;
+      for(var i = 0; i < note.ratings.length; i++){
+        sum = sum + note.ratings[i].rating
+      }
+      return ((sum*(1.0))/note.ratings.length) * 5
     }
 
     deleteNotebook = (pk) => {
       let that = this;
       if (window.confirm("Are you sure you want to delete this notebook?")) {
         const deleteUrl = `${base_url}notebooks/delete/${pk}`;
-        Axios.delete(deleteUrl)
+        axios.delete(deleteUrl)
           .catch(function (error) {
             alert(error.response.data["message"]);
           });
@@ -125,19 +170,16 @@ class NotebookCard extends React.Component{
     }
 
     async handleSwitch(event){
-      this.setState({checked: event.target.checked})
-      this.state.parent.changePrivacy(this.state.parent.state.notebook)
       var data = {
         'pk' : this.state.note.pk,
       }
+      let self = this
       const url = `${base_url}notebooks/privacy-toggle/`;
-      await Axios.post(url, data)
+      await axios.post(url, data)
           .then(function (response) {
               if (response.status === 200) {
-                  
-              }
-              else {
-                  alert("Edits were not saved!");
+                self.setState({checked: event.target.checked})
+                self.state.parent.changePrivacy(this.state.parent.state.notebook)
               }
           })
           .catch(function (error) {
@@ -145,6 +187,23 @@ class NotebookCard extends React.Component{
               console.log(error);
           });
   
+    }
+
+    rateNotebook(note, user, rating){
+      console.log(user)
+      const payload= {
+        'note_pk': note.pk,
+        'user_pk': user.pk,
+        'rating': rating
+      }
+      axios.post(base_url+'notebooks/rate/', payload).then(function(res){
+        if(res.status === 201){
+          console.log('rating applies')
+        }
+        else if(res.status === 200){
+          console.log('user already rated notebook')
+        }
+      }).then(async()=>this.state.parent.updateUser()).catch((err)=>{console.log('rating was not applied :(')})
     }
 
     handleNameChange(event){
@@ -155,19 +214,16 @@ class NotebookCard extends React.Component{
       var dummy = this.state.selectedKeys
       if(this.state.selectedKeys.indexOf(id) < 0){
         dummy.unshift(id)
-        console.log(id)
         this.setState({selectedKeys: dummy})
       }
       else{
         dummy.splice(dummy.indexOf(id), 1)
         this.setState({selectedKeys: dummy})
       }
-      console.log(this.state.selectedKeys)
     }
 
 
     async handleSubmit(event){
-      event.preventDefault();
       if(this.state.notebookname === ""){
         return
       }
@@ -183,13 +239,10 @@ class NotebookCard extends React.Component{
         //'private': this.state.notebookprivate
       }
       const url = `${base_url}notebooks/edit/`;
-      await Axios.post(url, data)
+      await axios.post(url, data)
           .then(function (response) {
               if (response.status === 200) {
                   
-              }
-              else {
-                  alert("Edits were not saved!");
               }
           })
           .catch(function (error) {
@@ -199,8 +252,8 @@ class NotebookCard extends React.Component{
   
     }
 
-    componentDidUpdate(props) {
-        if (props.note != this.state.note) {
+    componentDidUpdate(props, state) {
+        if (props.notes != state.notes) {
             this.setState({
               note: props.note,
               notes: props.notes,
@@ -213,7 +266,7 @@ class NotebookCard extends React.Component{
       let that = this;
       if (window.confirm("Are you sure you want to change the SDAC status of this notebook?")) {
         const getUrl = `${base_url}notebooks/toggle_sdac/${pk}`;
-        Axios.get(getUrl)
+        axios.get(getUrl)
           .catch(function (error) {
             alert("Couldn't find the notebook.");
           });
@@ -221,28 +274,47 @@ class NotebookCard extends React.Component{
       }
     }
 
-    handleSelection (key) {
-      this.setState({ selectedKeys: this.state.selectedKeys.shift(key) });
-      console.log(this.state.selectedKeys)
-    }
+    // handleSelection (key) {
+    //   this.setState({ selectedKeys: this.state.selectedKeys.shift(key) });
+    // }
 
     async favorite(){
       var self = this
+      
       if(this.state.selectedKeys.length > 0){
         const url = `${base_url}notebooks/favorite/`;
         var data2 = {
           'user_pk': this.state.parent.state.user.pk,
           'books_pk': this.state.selectedKeys
         }
-        await Axios.post(url, data2).then(function(res){
+        await axios.post(url, data2).then(async function(res){
           if(res.status == 201){
             self.setState({selectedKeys: []})
+            await self.props.onUpdatePublic()
+            self.state.parent.switchNote(self.state.notes.indexOf(self.state.note))
           }
-          else{
-            alert('Was unable to add books!')
-          }
+        }).catch((err)=>{
+          alert('Was unable to add books!')
         })
       }
+    }
+
+    async removeSavedNotebook(key){
+      var self = this
+        const url = `${base_url}notebooks/unfavorite/`;
+        var data2 = {
+          'user_pk': this.state.parent.state.user.pk,
+          'book_pk': key.pk
+        }
+        await axios.post(url, data2).then(async function(res){
+          if(res.status == 201){
+            console.log('successfully removed item')
+            await self.props.onUpdateUser()
+            self.state.parent.switchNote(self.state.notes.indexOf(self.state.note))
+          }
+        }).catch((err)=>{alert('Was unable to remove books!')})
+        // dummy = dummy.favoritedBooks.splice(dummy.favoritedBooks.indexOf())
+        // this.setState({state: this.state})
     }
 
     render(){
@@ -251,23 +323,34 @@ class NotebookCard extends React.Component{
       var pageslist = self.state.parent.state.pages.map(function(page){
         return (<PageCard parent={self.state.parent} page={page} pages={self.state.parent.state.pages}  />) //onClick={() => self.switchPage(pages.indexOf(page))}
       })
-      var publics = this.state.parent.state.public_items.map((item, i) => {
+      var self = this
+      var publics = this.state.parent.state.public_items.sort(function(a, b){
+        if(self.calculateRating(a) < self.calculateRating(b)){
+          return 1
+        }
+        else if(self.calculateRating(a) > self.calculateRating(b)){
+          return -1
+        }
+        else{
+          return 0
+        }
+      }).map((item, i) => {
         let selected = this.state.selectedKeys !== undefined ? this.state.selectedKeys.indexOf(item.pk) > -1 : false;
-        console.log(selected)
+        let averageRating = item.ratings.length !== 0 ? this.calculateRating(item) : 0
         return (
-          <PublicCard name={item.name} sharedBy={item.owner} id={item.pk} isSelected={selected} onClick={this.handleSelection} selectableKey={item.pk} />
+          <PublicCard name={item.name} sharedBy={item.owner} id={item.pk} isSelected={selected} onClick={this.handleSelection} selectableKey={item.pk} numberOfRatings={item.ratings.length} rating={averageRating} precision={0.5} />
         );
         })
       return(
     <div>
         <div style={notestyle}>  
-            <Card style={notecardstyle} border={1} borderColor={"#09d3ac"} onClick={(event) => self.state.parent.switchNote(this.state.notes.indexOf(this.state.note))}>
+            <Card style={notecardstyle} label='notebookcard' border={1} borderColor={"#09d3ac"} onClick={async(event) => { await self.state.parent.switchNote(this.state.notes.indexOf(this.state.note))}}>
                 {self.state.edit ? //conditional render based on whether editing process has been initiated
                 <div style={{display: 'inline-block'}}>
                   <CardContent>
                     <form>
-                      <TextField style={textfieldstyle} id="standard-basic" label="new name" onChange={(event)=>self.handleNameChange(event)} />
-                      <Button style={buttonstyle} variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
+                      <TextField id="newName" inputProps={{"data-testid": "content-input"}} value={this.notebookname} style={textfieldstyle} label="new name" onChange={(event)=>self.handleNameChange(event)} />
+                      <Button role='edit-submit-button' id="submit-name" style={buttonstyle} aria-label="submit name change" variant="contained" onClick={(event) => self.handleSubmit(event)}>Done</Button>
                     </form> 
                   </CardContent>
                   </div>:
@@ -277,20 +360,53 @@ class NotebookCard extends React.Component{
                       {self.state.note.name}
                     </Typography>
                   </CardContent>
-                  <CardActions style={{justifyContent: 'center'}}>
-                    {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <div>Shared by: {self.state.note.owner.username}</div> :
+                  <CardActions style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                    {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <div style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                    <IconButton className='remove' aria-label="remove icon" onClick={(event) => this.removeSavedNotebook(self.state.note)}>
+                    <HighlightOffRoundedIcon />
+                    </IconButton>
+                    {self.state.parent.state.user.ratings.filter(function(item){
+                      return item.notebook.pk === self.state.note.pk
+                    }).length !== 0 ? self.state.parent.state.user.ratings.filter(function(item){
+                      return item.notebook.pk === self.state.note.pk
+                    })[0].rating === 1 
+                    ? 
+                    <div>
+                    <IconButton id='up' color={'primary'} aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    <ThumbUpIcon />
+                    </IconButton>
+                    <IconButton id='down' aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
+                    <ThumbDownIcon />
+                    </IconButton> </div>:
+                    <div><IconButton id='up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    <ThumbUpIcon/>
+                    </IconButton>
+                    <IconButton id='down' color={'primary'} aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
+                    <ThumbDownIcon />
+                    </IconButton></div> : 
+                    <div><IconButton id='up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    <ThumbUpIcon/>
+                    </IconButton>
+                    <IconButton id='down' aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
+                    <ThumbDownIcon />
+                    </IconButton></div>}
+                    <Tooltip  style={{margin: 0}} title={'Shared By: '+this.state.parent.state.user.username}>
+                        <Avatar m={0} style={avatarr[this.state.parent.state.user.pk % 5]}>{self.state.parent.state.user.username.charAt(0)}</Avatar> 
+                      </Tooltip>
+                    </div> :
                     <div>
                     <Toggle parent={self} />
-                    <IconButton aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
+                    <IconButton role="edit-button" id='editButton' aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
                     <EditIcon />
                     </IconButton>
-                    <IconButton aria-label="delete icon" onClick={(event) => self.deleteNotebook(self.state.note.pk)}>
+                    <IconButton className='delete' aria-label="delete icon" onClick={(event) => self.deleteNotebook(self.state.note.pk)}>
                       <DeleteForeverIcon/>
                     </IconButton>
-                    <Popup modal contentStyle={{borderRadius: '20px'}} trigger={
-                      <IconButton aria-label="explore icon" onClick={this.props.showModal}>
+                    <Popup modal id="popup" contentStyle={{borderRadius: '20px'}} trigger={
+                      <IconButton id="ex" aria-label="explore icon">
                         <ExploreIcon />
                       </IconButton>}>
+                        {close=>(
                         <div style={modalStyle}>
                         <div style={HeaderModalStyle}>
                           <h2>Public notebooks for course: {this.state.note.class_name}</h2>
@@ -303,9 +419,10 @@ class NotebookCard extends React.Component{
                           {/* <List items={self.state.parent.state.public_items} /> */}
                         </div>
                         <div style={ButtonModalStyle}>
-                          <Button onClick={(event)=>{this.favorite()}} style={{backgroundColor: '#3f51b5', color: 'white', textAlign: 'center'}}>Add to collection</Button>
+                          <Button id="submitFavorite" onClick={(event)=>{this.favorite(); setTimeout(()=>{close()}, 400)}} style={{backgroundColor: '#3f51b5', color: 'white', textAlign: 'center'}}>Add to collection</Button>
                         </div>
                         </div>
+                        )}
                       </Popup>
                     </div>
                     } 
