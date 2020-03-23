@@ -140,13 +140,18 @@ class CourseTests(TestCase):
 
     def test_find_buildings_returns_right_num(self):
         c = Client()
-        response = c.get('/courses/buildings')
+        response = c.get('/courses/Fall 2019/buildings')
         self.assertEqual(1, len(response.data["buildings"]))
 
     def test_find_building_matches_name(self):
         c = Client()
-        response = c.get('/courses/buildings')
+        response = c.get('/courses/Fall 2019/buildings')
         self.assertEqual('testBuilding', response.data["buildings"][0])
+
+    def test_find_building_fails_on_empty_semester(self):
+        c = Client()
+        response = c.get('/courses/ /buildings')
+        self.assertEqual(response.status_code, 400)
 
     def test_find_rooms_returns_right_num(self):
         c = Client()
