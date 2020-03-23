@@ -47,7 +47,7 @@ export default class CourseCalendar extends React.Component {
         this.loadUser = this.loadUser.bind(this);
         this.loadUser();
         this.loadSemesters();
-        this.loadBuildings();
+        this.loadBuildings(this.state.semester);
     }
 
     loadUser = () => {
@@ -87,10 +87,13 @@ export default class CourseCalendar extends React.Component {
 
     handleSemesterChange = (event, index, value) => {
         this.setState({
+            building: "",
+            room: "",
+            serial: "",
             semester: value,
             selectedIntervals: []
         }, () => {
-            this.loadBuildings();
+            this.loadBuildings(value);
         });
         
     }
@@ -109,9 +112,10 @@ export default class CourseCalendar extends React.Component {
             })
     }
 
-    loadBuildings = () => {
+    loadBuildings = (semester) => {
+        let curSem = semester || this.state.semester
         let that = this;
-        const getUrl = `${base_url}courses/buildings`;
+        const getUrl = `${base_url}courses/${curSem}/buildings`;
         Axios.get(getUrl)
             .then(function (response) {
                 that.setState({
@@ -217,7 +221,7 @@ export default class CourseCalendar extends React.Component {
             building: event.building
         }, () => {
             this.loadSemesters();
-            this.loadBuildings();
+            this.loadBuildings(event.semester);
             this.loadRooms();
             this.loadClasses(this.state.room);
         });
@@ -230,7 +234,7 @@ export default class CourseCalendar extends React.Component {
             building: newIntervals[0].building
         }, () => {
             this.loadSemesters();
-            this.loadBuildings();
+            this.loadBuildings(newIntervals[0].semester);
             this.loadRooms();
             this.loadClasses(this.state.room);
         });
@@ -258,7 +262,7 @@ export default class CourseCalendar extends React.Component {
                             value = {this.state.building}
                             onChange={this.handleBuildingChange}
                             onFocus={this.loadBuildings}>
-                            {this.state.buildings.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
+                            {this.state.buildings && this.state.buildings.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
                         </SelectField>
                         <SelectField
                             id="room-select"
@@ -267,7 +271,7 @@ export default class CourseCalendar extends React.Component {
                             value = {this.state.room}
                             onChange={this.handleRoomChange}
                             onFocus={this.loadRooms}>
-                            {this.state.rooms.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
+                            {this.state.rooms && this.state.rooms.map(name => <MenuItem key={name} value={name} primaryText={name} />)}
                         </SelectField>
                         <br/>
                         <TextField

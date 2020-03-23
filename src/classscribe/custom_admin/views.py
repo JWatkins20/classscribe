@@ -212,10 +212,13 @@ def edit_course(request, semester=None, course_name=None, building=None, room=No
 
 
 @api_view(["GET"])
-def get_buildings(request):
+def get_buildings(request, semester=""):
+    if semester == "" or semester == " ":
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "A semester needs to be specified."})
+
     buildingMap = {}
     buildingList = []
-    courses = Course.objects.all()
+    courses = Course.objects.filter(semester=semester)
 
     for course in courses:
         if course.building not in buildingMap:
