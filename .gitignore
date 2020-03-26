@@ -6,7 +6,7 @@ venv
 **/media/*
 **/staticfiles/**
 *.pyc
-
+*.DS_Store
 #server url
 url.txt
 
