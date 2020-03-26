@@ -38,7 +38,7 @@ def verify(request, email, verification_password):
 			return Response(status=status.HTTP_200_OK, data={})
 		else:
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={})
-	except Exception:
-		return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+	except Exception: # pragma no cover
+		return Response(status=status.HTTP_400_BAD_REQUEST, data={}) #pragma no cover
 
 

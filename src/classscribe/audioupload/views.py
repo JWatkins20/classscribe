@@ -37,8 +37,8 @@ def getAudioFile(request, pk):
 		res = HttpResponse(file, content_type='audio/mp4')
 		res['Content-Disposition'] = 'attachment; filename=%s' % file.name
 		return res
-	except Exception:
-		return Response({}, status=status.HTTP_400_BAD_REQUEST)
+	except Exception: # pragma no cover
+		return Response({}, status=status.HTTP_400_BAD_REQUEST) #pragma no cover
 
 @api_view(["GET"])
 def stream_audio(request, pk):

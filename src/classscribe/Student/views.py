@@ -12,12 +12,13 @@ from django.core.mail import send_mail
 import random
 import string
 
-from .serializers import ArticleSerializer
+# this code was an experiment from a long time ago. Not being used
+# from .serializers import ArticleSerializer 
 
-class ArticleView(APIView):
-	def get(self, request, idNumber):
-		serializer = ArticleSerializer(Student.objects.filter(idNumber=idNumber), many=True)
-		return Response({"articles": serializer.data})
+# class ArticleView(APIView):
+# 	def get(self, request, idNumber):
+# 		serializer = ArticleSerializer(Student.objects.filter(idNumber=idNumber), many=True)
+# 		return Response({"articles": serializer.data})
 
 
 @api_view(['POST'])
@@ -27,8 +28,8 @@ def link_studentID(request, email=None, idNumber=None):
 		student.save()
 		send_email(idNumber, email)
 		return Response(status=status.HTTP_200_OK, data={})
-	except Exception:
-		return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+	except Exception: #pragma no cover
+		return Response(status=status.HTTP_400_BAD_REQUEST, data={}) #pragma no cover
 
 @api_view(['GET'])
 def getPKbyCardID(request, id=None):
@@ -47,3 +48,4 @@ def send_email(idNumber, email):
 	email = 'class.scribe.co@gmail.com'
 
 	send_mail(title, subject, email, [user_email], fail_silently=False)
+	return True

@@ -8,7 +8,7 @@ router = routers.DefaultRouter()
 
 
 urlpatterns = [
-    path('articles/<str:idNumber>', ArticleView.as_view()),
+    #path('articles/<str:idNumber>', ArticleView.as_view()),
     path('api/', include(router.urls)),
 	path("lamp_registration/<str:email>/<str:idNumber>", link_studentID, name="link_StudentID"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
