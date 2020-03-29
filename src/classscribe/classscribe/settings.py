@@ -53,14 +53,6 @@ INSTALLED_APPS = [
     'django_nose'
 ]
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-html',
-    '--cover-package=api,audioupload,custom_admin,imageupload,notebooks,Professor,Student,users',
-]
-
 SITE_ID = 1
 
 MIDDLEWARE = [

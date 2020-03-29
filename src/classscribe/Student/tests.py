@@ -23,7 +23,7 @@ class StudentTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_email_and_pk_by_id(self):
+    def test_get_email_and_pk_by_id1(self):
         c = Client()
         
         path = '/api/getUserEmailAndPKByID/1'

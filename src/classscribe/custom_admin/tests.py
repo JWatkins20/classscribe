@@ -247,9 +247,29 @@ class CourseTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_edit_course_makes_successful_change_without_existing_notebook(self):
+        c = Client()
+        course2 = Course.objects.get(time="TThu 8:00-9:15")
+        path = '/courses/edit/' + str(course2.pk)
+
+        response = c.post(path, {
+            'semester': course2.semester,
+            'courseName': course2.name,
+            'building': course2.building,
+            'room': "testRoom",
+            'professorId': course2.professorID,
+            'lamp_serial': "testLamp_serial1234",
+            'time': course2.time
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_edit_course_makes_successful_change_with_existing_notebook(self):
         c = Client()
         course2 = Course.objects.get(time="TThu 8:00-9:15")
+        existing_notebook = Notebook.objects.create(Private=False, class_name="Capstone Practicum", name="bfb3ab_11/4/2019_notes", owner=None)
+        existing_notebook.course = course2
+        existing_notebook.save()
         path = '/courses/edit/' + str(course2.pk)
 
         response = c.post(path, {
