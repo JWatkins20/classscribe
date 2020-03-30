@@ -524,6 +524,9 @@ async loadPublicNotes(class_name){
 }
   async switchPage(index){
     //console.log(index)
+    if(index === this.state.page){
+     return 
+    }
     var object = this.state.items
     if(this.state.public){
       object = this.state.saved_items
