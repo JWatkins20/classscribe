@@ -52,8 +52,9 @@ let state = {
     recording: undefined,
     showModal: false,
     snapshot_index: 0,
+    switchedPage: false
 },
-  switchNote: (index)=>{},
+  switchNote: (index)=>{state.state.switchedPage = true},
   changePrivacy: (notebook)=>{},
   updateCards: (dummy)=>{}
 } 
@@ -80,6 +81,7 @@ let public_state = {
     recording: undefined,
     showModal: false,
     snapshot_index: 0,
+    switchedPage: false
 },
   switchNote: (index)=>{},
   changePrivacy: (notebook)=>{},
@@ -95,8 +97,24 @@ let public_state = {
 
   let notes = state.state.items
   let note = notes[state.state.notebook]
+  let public_notes = public_state.state.public_items
+  let public_note = public_state.state.public_items[public_state.state.notebook]
 //<NotebookCard onUpdateUser={(event)=>self.updateUser()} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.saved_items} note={note}
-  it('notebook card renders', ()=>{
+  
+it('notebook card doesnt render without parent', ()=>{
+  act(()=>{
+    render(<NotebookCard 
+      parent={undefined} 
+      notes={notes} 
+      note={note} 
+      onUpdateUser={()=>{}} 
+      onUpdatePublic={()=>{}}
+    />, container)
+  })
+  expect(container.textContent).toContain('')
+})
+
+it('notebook card renders', ()=>{
     act(()=>{
       render(<NotebookCard 
         parent={state} 
@@ -124,12 +142,18 @@ let public_state = {
       onUpdateUser={()=>{}} 
       onUpdatePublic={()=>{}}
     />, {attachTo: container})
+    let card = wrapper.find('#notecard')
+    await card.simulate('click')
+    expect(state.state.switchedPage).toBeTruthy()
     let editButton = wrapper.find('#editButton')
     editButton.simulate('click')
     expect(wrapper.update().state('edit')).toBeTruthy()
     let namePrompt = wrapper.update().find('#newName')
-    namePrompt.simulate('change', {target: {value: 'new name'}})
+    namePrompt.simulate('change', {target: {value: ''}})
     let submit = wrapper.update().find('#submit-name')
+    await submit.simulate('click')
+    namePrompt.simulate('change', {target: {value: 'new name'}})
+    submit = wrapper.update().find('#submit-name')
     await submit.simulate('click')
     expect(wrapper.update().state('notebookname')).toBe('new name')
     expect(wrapper.update().state('edit')).toBeFalsy()
@@ -149,8 +173,8 @@ let public_state = {
     //Test add selected notebooks to collection
     await wrapper.instance().favorite()
     expect(wrapper.update().state('selectedKeys').length).toBe(0)
-    await wrapper.instance().favorite()
-    wrapper.update()
+    let deleteButton = wrapper.update().find('.delete')
+    deleteButton.simulate('click')
     done()
   })
 
@@ -162,20 +186,48 @@ let public_state = {
     mock.onPost(new RegExp('/unfavorite/')).replyOnce(400, {})
     let wrapper = Enzyme.shallow(<NotebookCard 
       parent={public_state} 
-      notes={notes} 
-      note={note} 
+      notes={public_notes} 
+      note={public_note} 
       onUpdateUser={()=>{}} 
       onUpdatePublic={()=>{}}
     />, {attachTo: container})
+    //-----------------------------------------------//
     let ThumbsUp = wrapper.find('#up')
     ThumbsUp.simulate('click')
     let ThumbsDown = wrapper.update().find('#down')
     ThumbsDown.simulate('click')
     ThumbsDown.simulate('click')
+    //---------------------------------------------//
+    let dummy = public_state
+    let dummy_user = dummy.state.user
+    dummy_user.ratings = [{"rating":1,"notebook":{"name":"Anotha one 4","pk":14},"user":{"pk":1,"username":"bfb3ab@virginia.edu","email":"bfb3ab@virginia.edu","first_name":"Benjamin","last_name":"Brown","type":"student","university":"University of Virginia","verification_password":"AgFyT5ZUJX","verified":true,"type_object":null},"pk":3},{"rating":0,"notebook":{"name":"Anotha one 3","pk":10}}]
+    dummy.state.user = dummy_user
+    wrapper.instance().setState({parent: dummy})
+    ThumbsUp = wrapper.update().find('#up')
+    expect(ThumbsUp.prop('color')).toBe('primary')
+    ThumbsUp.simulate('click')
+    ThumbsDown = wrapper.update().find('#down')
+    ThumbsDown.simulate('click')
+    ThumbsDown.simulate('click')
+    //---------------------------------------------//
+    dummy = public_state
+    dummy_user = dummy.state.user
+    dummy_user.ratings = [{"rating":0,"notebook":{"name":"Anotha one 4","pk":14},"user":{"pk":1,"username":"bfb3ab@virginia.edu","email":"bfb3ab@virginia.edu","first_name":"Benjamin","last_name":"Brown","type":"student","university":"University of Virginia","verification_password":"AgFyT5ZUJX","verified":true,"type_object":null},"pk":3},{"rating":0,"notebook":{"name":"Anotha one 3","pk":10}}]
+    dummy.state.user = dummy_user
+    wrapper.instance().setState({parent: dummy})
+    ThumbsUp = wrapper.find('#up')
+    ThumbsUp.simulate('click')
+    ThumbsDown = wrapper.update().find('#down')
+    ThumbsDown.simulate('click')
+    ThumbsDown.simulate('click')
+    expect(ThumbsDown.prop('color')).toBe('primary')
+    //----------------------------------------------//
     let removeButton = wrapper.update().find('.remove')
     removeButton.simulate('click')
     done()
   })
+
+  
 
   it('remove saved notebook fails correctly', async(done)=>{
     var mock = new MockAdapter(axios);
@@ -190,6 +242,66 @@ let public_state = {
       await wrapper.instance().removeSavedNotebook(1)
       expect(alertStub.called).toEqual(true);
       done()
+  })
+  it('add saved notebook fails correctly', async(done)=>{
+    var mock = new MockAdapter(axios);
+    mock.onPost(new RegExp('/favorite/')).replyOnce(400, {})
+    let wrapper = Enzyme.shallow(<NotebookCard 
+      parent={public_state} 
+      notes={notes} 
+      note={note} 
+      onUpdateUser={()=>{}} 
+      onUpdatePublic={()=>{}}
+    />, {attachTo: container})
+    await wrapper.instance().setState({selectedKeys: [1,22,3]})
+    expect(wrapper.update().state('selectedKeys').length).toBe(3)
+      await wrapper.update().instance().favorite()
+      expect(alertStub.called).toEqual(true);
+      done()
+  })
+
+  it('test professor buttons dont crash', ()=>{
+    var mock = new MockAdapter(axios);
+    mock.onPost(new RegExp('/favorite/')).replyOnce(400, {})
+    let wrapper = Enzyme.shallow(<NotebookCard 
+      parent={public_state} 
+      notes={notes} 
+      note={note} 
+      onUpdateUser={()=>{}} 
+      onUpdatePublic={()=>{}}
+    />, {attachTo: container})
+    let dummy_user = public_state.state.user
+    dummy_user.type = 'teacher'
+    let dummy = public_state
+    dummy.state.user = dummy_user
+    wrapper.instance().setState({parent: dummy})
+    let sdac = wrapper.update().find('#sdac')
+    sdac.simulate('click')
+    let dummy_note = wrapper.update().state('note')
+    dummy_note.sdac_ready = true
+    wrapper.instance().setState({note: dummy_note}, ()=>{
+      sdac = wrapper.update().find('#sdac')
+      sdac.simulate('click')
+    })
+  })
+
+  it('popup renders and closed', async(done)=>{
+    var mock = new MockAdapter(axios);
+    mock.onPost(new RegExp('/favorite/')).replyOnce(400, {})
+    let wrapper = Enzyme.mount(<NotebookCard 
+      parent={state} 
+      notes={notes} 
+      note={note} 
+      onUpdateUser={()=>{}} 
+      onUpdatePublic={()=>{}}
+    />, {attachTo: container})
+    let popup_button = wrapper.find('#ex').at(4)
+    popup_button.simulate('click')
+    //popup submit button
+    let submitFavs = wrapper.update().find('#submitFavorite').at(4)
+    await submitFavs.simulate('click')
+    setTimeout(()=>{expect(wrapper.update().find('#submitFavorite').length).toBe(0);
+      done()}, 400) //wait for popup close
   })
 
 

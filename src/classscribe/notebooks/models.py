@@ -7,14 +7,15 @@ from datetime import datetime
 
 
 class Notebook(models.Model):
-    Private = models.BooleanField(blank=False)
-    class_name = models.CharField(max_length=50)
-    name = models.CharField(max_length = 100)
-    #pages = models.ManyToManyField(Page, null=True, blank=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    #rating = models.FloatField(blank=True)
+    Private = models.BooleanField(blank=False) # privacy of the notebook
+    class_name = models.CharField(max_length=50) # name of class the notebook is used in
+    name = models.CharField(max_length = 100) # name of notebook 
+    # user object representing owner of notebook
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True) 
+    #collection of users who have favorited a notebook
     FavoritedBy = models.ManyToManyField(User, related_name='favoritedBooks', null=True)
-    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='notebook')  # helpful for sending pages from student to prof
+    # helpful for sending pages from student to prof
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='notebook') 
     sdac_ready = models.BooleanField(default=False)  # used to indicate if notebook is sdac ready
 
 class Page(models.Model):

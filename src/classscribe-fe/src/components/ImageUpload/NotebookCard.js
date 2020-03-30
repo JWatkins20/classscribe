@@ -344,7 +344,7 @@ class NotebookCard extends React.Component{
       return(
     <div>
         <div style={notestyle}>  
-            <Card style={notecardstyle} label='notebookcard' border={1} borderColor={"#09d3ac"} onClick={async(event) => { await self.state.parent.switchNote(this.state.notes.indexOf(this.state.note))}}>
+            <Card style={notecardstyle} id="notecard" label='notebookcard' border={1} borderColor={"#09d3ac"} onClick={async(event) => { await self.state.parent.switchNote(this.state.notes.indexOf(this.state.note))}}>
                 {self.state.edit ? //conditional render based on whether editing process has been initiated
                 <div style={{display: 'inline-block'}}>
                   <CardContent>
@@ -433,6 +433,7 @@ class NotebookCard extends React.Component{
                             label="Mark as SDAC ready"
                             clickable
                             color="primary"
+                            id="sdac"
                             onClick={() => this.toggleSDAC(self.state.note.pk)}
                           />
                         </div> : 
@@ -441,6 +442,7 @@ class NotebookCard extends React.Component{
                           label="Remove SDAC ready"
                           clickable
                           color="secondary"
+                          id="sdac"
                           onClick={() => this.toggleSDAC(self.state.note.pk)}
                         />
                       </div> :

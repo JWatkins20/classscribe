@@ -160,10 +160,8 @@ export default class ImageCarousel extends Component {
     this.loadNotes = this.loadNotes.bind(this);
     this.loadPublicNotes = this.loadPublicNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
-    this.updateCards = this.updateCards.bind(this);
     this.switchNote = this.switchNote.bind(this);
     this.switchPage = this.switchPage.bind(this);
-    this.Toggle_public_notebooks = this.Toggle_public_notebooks.bind(this);
     this.updatePublicNotebooks = this.updatePublicNotebooks.bind(this)
   }
 
@@ -176,28 +174,16 @@ export default class ImageCarousel extends Component {
       "page_pk": this.state.pages[this.state.page].pk, 
       "image_pks": JSON.stringify(image_pks)
     }
-    await axios.post(base_url + "notebooks/split/page/", data)
-    this.loadNotes();
-  }
-
-
-  
-  
-  async Toggle_public_notebooks(event){
-    await this.setState({public: !this.state.public})
-    this.switchNote(0) //opens public notebook with 0 index in array
-  }
-  updateCards(dummy){
-    this.setState({items : dummy})
+    await axios.post(base_url + "notebooks/split/page/", data).then(async()=>{
+      await this.loadNotes();
+    })
   }
 
   async componentDidMount() {
-    try{
+      if(!this.state.loaded){
       await this.loadUser();
-    this.setState({loaded: true});
-    } catch(err){
-      console.log(err)
-    }
+      this.setState({loaded: true});
+      }
   }
 
   shouldComponentUpdate(nextProps, nextState){
@@ -231,19 +217,22 @@ export default class ImageCarousel extends Component {
   }
 
   async loadUser(){
+    // calls django api to load in user object
     const res = await axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
+        // response status is 200
         const user = res.data;
+        // sets React class's state object with new values for user and saved_items fields
         await this.setState({
           user:user,
           saved_items: user.FavoritedBooks,
-        }, async()=>{
+        }, async()=>{ //runs when setstate finishes
           if(this.state.user.type == "student" || this.state.user.type == "teacher"){
-            await this.loadNotes();
+            await this.loadNotes(); //calls django api to load notebooks and pages for the user
           }
         })
     }
-}
+  }
 
 async loadNotes()
   {
@@ -363,7 +352,7 @@ async loadNotes()
     dateObj.hours = dateObj.hours-hourChange
     if(dateObj.seconds < 0){
       dateObj.seconds = dateObj.seconds+60
-      dateObj.minutes = dateObj.minutes-1
+      dateObj.minute = dateObj.minute-1
     }
     if(dateObj.minute < 0){
       dateObj.minute = dateObj.minute+60
@@ -389,7 +378,7 @@ async loadNotes()
     dateObj.hours = dateObj.hours+hourChange
     if(dateObj.seconds > 59){
       dateObj.seconds = dateObj.seconds%60
-      dateObj.minutes = dateObj.minutes+1
+      dateObj.minute = dateObj.minute+1
     }
     if(dateObj.minute > 59){
       dateObj.minute = dateObj.minute%60
@@ -425,7 +414,6 @@ async loadNotes()
     if(snap_times[this.state.snapshot_index].day === audio_time.day && snap_times[this.state.snapshot_index].month === audio_time.month && snap_times[this.state.snapshot_index].year === audio_time.year){
       return this.calculateOffsetSeconds(snap_times[this.state.snapshot_index], start_time)
     }
-    return 0
   }
 
   findEligiblePages(){
@@ -462,8 +450,6 @@ async loadNotes()
         }
       }
     }
-    // a must be equal to b
-    return 0;
   }
 
 
@@ -481,10 +467,12 @@ async loadNotes()
     currentTime = this.addCurrentTime(start_time, currentTime)
     for(var i = page_arr.length-1; i >= 0; i-- ){
       if(page_arr[i].snapshots !== undefined){
+
       snap_times = page_arr[i].snapshots.map(function(x){
         let snaptime = new Date(x.timestamp)
         return t.parseDate(snaptime)
       })
+
       snap_times = snap_times.sort((a, b)=>{return this.compareSnapshots(a, b)})
     }
       for(var j = 0; j < snap_times.length; j++){
@@ -497,10 +485,11 @@ async loadNotes()
         }
       }
       if(targetI !== undefined && targetJ !== undefined){
-        await this.switchPage(targetI)
         this.setState({
           snapshot_index: targetJ,
+          page: targetI
         })
+        await this.switchPage(targetI)
         break
       }
     }
@@ -623,7 +612,6 @@ async loadPublicNotes(class_name){
 
   createCarousel = () => {
     let htmlImages = [];
-    //alert("number of images = " + this.state.images.length);
     for (let i = 0; i < this.state.images.length; i++) {
       htmlImages.push(
         <div>
@@ -641,12 +629,13 @@ async loadPublicNotes(class_name){
     var notes = this.state.items;
     if(notes != undefined){
       if(this.state.public && this.state.saved_items !== undefined){
-        var notelist = self.state.saved_items.map(function(note){
-          return <NotebookCard onUpdateUser={(event)=>self.updateUser()} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.saved_items} note={note}/>
+        var notelist = self.state.saved_items.map(function(note, i){
+          let index = i
+          return <NotebookCard id={"note"+String(index)} onUpdateUser={(event)=>self.updateUser()} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.saved_items} note={note}/>
         })}
       else{
-        var notelist = self.state.items.map(function(note){
-          return <NotebookCard showModal={(event)=>self.showModal(event)} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.items} note={note}/>
+        var notelist = self.state.items.map(function(note, i){
+          return <NotebookCard id={"note"+String(i)} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.items} note={note}/>
         })}
       }            
     else{
@@ -671,7 +660,7 @@ async loadPublicNotes(class_name){
    textAlign: "center",
    lineHeight: "1.0"}}>Notebooks{'\n'}</p><div style={{flex: 6, overflow: 'auto'}}>{notelist}</div><this.NotebookToggle></this.NotebookToggle></div>
         <div style={carstyle}>
-          {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
+          {this.state.loaded && this.state.images.length > 0 ? <Carousel id="carousel" useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
         </div>
         <div style={tandastyle}>
         <div style={transcriptStyle}>
@@ -680,8 +669,8 @@ async loadPublicNotes(class_name){
         </div>
           <div style={audiostyle}>
          {this.state.loaded && this.state.audio != undefined  ? this.state.audio.pk !== undefined ? <AudioPlayer parent={this} getAudioDuration={this.getAudioDuration} updateTime={this.updateAudioTime} syncToPage={this.syncToPage} audio_url={'http://localhost:8000/audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div> : <div>Page has no audio</div>}
-         <Button onClick={(event)=>this.syncToAudio()}>Sync page to audio</Button>
-         <Button onClick={(event)=>this.split_page()}>Split into new page</Button>
+         <Button id="syncAudio" onClick={(event)=>this.syncToAudio()}>Sync page to audio</Button>
+         <Button id="split" onClick={(event)=>this.split_page()}>Split into new page</Button>
          </div>
          </div>
       </div>
