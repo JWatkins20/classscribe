@@ -476,8 +476,13 @@ async loadNotes()
       })
 
       snap_times = snap_times.sort((a, b)=>{return this.compareSnapshots(a, b)})
+        console.log('------------snap times-------------')
+        console.log(snap_times)
     }
       for(var j = 0; j < snap_times.length; j++){
+        console.log('----------------------------------------')
+        console.log(currentTime)
+        console.log(this.calculateOffsetSeconds(snap_times[j],currentTime))
         if(this.calculateOffsetSeconds(snap_times[j], currentTime) > 0){
           break
         }
