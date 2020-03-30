@@ -402,10 +402,12 @@ async loadNotes()
   syncToPage(){
     let snap_times = {}
     let audio_time = this.parseDate(new Date(this.state.audio.timestamp))//date object relating to stored audio
+    console.log(audio_time)
     let t = this // to bring component state to map function scope
     if(this.state.items[this.state.notebook].pages[this.state.page].snapshots !== undefined){
       snap_times = this.state.items[this.state.notebook].pages[this.state.page].snapshots.map(function(x){
         let snaptime = new Date(x.timestamp)
+        console.log(t.parseDate(snaptime)
         return t.parseDate(snaptime)
       })
     }
