@@ -22,9 +22,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">56.25% </span>
+                <span class="strong">38.89% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/16</span>
+                <span class='fraction'>7/18</span>
             </div>
         
             
@@ -36,16 +36,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">37.5% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/8</span>
+                <span class='fraction'>3/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">64.29% </span>
+                <span class="strong">53.85% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>9/14</span>
+                <span class='fraction'>7/13</span>
             </div>
         
             
@@ -54,7 +54,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -92,44 +92,36 @@
 <a name='L34'></a><a href='#L34'>34</a>
 <a name='L35'></a><a href='#L35'>35</a>
 <a name='L36'></a><a href='#L36'>36</a>
-<a name='L37'></a><a href='#L37'>37</a>
-<a name='L38'></a><a href='#L38'>38</a>
-<a name='L39'></a><a href='#L39'>39</a>
-<a name='L40'></a><a href='#L40'>40</a>
-<a name='L41'></a><a href='#L41'>41</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -139,38 +131,34 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, {useState, useEffect} from 'react'
 import {default as BuiltinAudioPlayer} from "react-h5-audio-player";
 import Button from '@material-ui/core/Button'
-&nbsp;
-const AudioPlayer = ({updateTime, audio_url}) =&gt; {
+//parent is parent component, getAudioDuration, syncToPage and updateTime are functions passed from parent to 
+//update parent component. audio_url is url to fetch audio from.
+const AudioPlayer = ({parent, getAudioDuration,updateTime, audio_url, syncToPage}) =&gt; {
     var myaudio = {}
-    const [currentTime, setCurrentTime] = useState(0)
-    const [playing, setPlaying] = useState(false)
-    const [playable, setPlayable] = useState(false)
-    // window.onload = function(){
-    //     setPlayable(true)
-    // }
+    const [playing, setPlaying] = useState(false) //sets state's playing attribute
     useEffect(() =&gt; {
         <span class="missing-if-branch" title="if path not taken" >I</span>if(playing){
+            // only update audio time when audio is playing
             const timer = <span class="cstat-no" title="statement not covered" >setTimeout(<span class="fstat-no" title="function not covered" >()</span> =&gt; {<span class="cstat-no" title="statement not covered" >updateTime(myaudio.currentTime)}</span>, 1000);</span>
 <span class="cstat-no" title="statement not covered" >            return <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >clearTimeout(timer);</span></span>
-        }
+        }  
     })
-&nbsp;
-    // function changeTime(time){
-    //     myaudio.currentTime = currentTime + time
-    //     updateTime(time)
-    // }
     return (
-        &lt;div&gt;
-            &lt;audio id="audioPlayer" 
+        &lt;div&gt;&lt;audio id="audioPlayer" 
                 preload="auto" 
-                onPlay={<span class="fstat-no" title="function not covered" >(e</span>vent)=&gt;<span class="cstat-no" title="statement not covered" >setPlaying(true)}</span>
-                onPause={<span class="fstat-no" title="function not covered" >(e</span>vent)=&gt;<span class="cstat-no" title="statement not covered" >setPlaying(false)}</span>
-                onSeeked={<span class="fstat-no" title="function not covered" >(e</span>vent)=&gt;{<span class="cstat-no" title="statement not covered" >updateTime(myaudio.currentTime);}</span>}
-                src={audio_url}  controls ref={audio=&gt;{myaudio = audio}}&gt;
+                //when play is pressed adjust playing to true and send audio duration to parent
+                onPlay={<span class="fstat-no" title="function not covered" >(e</span>vent)=&gt;{<span class="cstat-no" title="statement not covered" >setPlaying(true); <span class="cstat-no" title="statement not covered" ></span>getAudioDuration(myaudio)}</span>}
+                onPause={<span class="fstat-no" title="function not covered" >(e</span>vent)=&gt;<span class="cstat-no" title="statement not covered" >setPlaying(false)}</span> //when paused adjust playing to false
+                //when seeking to specific point in audio send current time to parent and send duration to parent
+                onSeeked={<span class="fstat-no" title="function not covered" >(e</span>vent)=&gt;{<span class="cstat-no" title="statement not covered" >updateTime(myaudio.currentTime);<span class="cstat-no" title="statement not covered" >g</span>etAudioDuration(myaudio)}</span>}
+                src={audio_url} //source of audio
+                controls 
+                // creates a reference to audio object
+                ref={audio=&gt;{myaudio = audio} }&gt;
             &lt;/audio&gt;
-            {/* &lt;Button onClick={(event)=&gt;changeTime(10)}&gt;Skip 10 seconds&lt;/Button&gt;
-            &lt;Button onClick={(event)=&gt;changeTime(-10)}&gt;Rewind 10 seconds&lt;/Button&gt; */}
-        &lt;/div&gt;
+            {/*syncs audio to page*/}
+            &lt;Button onClick={<span class="fstat-no" title="function not covered" >(e</span>vent)=&gt;{<span class="cstat-no" title="statement not covered" >myaudio.currentTime = syncToPage(parent); <span class="cstat-no" title="statement not covered" ></span>updateTime(myaudio.currentTime)}</span>}&gt;Sync audio to page&lt;/Button&gt;
+            &lt;/div&gt;
     );
 }
 &nbsp;
@@ -183,7 +171,7 @@ export default AudioPlayer;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Feb 25 2020 14:33:43 GMT-0500 (Eastern Standard Time)
+                at Mon Mar 30 2020 03:03:54 GMT-0400 (Eastern Daylight Time)
             </div>
         </div>
         <script src="..\..\prettify.js"></script>
