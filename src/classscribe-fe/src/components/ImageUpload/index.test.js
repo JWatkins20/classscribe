@@ -257,9 +257,9 @@ it('renders and non-button functions work correctly', async(done)=>{
   expect(wrapper.state('public_items')[0].Private).toBe(true)
   await wrapper.instance().changePrivacy(0)
   expect(wrapper.state('public_items')[0].Private).toBe(true)
-  note = wrapper.update().find('#note0')
-  await note.props().onUpdateUser({})
-  await note.props().onUpdatePublic({})
+  // note = wrapper.update().find('#note0')
+  // await note.props().onUpdateUser({})
+  // await note.props().onUpdatePublic({})
   done()
 })
 
