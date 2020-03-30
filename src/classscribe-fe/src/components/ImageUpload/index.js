@@ -407,7 +407,7 @@ async loadNotes()
     if(this.state.items[this.state.notebook].pages[this.state.page].snapshots !== undefined){
       snap_times = this.state.items[this.state.notebook].pages[this.state.page].snapshots.map(function(x){
         let snaptime = new Date(x.timestamp)
-        console.log(t.parseDate(snaptime)
+        console.log(t.parseDate(snaptime))
         return t.parseDate(snaptime))
       })
     }
