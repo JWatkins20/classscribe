@@ -123,7 +123,7 @@ it('render student ui', async (done) => {
   let wrapper = Enzyme.mount(<ImageCarousel />, {attachTo: container});
   let instance = wrapper.instance();
 
-  await instance.componentDidMount().then(()=>{
+  await instance.componentDidMount().then(async()=>{
     expect(container.textContent).toContain("Hello bfb3ab@virginia.edu")
   //------------------test rendered notebooks can be selected and prop functions---------------------//
   let note = wrapper.update().find('#note0')
