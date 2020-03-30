@@ -123,8 +123,8 @@ it('render student ui', async (done) => {
   let wrapper = Enzyme.mount(<ImageCarousel />, {attachTo: container});
   let instance = wrapper.instance();
 
-  await instance.componentDidMount()
-  expect(container.textContent).toContain("Hello bfb3ab@virginia.edu")
+  await instance.componentDidMount().then(()=>{
+    expect(container.textContent).toContain("Hello bfb3ab@virginia.edu")
   //------------------test rendered notebooks can be selected and prop functions---------------------//
   let note = wrapper.update().find('#note0')
   note.props().onUpdatePublic({})
@@ -135,6 +135,7 @@ it('render student ui', async (done) => {
   note = wrapper.update().find('#note0')
   await note.props().onUpdateUser({})
   await note.props().onUpdatePublic({})
+  })
   //----------------------------------------------------------------------------------------------------//
 
   let carousel = wrapper.update().find('#carousel')
