@@ -116,13 +116,13 @@ export default class CourseCalendar extends React.Component {
         let curSem = semester || this.state.semester
         let that = this;
         const getUrl = `${base_url}courses/${curSem}/buildings`;
-        Axios.get(getUrl)
+        Axios.get(getUrl)//calls django api to retrieve buildings
             .then(function (response) {
-                that.setState({
+                that.setState({ //sets component state's buildings field
                     buildings: response.data["buildings"]
                 })
             })
-            .catch(function (error) {
+            .catch(function (error) {// handles response with 400+ code
                 alert(error);
             });
     }

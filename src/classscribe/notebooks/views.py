@@ -69,19 +69,22 @@ Response contains key of created notebook
 '''
 class NotebookCreateView(APIView):
 	def post(self, request, *args, **kwargs):
-		serializer = NotebookSerializer(data=request.data)
-		if serializer.is_valid():
-			try:
+		# request contains fields of notebook model to be serialized into a model and primary key of owner
+		serializer = NotebookSerializer(data=request.data) # serializes request data
+		if serializer.is_valid(): #checks to make sure serializer with input data is valid
+			try: #try block to handle case where queried object does not exist
+				#query for notebook with name given in request
 				notebook = Notebook.objects.get(name=request.data["name"])
+				#send 200 code and key of created object
 				return Response({"key": notebook.pk}, status=status.HTTP_200_OK)
 			except ObjectDoesNotExist:
-				serializer.save()
-				notebook = Notebook.objects.get(name=request.data["name"])
-				notebook.owner = User.objects.get(pk=request.data["pk"])
+				serializer.save() #save serialized request as notebook object
+				notebook = Notebook.objects.get(name=request.data["name"]) # query for created object
+				notebook.owner = User.objects.get(pk=request.data["pk"]) # query for user with owner primary key
 				notebook.save()
-				return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED)
+				return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED) # send 201
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) #send 400
 
 class NotebookRatingCreateView(APIView):
 	def post(self, request, *args, **kwargs):
@@ -186,42 +189,43 @@ def split_page(request):
 
 @api_view(["POST"])
 def edit_notebook_view(request):
+	#request includes primary key of notebook and new name keys accessed from request.data
     data = request.data
-    notebook = Notebook.objects.get(pk=data["pk"])
-    notebook.name = data["name"]
+	#try and except blocks will handle case where the primary key passed is not associated with a notebook
     try:
+        notebook = Notebook.objects.get(pk=data["pk"]) # find notebook based on primary key
+        notebook.name = data["name"]
         notebook.save()
-        return Response(status=status.HTTP_200_OK, data={})
-    except Exception as e:
-        print(e.message)
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={})
+        return Response(status=status.HTTP_200_OK, data={}) #success
+    except ObjectDoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={}) #failure
 
 
 @api_view(["POST"])
 def toggle_privacy_view(request):
     data = request.data
-    notebook = Notebook.objects.get(pk=data["pk"])
-    notebook.Private = not notebook.Private
     #notebook.private = data["private"]
     try:
+        notebook = Notebook.objects.get(pk=data["pk"])
+        notebook.Private = not notebook.Private
         notebook.save()
         return Response(status=status.HTTP_200_OK, data={'message': 'Should have worked'})
-    except Exception as e:
-        print(e.message)
+    except ObjectDoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 
 @api_view(["POST"])
 def add_audio_and_transcript_view(request):
 	data = request.data
-	page = Page.objects.get(pk=data["pk_page"])
-	files = AudioFile.objects.get(pk=data["pk_audio"])
-	page.audio = files
-	page.transcript = data["transcript"]
-	page.save()
-	if files == page.audio:
-		return Response(status=status.HTTP_201_CREATED)
-	else:
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+	try:
+		page = Page.objects.get(pk=data["pk_page"])
+		files = AudioFile.objects.get(pk=data["pk_audio"])
+		page.audio = files
+		page.transcript = data["transcript"]
+		page.save()
+		if files == page.audio:
+			return Response(status=status.HTTP_201_CREATED)
+	except ObjectDoesNotExist:
+		return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 
 @api_view(["POST"])
 def favorite_notebook_view(request):
@@ -242,22 +246,20 @@ def favorite_notebook_view(request):
 				number_added += 1
 		if len(note_pks) == number_added:
 			return Response(status=status.HTTP_201_CREATED)
-		else:
-			return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Did not get all notebooks'})
 	except ObjectDoesNotExist:
 		return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': "Favorited notebook does not exist"})
 
 @api_view(["POST"])
 def unfavorite_notebook_view(request):
 	data = request.data
-	user = User.objects.get(pk=data["user_pk"])
-	notebook = Notebook.objects.get(pk=data["book_pk"])
 	try:
+		user = User.objects.get(pk=data["user_pk"])
+		notebook = Notebook.objects.get(pk=data["book_pk"])
 		notebook.FavoritedBy.remove(user)
 		notebook.save()
 		return Response(status=status.HTTP_201_CREATED)
-	except Exception as e:
-		return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': str(e)})
+	except ObjectDoesNotExist:
+		return Response(status=status.HTTP_400_BAD_REQUEST, data={})
 
 
 # class ProcessingView(APIView):

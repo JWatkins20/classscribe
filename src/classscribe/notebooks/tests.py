@@ -134,6 +134,8 @@ class NotebookCreationEndpointTest(APITestCase):
     def testendpoint(self):
         response = self.client.post(reverse('create'),{"Private": False, "class_name": 'CS 1111', "name": 'jw2vp CS 1111', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
         self.assertTrue(response.status_code==201, msg=response.data)
+        response = self.client.post(reverse('create'),{"Private": False, "class_name": 'CS 1111', "name": 'jw2vp CS 1111', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
+        self.assertTrue(response.status_code==200, msg=response.data)
         response2 = self.client.post(reverse('create'),{"Private": False, "class_name": 'CS 1112', "name": 'jw2vp CS 1112', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
         self.assertTrue(response2.status_code==201, msg=response.data)
         self.assertTrue(response.data["key"] == response2.data["key"]-1)
@@ -157,12 +159,18 @@ class NotebookGetViewTests(APITestCase):
         notebook2 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes2", owner=user1)
         notebook3 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes3", owner=user3)
         file1 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", page_num="1", lampSN=1)
+        file2 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test2", class_name="Practicum", page_num="1", lampSN=1)
+        file3 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test3", class_name="Practicum", page_num="1", lampSN=1)
+        file4 = File.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test4", class_name="Practicum", page_num="1", lampSN=1)
         audiofile1 = AudioFile.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", length="1")
         page1 = Page.objects.create(name="Page1 name") 
         
         page2 = Page.objects.create(name="Page2 name") 
         notebook1.owner = user1
         page1.notebook = notebook1
+        page1.snapshots.add(file1)
+        page1.snapshots.add(file2)
+        page1.snapshots.add(file3)
         page1.save()
         notebook1.save()
         notebook2.owner = user1  
@@ -180,6 +188,13 @@ class NotebookGetViewTests(APITestCase):
         data = json.loads(response.content)
         self.assertTrue(response.status_code==200)
         self.assertTrue(len(data["data"]) == 2 , msg=str(response.context)) 
+    def testGetUserFail(self):
+        response = self.client.get(reverse('notebooks', args=[12]), format=json)
+        self.assertTrue(response.status_code==404)
+    def testgetprofessornotebooks(self):
+        user2 = User.objects.create(username='username144', password='pa$$word123', type='teacher')
+        response = self.client.get(reverse('notebooks', args=[user2.pk]), format=json)
+        self.assertTrue(response.status_code==400)
     def testaddview(self):
         user = User.objects.get(username='username134')
         response = self.client.get(reverse('notebooks', args=[user.pk]), format=json)
@@ -228,6 +243,9 @@ class NotebookGetViewTests(APITestCase):
         self.assertTrue(response.status_code==200)
         self.assertTrue(data["data"][0]["pages"][0]["transcript"] != '' , msg=str(response.context))
         self.assertTrue(data["data"][0]["pages"][0]["audio"]["remark"] == 'test1' , msg=str(response.context))
+    def testaddaudiofails(self):
+        response = self.client.post(reverse('audio'), {"pk_page": 999, "pk_audio": 999,  "transcript": "This is the transcript of lecture"})
+        self.assertTrue(response.status_code==400)
     def testprivacytoggle(self):
         notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
         notebook1.Private = False      
@@ -235,6 +253,11 @@ class NotebookGetViewTests(APITestCase):
         notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
         self.assertTrue(response.status_code==200)
         self.assertTrue(notebook1.Private, msg=response.data['message'])
+    def testprivacytogglefails(self):
+        notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
+        notebook1.Private = False      
+        response = self.client.post(reverse('toggle'), {"pk": 999})
+        self.assertTrue(response.status_code==400)
     def testnamechange(self):
         notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
         pk = notebook1.pk    
@@ -242,6 +265,8 @@ class NotebookGetViewTests(APITestCase):
         notebook1 = Notebook.objects.get(pk=pk)
         self.assertTrue(response.status_code==200)
         self.assertTrue(notebook1.name == 'new notebook name')
+        response = self.client.post(reverse('edit_notebook'), {"pk": 98, "name": 'new notebook name'})
+        self.assertTrue(response.status_code==400)
     def testfavorite(self):
         notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
         notebook2 =  Notebook.objects.get(name='bfb3ab_notes2')
@@ -269,6 +294,10 @@ class NotebookGetViewTests(APITestCase):
         response = self.client.post(reverse('unfavorite'), {"user_pk": user.pk, "book_pk": notebook3.pk})
         self.assertTrue(response.status_code==201)
         self.assertTrue(notebook3 not in user.favoritedBooks.all())
+    def testunfavoritefails(self):
+        user = User.objects.get(username='username134')  
+        response = self.client.post(reverse('unfavorite'), {"user_pk": user.pk, "book_pk": [999]})
+        self.assertTrue(response.status_code==400, msg=str(response.status_code))
     def testRetrievePublicBooks(self):
         user = User.objects.get(username='username134')
         notebook2 = Notebook.objects.get(name='bfb3ab_notes2')
@@ -292,3 +321,8 @@ class NotebookGetViewTests(APITestCase):
         page1 = Page.objects.create(name="Page1 name") 
         response = self.client.post(reverse('add_file'), {"pk": page1.pk, "image_pks": [99]})
         self.assertTrue(response.status_code==400)
+    def testSplitPage(self):
+        page1 = Page.objects.get(name='Page1 name')
+        images = [1,2,3]
+        self.client.post(reverse('split_page'), {"image_pks": images, "page_pk": page1.pk})
+

@@ -14,8 +14,9 @@ class Toggle extends React.Component{
     render(){
         return(
             <FormControlLabel
+            id="toggle"
                 control={
-                    <Switch role="pub_switch" checked={this.state.parent.state.checked} onChange={(event) => this.state.parent.handleSwitch(event)} value="checked" />
+                    <Switch id="switch" role="pub_switch" checked={this.state.parent.state.checked} onChange={(event) => this.state.parent.handleSwitch(event)} value="checked" />
                 } label="Private"/>
         )
     }

@@ -160,10 +160,8 @@ export default class ImageCarousel extends Component {
     this.loadNotes = this.loadNotes.bind(this);
     this.loadPublicNotes = this.loadPublicNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
-    this.updateCards = this.updateCards.bind(this);
     this.switchNote = this.switchNote.bind(this);
     this.switchPage = this.switchPage.bind(this);
-    this.Toggle_public_notebooks = this.Toggle_public_notebooks.bind(this);
     this.updatePublicNotebooks = this.updatePublicNotebooks.bind(this)
   }
 
@@ -177,27 +175,14 @@ export default class ImageCarousel extends Component {
       "image_pks": JSON.stringify(image_pks)
     }
     await axios.post(base_url + "notebooks/split/page/", data)
-    this.loadNotes();
-  }
-
-
-  
-  
-  async Toggle_public_notebooks(event){
-    await this.setState({public: !this.state.public})
-    this.switchNote(0) //opens public notebook with 0 index in array
-  }
-  updateCards(dummy){
-    this.setState({items : dummy})
+    await this.loadNotes();
   }
 
   async componentDidMount() {
-    try{
+      if(!this.state.loaded){
       await this.loadUser();
-    this.setState({loaded: true});
-    } catch(err){
-      console.log(err)
-    }
+      this.setState({loaded: true});
+      }
   }
 
   shouldComponentUpdate(nextProps, nextState){
@@ -231,19 +216,22 @@ export default class ImageCarousel extends Component {
   }
 
   async loadUser(){
+    // calls django api to load in user object
     const res = await axios.get(url + "user/", {headers: {Authorization: 'Token ' + Cookies.get('user-key')}});
     if(res.status === 200){
+        // response status is 200
         const user = res.data;
+        // sets React class's state object with new values for user and saved_items fields
         await this.setState({
           user:user,
           saved_items: user.FavoritedBooks,
-        }, async()=>{
+        }, async()=>{ //runs when setstate finishes
           if(this.state.user.type == "student" || this.state.user.type == "teacher"){
-            await this.loadNotes();
+            await this.loadNotes(); //calls django api to load notebooks and pages for the user
           }
         })
     }
-}
+  }
 
 async loadNotes()
   {
@@ -433,6 +421,7 @@ async loadNotes()
     let pages = this.state.items[this.state.notebook].pages.filter(function(item){
       return item.audio.pk === t.state.audio.pk
     })
+    console.log(pages)
     return pages;
   }
 
@@ -445,25 +434,23 @@ async loadNotes()
     }
     if(a.hours === b.hours){
       if(a.minute > b.minute){
-        return 1;
+        return -1;
       }
       if(a.minute < b.minute){
-        return -1;
+        return 1;
       }
       if(a.minute === b.minute){
         if(a.seconds > b.seconds){
-          return 1;
+          return -1;
         }
         if(a.seconds < b.seconds){
-          return -1;
+          return 1;
         }
         if(a.seconds === b.seconds){
           return 0
         }
       }
     }
-    // a must be equal to b
-    return 0;
   }
 
 
@@ -481,10 +468,12 @@ async loadNotes()
     currentTime = this.addCurrentTime(start_time, currentTime)
     for(var i = page_arr.length-1; i >= 0; i-- ){
       if(page_arr[i].snapshots !== undefined){
+        console.log(page_arr[i].snapshots.length)
       snap_times = page_arr[i].snapshots.map(function(x){
         let snaptime = new Date(x.timestamp)
         return t.parseDate(snaptime)
       })
+      console.log(snap_times)
       snap_times = snap_times.sort((a, b)=>{return this.compareSnapshots(a, b)})
     }
       for(var j = 0; j < snap_times.length; j++){
@@ -497,10 +486,11 @@ async loadNotes()
         }
       }
       if(targetI !== undefined && targetJ !== undefined){
-        await this.switchPage(targetI)
         this.setState({
           snapshot_index: targetJ,
+          page: targetI
         })
+        await this.switchPage(targetI)
         break
       }
     }
@@ -680,8 +670,8 @@ async loadPublicNotes(class_name){
         </div>
           <div style={audiostyle}>
          {this.state.loaded && this.state.audio != undefined  ? this.state.audio.pk !== undefined ? <AudioPlayer parent={this} getAudioDuration={this.getAudioDuration} updateTime={this.updateAudioTime} syncToPage={this.syncToPage} audio_url={'http://localhost:8000/audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div> : <div>Page has no audio</div>}
-         <Button onClick={(event)=>this.syncToAudio()}>Sync page to audio</Button>
-         <Button onClick={(event)=>this.split_page()}>Split into new page</Button>
+         <Button id="syncAudio" onClick={(event)=>this.syncToAudio()}>Sync page to audio</Button>
+         <Button id="split" onClick={(event)=>this.split_page()}>Split into new page</Button>
          </div>
          </div>
       </div>
