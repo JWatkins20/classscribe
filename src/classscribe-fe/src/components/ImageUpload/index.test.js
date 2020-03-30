@@ -126,12 +126,6 @@ it('render student ui', async (done) => {
   await instance.componentDidMount()
   expect(container.textContent).toContain("Hello bfb3ab@virginia.edu")
   //------------------test rendered notebooks can be selected and prop functions---------------------//
-  let note = wrapper.update().find('#note0')
-  note.props().onUpdatePublic({})
-  await wrapper.instance().setState({
-    saved_items: public_state.state.user.favoritedBooks,
-    public: true
-  })
   //----------------------------------------------------------------------------------------------------//
 
   let carousel = wrapper.update().find('#carousel')
@@ -207,7 +201,7 @@ it('render student ui and toggle between user and public notebooks', async (done
   await publicSwitch.simulate('click')
   expect(wrapper.update().state('public')).toBe(true)
   await publicSwitch.simulate('click')
-  expect(wrapper.update().state('public')).toBe(true) 
+  expect(wrapper.update().state('public')).toBe(true)
   publicSwitch = wrapper.update().find('#userToggle').at(4)
   await publicSwitch.simulate('click')
   expect(wrapper.update().state('public')).toBe(false)
@@ -257,9 +251,15 @@ it('renders and non-button functions work correctly', async(done)=>{
   expect(wrapper.state('public_items')[0].Private).toBe(true)
   await wrapper.instance().changePrivacy(0)
   expect(wrapper.state('public_items')[0].Private).toBe(true)
-  // note = wrapper.update().find('#note0')
-  // await note.props().onUpdateUser({})
-  // await note.props().onUpdatePublic({})
+  let note = wrapper.update().find('#note0')
+  note.props().onUpdatePublic({})
+  await wrapper.instance().setState({
+    saved_items: public_state.state.user.favoritedBooks,
+    public: true
+  })
+  note = wrapper.update().find('#note0')
+  await note.props().onUpdateUser({})
+  await note.props().onUpdatePublic({})
   done()
 })
 
