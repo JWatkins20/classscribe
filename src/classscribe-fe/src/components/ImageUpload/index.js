@@ -174,8 +174,9 @@ export default class ImageCarousel extends Component {
       "page_pk": this.state.pages[this.state.page].pk, 
       "image_pks": JSON.stringify(image_pks)
     }
-    await axios.post(base_url + "notebooks/split/page/", data)
-    await this.loadNotes();
+    await axios.post(base_url + "notebooks/split/page/", data).then(async()=>{
+      await this.loadNotes();
+    })
   }
 
   async componentDidMount() {
@@ -351,7 +352,7 @@ async loadNotes()
     dateObj.hours = dateObj.hours-hourChange
     if(dateObj.seconds < 0){
       dateObj.seconds = dateObj.seconds+60
-      dateObj.minutes = dateObj.minutes-1
+      dateObj.minute = dateObj.minute-1
     }
     if(dateObj.minute < 0){
       dateObj.minute = dateObj.minute+60
@@ -377,7 +378,7 @@ async loadNotes()
     dateObj.hours = dateObj.hours+hourChange
     if(dateObj.seconds > 59){
       dateObj.seconds = dateObj.seconds%60
-      dateObj.minutes = dateObj.minutes+1
+      dateObj.minute = dateObj.minute+1
     }
     if(dateObj.minute > 59){
       dateObj.minute = dateObj.minute%60
@@ -413,7 +414,6 @@ async loadNotes()
     if(snap_times[this.state.snapshot_index].day === audio_time.day && snap_times[this.state.snapshot_index].month === audio_time.month && snap_times[this.state.snapshot_index].year === audio_time.year){
       return this.calculateOffsetSeconds(snap_times[this.state.snapshot_index], start_time)
     }
-    return 0
   }
 
   findEligiblePages(){
@@ -434,17 +434,17 @@ async loadNotes()
     }
     if(a.hours === b.hours){
       if(a.minute > b.minute){
-        return -1;
+        return 1;
       }
       if(a.minute < b.minute){
-        return 1;
+        return -1;
       }
       if(a.minute === b.minute){
         if(a.seconds > b.seconds){
-          return -1;
+          return 1;
         }
         if(a.seconds < b.seconds){
-          return 1;
+          return -1;
         }
         if(a.seconds === b.seconds){
           return 0
@@ -613,7 +613,6 @@ async loadPublicNotes(class_name){
 
   createCarousel = () => {
     let htmlImages = [];
-    //alert("number of images = " + this.state.images.length);
     for (let i = 0; i < this.state.images.length; i++) {
       htmlImages.push(
         <div>
@@ -631,12 +630,13 @@ async loadPublicNotes(class_name){
     var notes = this.state.items;
     if(notes != undefined){
       if(this.state.public && this.state.saved_items !== undefined){
-        var notelist = self.state.saved_items.map(function(note){
-          return <NotebookCard onUpdateUser={(event)=>self.updateUser()} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.saved_items} note={note}/>
+        var notelist = self.state.saved_items.map(function(note, i){
+          let index = i
+          return <NotebookCard id={"note"+String(index)} onUpdateUser={(event)=>self.updateUser()} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.saved_items} note={note}/>
         })}
       else{
-        var notelist = self.state.items.map(function(note){
-          return <NotebookCard showModal={(event)=>self.showModal(event)} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.items} note={note}/>
+        var notelist = self.state.items.map(function(note, i){
+          return <NotebookCard id={"note"+String(i)} onUpdatePublic={(event)=>{self.updatePublicNotebooks()}} parent={self} notes={self.state.items} note={note}/>
         })}
       }            
     else{
@@ -661,7 +661,7 @@ async loadPublicNotes(class_name){
    textAlign: "center",
    lineHeight: "1.0"}}>Notebooks{'\n'}</p><div style={{flex: 6, overflow: 'auto'}}>{notelist}</div><this.NotebookToggle></this.NotebookToggle></div>
         <div style={carstyle}>
-          {this.state.loaded && this.state.images.length > 0 ? <Carousel useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
+          {this.state.loaded && this.state.images.length > 0 ? <Carousel id="carousel" useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
         </div>
         <div style={tandastyle}>
         <div style={transcriptStyle}>

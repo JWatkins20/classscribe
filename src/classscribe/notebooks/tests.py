@@ -272,7 +272,7 @@ class NotebookGetViewTests(APITestCase):
         notebook2 =  Notebook.objects.get(name='bfb3ab_notes2')
         notebook3 =  Notebook.objects.get(name='bfb3ab_notes3')
         user = User.objects.get(username='username134')  
-        response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [notebook1.pk, notebook2.pk, notebook3.pk]})
+        response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [notebook3.pk]})
         self.assertTrue(response.status_code==201)
         notebook3 = Notebook.objects.get(name='bfb3ab_notes3')
         user = User.objects.get(username='username134')
@@ -281,6 +281,7 @@ class NotebookGetViewTests(APITestCase):
         user = User.objects.get(username='username134')  
         response = self.client.post(reverse('favorite'), {"user_pk": user.pk, "books_pk": [1, 2, 27]})
         self.assertTrue(response.status_code==400, msg=str(response.status_code))
+
     def testunfavorite(self):
         notebook1 = Notebook.objects.get(name='bfb3ab_notes1')
         notebook2 =  Notebook.objects.get(name='bfb3ab_notes2')
@@ -294,6 +295,7 @@ class NotebookGetViewTests(APITestCase):
         response = self.client.post(reverse('unfavorite'), {"user_pk": user.pk, "book_pk": notebook3.pk})
         self.assertTrue(response.status_code==201)
         self.assertTrue(notebook3 not in user.favoritedBooks.all())
+        
     def testunfavoritefails(self):
         user = User.objects.get(username='username134')  
         response = self.client.post(reverse('unfavorite'), {"user_pk": user.pk, "book_pk": [999]})
