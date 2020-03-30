@@ -421,7 +421,6 @@ async loadNotes()
     let pages = this.state.items[this.state.notebook].pages.filter(function(item){
       return item.audio.pk === t.state.audio.pk
     })
-    console.log(pages)
     return pages;
   }
 
@@ -468,12 +467,12 @@ async loadNotes()
     currentTime = this.addCurrentTime(start_time, currentTime)
     for(var i = page_arr.length-1; i >= 0; i-- ){
       if(page_arr[i].snapshots !== undefined){
-        console.log(page_arr[i].snapshots.length)
+
       snap_times = page_arr[i].snapshots.map(function(x){
         let snaptime = new Date(x.timestamp)
         return t.parseDate(snaptime)
       })
-      console.log(snap_times)
+
       snap_times = snap_times.sort((a, b)=>{return this.compareSnapshots(a, b)})
     }
       for(var j = 0; j < snap_times.length; j++){
