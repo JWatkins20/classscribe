@@ -127,16 +127,6 @@ it('render student ui', async (done) => {
   expect(container.textContent).toContain("Hello bfb3ab@virginia.edu")
   //------------------test rendered notebooks can be selected and prop functions---------------------//
   //----------------------------------------------------------------------------------------------------//
-
-  let carousel = wrapper.update().find('#carousel')
-  await carousel.simulate('change', 2)
-  await carousel.props().onChange(2)
-  expect(wrapper.update().state('snapshot_index')).toBe(2)
- //-------------------------------------------------------------------------------------------------------//
- let split = wrapper.update().find('#split').at(4)
- await split.simulate('click')
- let sync = wrapper.update().find('#syncAudio').at(4)
- await sync.simulate('click')
   done()
 });
 
@@ -218,7 +208,7 @@ it('renders and non-button functions work correctly', async(done)=>{
   let wrapper = Enzyme.shallow(<ImageCarousel/>)
   await wrapper.setState({
     pagename: '',
-      images:[],
+      images:['/media/linear3_off_azhLcWo.jpg'],
       items: [{"Private":false,"class_name":"STS 4500","name":"STS 4500","pages":[{"time":"2020-01-17","snapshots":[{"file":"/media/bg1_92NGGin.png","remark":"bfb3ab@virginia.edu","class_name":"example","page_num":"1","timestamp":"2020-03-02T16:25:43Z","lampSN":1,"pk":76},{"file":"/media/bg1_92NGGin.png","remark":"bfb3ab@virginia.edu","class_name":"example","page_num":"1","timestamp":"2020-03-02T16:25:45Z","lampSN":1,"pk":2}],"audio":{"file":"/media/Section1.2.mp4","remark":"bfb3ab4","class_name":"who cares","length":"3000","timestamp":"2020-03-02T16:51:36Z","pk":7},"name":"Page o","transcript":"page 1","pk":9,"submitted":false},{"time":"2020-03-15","snapshots":[{"file":"/media/linear3_off_azhLcWo.jpg","remark":"bfb3ab18","class_name":"who cares","page_num":"1","timestamp":"2020-03-02T16:28:20Z","lampSN":34957,"pk":3}],"audio":{"file":"/media/Section1.2.mp4","remark":"bfb3ab4","class_name":"who cares","length":"3000","timestamp":"2020-03-02T16:51:36Z","pk":7},"name":"page1","transcript":"page 2","pk":13,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/linear3_off_jpGHkWP.jpg","remark":"bfb3ab19","class_name":"who cares","page_num":"1","timestamp":"2020-03-02T16:31:00Z","lampSN":34957,"pk":4}],"audio":{"file":"/media/Section1.2.mp4","remark":"bfb3ab4","class_name":"who cares","length":"3000","timestamp":"2020-03-02T16:51:36Z","pk":7},"name":"Page o","transcript":"page 3","pk":14,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/linear3_off_rFhGXAn.jpg","remark":"bfb3ab20","class_name":"who cares","page_num":"1","timestamp":"2020-03-02T16:33:40Z","lampSN":34957,"pk":5}],"audio":{"file":"/media/Section1.2.mp4","remark":"bfb3ab4","class_name":"who cares","length":"3000","timestamp":"2020-03-02T16:51:36Z","pk":7},"name":"Page o","transcript":"page 4","pk":15,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/linear3_off_2J7Qq2n.jpg","remark":"bfb3ab","class_name":"Capstone Practicum","page_num":"1","timestamp":"2020-03-02T16:35:20Z","lampSN":9347,"pk":6}],"audio":{"file":"/media/Section1.2.mp4","remark":"bfb3ab4","class_name":"who cares","length":"3000","timestamp":"2020-03-02T16:51:36Z","pk":7},"name":"Page o","transcript":"page 5","pk":16,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/ielts-ukvi-academic-writing-part-2-notes-30-638_Af90UIa.jpg","remark":"bfb3ab","class_name":"Capstone Practicum","page_num":"2","timestamp":"2020-03-02T16:38:00Z","lampSN":234,"pk":7}],"audio":{"file":"/media/Section1.2.mp4","remark":"bfb3ab4","class_name":"who cares","length":"3000","timestamp":"2020-03-02T16:51:36Z","pk":7},"name":"Page o","transcript":"page 6","pk":17,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/linear3_off_rFhGXAn_SXGMkeP.jpg","remark":"bfb3ab","class_name":"Capstone Practicum","page_num":"1","timestamp":"2020-03-02T16:42:10Z","lampSN":435,"pk":8}],"audio":{"file":"/media/Section1.2.mp4","remark":"bfb3ab4","class_name":"who cares","length":"3000","timestamp":"2020-03-02T16:51:36Z","pk":7},"name":"Page o","transcript":"page 7","pk":18,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/linear3_off_QESKhiZ_6eSK4x4.jpg","remark":"bfb3ab","class_name":"Capstone Practicum","page_num":"2","timestamp":"2020-03-02T16:46:20Z","lampSN":2,"pk":9}],"audio":{"file":"/media/Section1.2.mp4","remark":"bfb3ab4","class_name":"who cares","length":"3000","timestamp":"2020-03-02T16:51:36Z","pk":7},"name":"Page o","transcript":"page 8","pk":19,"submitted":false}],"pk":9,"owner":{"pk":1,"username":"bfb3ab@virginia.edu","email":"bfb3ab@virginia.edu","first_name":"Benjamin","last_name":"Brown","type":"student","university":"University of Virginia","verification_password":"AgFyT5ZUJX","verified":true,"type_object":null},"sdac_ready":false,"ratings":[]}],
     public_items: [{"Private":false,"class_name":"STS 4500","name":"Anotha one 4","pages":[],"pk":11,"owner":{"pk":4,"username":"jimbofisher@jimbofisher.edu","email":"bfb3ab@virginia.edu","first_name":"Jimbo","last_name":"Fisher","type":null,"university":"","verification_password":"","verified":false,"type_object":null},"sdac_ready":false,"ratings":[{"rating":0,"notebook":{"name":"Anotha one 4","pk":11},"user":{"pk":1,"username":"bfb3ab@virginia.edu","email":"bfb3ab@virginia.edu","first_name":"Benjamin","last_name":"Brown","type":"student","university":"University of Virginia","verification_password":"AgFyT5ZUJX","verified":true,"type_object":null},"pk":3}]}],
     pages: [{"time":"2019-12-12","snapshots":[{"file":"/media/linear3_off_azhLcWo.jpg","remark":"bfb3ab18","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:23.766416Z","lampSN":34957,"pk":3},{"file":"/media/linear3_off_jpGHkWP.jpg","remark":"bfb3ab19","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:45.387858Z","lampSN":34957,"pk":4},{"file":"/media/linear3_off_rFhGXAn.jpg","remark":"bfb3ab20","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:54.000557Z","lampSN":34957,"pk":5}],"audio":{"file":"/media/Section1_mp3cut.net_2_ZndfqE4.mp3","remark":"bfb3ab6","class_name":"who cares","length":"3000","timestamp":null,"pk":10},"name":"FD2Kp2","transcript":"I am the teacher this is what I say!","pk":1,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/linear3_off_azhLcWo.jpg","remark":"bfb3ab18","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:23.766416Z","lampSN":34957,"pk":3},{"file":"/media/linear3_off_jpGHkWP.jpg","remark":"bfb3ab19","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:45.387858Z","lampSN":34957,"pk":4},{"file":"/media/linear3_off_rFhGXAn.jpg","remark":"bfb3ab20","class_name":"who cares","page_num":"1","timestamp":"2020-02-05T22:24:54.000557Z","lampSN":34957,"pk":5}],"audio":null,"name":"FD2Kp2","transcript":"","pk":2,"submitted":false},{"time":"2020-01-17","snapshots":[{"file":"/media/bg1_92NGGin.png","remark":"bfb3ab@virginia.edu","class_name":"example","page_num":"1","timestamp":"2020-01-16T12:52:13.438682Z","lampSN":1,"pk":2}],"audio":null,"name":"Databs","transcript":"","pk":3,"submitted":false},{"time":"2020-01-17","snapshots":[],"audio":null,"name":"Page","transcript":"","pk":11,"submitted":false}],
@@ -260,6 +250,15 @@ it('renders and non-button functions work correctly', async(done)=>{
   note = wrapper.update().find('#note0')
   await note.props().onUpdateUser({})
   await note.props().onUpdatePublic({})
+  let carousel = wrapper.update().find('#carousel')
+  await carousel.simulate('change', 2)
+  await carousel.props().onChange(2)
+  expect(wrapper.update().state('snapshot_index'))
+ //-------------------------------------------------------------------------------------------------------//
+ let split = wrapper.update().find('#split')
+ await split.simulate('click')
+ let sync = wrapper.update().find('#syncAudio')
+ await sync.simulate('click')
   done()
 })
 
