@@ -7,7 +7,7 @@ class File(models.Model):
     remark = models.CharField(max_length=20)  # associated ID number
     class_name = models.CharField(max_length=20)
     page_num = models.CharField(max_length=10)
-    timestamp = models.DateTimeField(default=datetime.now)  # used to sync up with audio
-    ###
+    #timestamp = models.DateTimeField(default=datetime.now)  # used to sync up with audio
+    timestamp = models.CharField(max_length=100)
     lampSN = models.IntegerField()
     newPage = models.BooleanField(default=False)

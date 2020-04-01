@@ -287,6 +287,7 @@ def send_page_to_prof(request, pk):
 		return Response(status=status.HTTP_404_NOT_FOUND)
 
 	to_send.submitted = True
+	snapshots = to_send.snapshots.all()
 	to_send.save()
 	to_send.pk = None  # make a copy of the page
 
@@ -298,6 +299,8 @@ def send_page_to_prof(request, pk):
 	to_send.name = original_owner.email + " submitted"
 	to_send.transcript = "Submitted by: " + original_owner.email
 	to_send.notebook = prof_notebook
+	to_send.save()
+	to_send.snapshots.add(*snapshots)
 	to_send.save()
 
 	return Response(status=status.HTTP_200_OK)
