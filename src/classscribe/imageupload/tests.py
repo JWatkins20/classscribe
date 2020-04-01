@@ -63,7 +63,8 @@ class ImageUploadTests(TestCase):
             'remark': "testID",
             'class_name': "testClass",
             'page_num': "0",
-            'lampSN': 1
+            'lampSN': 1,
+            'timestamp': "placeholder"
         }
 
         response = c.post("/upload/", data=data)
