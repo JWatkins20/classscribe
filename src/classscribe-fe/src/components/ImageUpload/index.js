@@ -596,7 +596,7 @@ async loadPublicNotes(class_name){
 
   getImgSrc = (imageName) => {
     var img = imageName.substring(1)
-    if(imageName.includes('localhost')){
+    if(imageName.includes('http')){
       img = imageName.substring(imageName.indexOf('m'))
     }
     return base_url + img;
