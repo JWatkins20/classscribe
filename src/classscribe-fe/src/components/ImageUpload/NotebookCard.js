@@ -178,8 +178,8 @@ class NotebookCard extends React.Component{
       await axios.post(url, data)
           .then(function (response) {
               if (response.status === 200) {
-                self.setState({checked: event.target.checked})
-                self.state.parent.changePrivacy(this.state.parent.state.notebook)
+                self.setState({checked: !self.state.checked})
+                self.state.parent.changePrivacy(self.state.parent.state.notebook)
               }
           })
           .catch(function (error) {
