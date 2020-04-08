@@ -314,7 +314,7 @@ async loadNotes()
                 return
               }
               await self.setState({public: true})
-              self.switchNote(0)}}
+              await self.switchNote(0)}}
             >
             Saved Notebooks
         </ToggleButton>
@@ -402,12 +402,10 @@ async loadNotes()
   syncToPage(){
     let snap_times = {}
     let audio_time = this.parseDate(new Date(this.state.audio.timestamp))//date object relating to stored audio
-    console.log(audio_time)
     let t = this // to bring component state to map function scope
     if(this.state.items[this.state.notebook].pages[this.state.page].snapshots !== undefined){
       snap_times = this.state.items[this.state.notebook].pages[this.state.page].snapshots.map(function(x){
         let snaptime = new Date(x.timestamp)
-        console.log(t.parseDate(snaptime))
         return t.parseDate(snaptime)
       })
     }
@@ -464,8 +462,8 @@ async loadNotes()
     let t = this
     let page_arr = this.findEligiblePages()
     let audio_duration = Math.floor(this.state.duration)
-
     let start_time = this.subtractDuration(audio_time, audio_duration)
+
     currentTime = this.addCurrentTime(start_time, currentTime)
     for(var i = page_arr.length-1; i >= 0; i-- ){
       if(page_arr[i].snapshots !== undefined){
@@ -491,15 +489,13 @@ async loadNotes()
         this.setState({
           snapshot_index: targetJ,
         })
-        
         break
       }
     }
     if(targetI === undefined || targetJ === undefined){
-      await this.switchPage(targetI)
+      await this.switchPage(0)
       this.setState({
         snapshot_index: 0,
-        page: 0
       })
     }
     
@@ -521,8 +517,8 @@ async loadPublicNotes(class_name){
   async switchPage(index){
     //console.log(index)
     if(index === this.state.page){
-     return 
-    }
+      return 
+     }
     var object = this.state.items
     if(this.state.public){
       object = this.state.saved_items
