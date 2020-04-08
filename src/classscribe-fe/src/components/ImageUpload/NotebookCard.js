@@ -361,7 +361,7 @@ class NotebookCard extends React.Component{
                     </Typography>
                   </CardContent>
                   <CardActions style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-                    {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <div style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                    {self.state.parent.state.public && self.state.note.owner && self.state.note.owner.username ? <span style={{paddingLeft: 15, display: "flex", flexDirection: 'row', justifyContent: 'center'}}>
                     <IconButton className='remove' aria-label="remove icon" onClick={(event) => this.removeSavedNotebook(self.state.note)}>
                     <HighlightOffRoundedIcon />
                     </IconButton>
@@ -371,29 +371,30 @@ class NotebookCard extends React.Component{
                       return item.notebook.pk === self.state.note.pk
                     })[0].rating === 1 
                     ? 
-                    <div>
+                    <span>
                     <IconButton id='up' color={'primary'} aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
                     <ThumbUpIcon />
                     </IconButton>
                     <IconButton id='down' aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
                     <ThumbDownIcon />
-                    </IconButton> </div>:
-                    <div><IconButton id='up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    </IconButton> </span>:
+                    <span><IconButton id='up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
                     <ThumbUpIcon/>
                     </IconButton>
                     <IconButton id='down' color={'primary'} aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
                     <ThumbDownIcon />
-                    </IconButton></div> : 
-                    <div><IconButton id='up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
+                    </IconButton></span> : 
+                    <span><IconButton id='up' aria-label="up rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 1)}>
                     <ThumbUpIcon/>
                     </IconButton>
                     <IconButton id='down' aria-label="down rating icon" onClick={(event) => this.rateNotebook(self.state.note, self.state.parent.state.user, 0)}>
                     <ThumbDownIcon />
-                    </IconButton></div>}
-                    <Tooltip  style={{margin: 0}} title={'Shared By: '+this.state.parent.state.user.username}>
-                        <Avatar m={0} style={avatarr[this.state.parent.state.user.pk % 5]}>{self.state.parent.state.user.username.charAt(0)}</Avatar> 
+                    </IconButton></span>}
+                    <span><Tooltip  style={{margin: 0, float: "right", paddingLeft: 10}} title={'Shared By: '+this.state.parent.state.user.username}>
+                        <span><Avatar m={0} style={avatarr[this.state.parent.state.user.pk % 5]}>{self.state.parent.state.user.username.charAt(0)}</Avatar> </span>
                       </Tooltip>
-                    </div> :
+                      </span>
+                    </span> :
                     <div>
                     <Toggle parent={self} />
                     <IconButton role="edit-button" id='editButton' aria-label="edit icon" onClick={(event) => self.handleEditNotebook(self.state.note)}>
