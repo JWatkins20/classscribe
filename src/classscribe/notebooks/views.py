@@ -221,6 +221,7 @@ def add_audio_and_transcript_view(request):
 		files = AudioFile.objects.get(pk=data["pk_audio"])
 		page.audio = files
 		page.transcript = data["transcript"]
+		page.handwriting = data["handwriting"]
 		page.save()
 		if files == page.audio:
 			return Response(status=status.HTTP_201_CREATED)
