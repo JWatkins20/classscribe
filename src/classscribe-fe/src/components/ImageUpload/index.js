@@ -169,6 +169,11 @@ export default class ImageCarousel extends Component {
     this.switchXray = this.switchXray.bind(this);
     this.switchPage = this.switchPage.bind(this);
     this.updatePublicNotebooks = this.updatePublicNotebooks.bind(this)
+    this.updateCards = this.updateCards.bind(this)
+  }
+
+  updateCards(dummy){
+    this.setState({items : dummy})
   }
 
   split_page = async () =>{

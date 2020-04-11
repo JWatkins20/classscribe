@@ -146,7 +146,7 @@ class NotebookCard extends React.Component{
 
     handleEditNotebook = (notebook) => {
       this.setState({edit:true})
-  
+      
     }
 
     calculateRating = (note) => {
@@ -242,7 +242,7 @@ class NotebookCard extends React.Component{
       await axios.post(url, data)
           .then(function (response) {
               if (response.status === 200) {
-                  
+                console.log('saved')
               }
           })
           .catch(function (error) {
