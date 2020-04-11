@@ -187,6 +187,7 @@ export default class ImageCarousel extends Component {
     }
     await axios.post(base_url + "notebooks/split/page/", data).then(async()=>{
       await this.updateUser();
+      this.setState({state: this.state})
     })
   }
 
