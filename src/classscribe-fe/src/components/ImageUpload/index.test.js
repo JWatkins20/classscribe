@@ -255,8 +255,6 @@ it('renders and non-button functions work correctly', async(done)=>{
   await carousel.props().onChange(2)
   expect(wrapper.update().state('snapshot_index'))
  //-------------------------------------------------------------------------------------------------------//
- let split = wrapper.update().find('#split')
- await split.simulate('click')
  let sync = wrapper.update().find('#syncAudio')
  await sync.simulate('click')
   done()
