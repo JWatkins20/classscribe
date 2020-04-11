@@ -186,7 +186,12 @@ export default class ImageCarousel extends Component {
       "image_pks": JSON.stringify(image_pks)
     }
     await axios.post(base_url + "notebooks/split/page/", data).then(async()=>{
-      await this.loadUser()
+      if(this.state.public){
+        this.updateUser()
+      }
+      else{
+        this.loadNotes()
+      }
       this.setState({state: this.state})
     })
   }
@@ -584,6 +589,7 @@ async loadPublicNotes(class_name){
     //console.log(this.state.notebook)
     this.setState({
       page:index,
+      pages: object[this.state.notebook].pages,
       transcript: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].transcript: '',
       handwriting: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].handwriting: '',
       audio: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].audio : {}
@@ -647,6 +653,7 @@ async loadPublicNotes(class_name){
     this.setState({
       notebook:index,
       page:0,
+      pages: object[index].pages,
       handwriting: object[index].pages[0] != {} && object[index].pages[0] != undefined  ? object[index].pages[0].handwriting: '',
       transcript: object[index].pages[0] != {} && object[index].pages[0] != undefined  ? object[index].pages[0].transcript: '',
       audio: object[index].pages[0] != {} && object[index].pages[0] != undefined ? object[index].pages[0].audio : undefined
