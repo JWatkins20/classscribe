@@ -27,9 +27,9 @@ class Navbar extends React.Component {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6">Hello {this.state.username}</Typography>
-                    <Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
-                    <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>
-                    <LogoutButton/>
+                    {/*<Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
+                    <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>*/}
+                    <LogoutButton style={{float:"right"}}/>
                 </Toolbar>
             </AppBar>
         );

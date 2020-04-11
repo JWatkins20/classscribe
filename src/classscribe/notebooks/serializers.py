@@ -12,7 +12,7 @@ class PageSerializer(serializers.ModelSerializer):
     audio = AudioFileSerializer(read_only=True)
     class Meta:
         model = Page
-        fields = ('time', 'snapshots', 'audio', 'name', 'transcript', 'pk', 'submitted')
+        fields = ('time', 'snapshots', 'audio', 'name', 'transcript', 'pk', 'submitted','handwriting')
 
 class NotebookKeySerializer(serializers.ModelSerializer):
     class Meta:

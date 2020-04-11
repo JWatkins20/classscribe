@@ -17,6 +17,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 var currentImage;
 
+
 // (function(){
 //   var oldLog = console.log;
 //   console.log = function (message) {
@@ -145,7 +146,10 @@ export default class ImageCarousel extends Component {
       duration: 0,
       time: 0,
       transcript: "",
+      displayXray: "",
+      handwriting:"",
       public: false,
+      hw: false,
       sdac_ready: false,
       recording: undefined,
       showModal: false,
@@ -161,6 +165,7 @@ export default class ImageCarousel extends Component {
     this.loadPublicNotes = this.loadPublicNotes.bind(this);
     this.loadUser = this.loadUser.bind(this);
     this.switchNote = this.switchNote.bind(this);
+    this.switchXray = this.switchXray.bind(this);
     this.switchPage = this.switchPage.bind(this);
     this.updatePublicNotebooks = this.updatePublicNotebooks.bind(this)
   }
@@ -247,8 +252,11 @@ async loadNotes()
       for(var i = 0; i<data[this.state.notebook].pages.length; i++){
           ps.push(data[this.state.notebook].pages[i]);
         }
+        console.log(res.data.data)
         this.setState({
           transcript: data[this.state.notebook].pages[this.state.page].transcript,
+          handwriting: data[this.state.notebook].pages[this.state.page].handwriting,
+          displayXray: data[this.state.notebook].pages[this.state.page].transcript,
           saved_items: this.state.user.favoritedBooks,
         });
         this.setState({
@@ -323,6 +331,38 @@ async loadNotes()
     )
   }
   
+  
+
+  XrayToggle = () => {
+    var self = this
+    return(<div style={{alignSelf:'flex-end', flex: 1, paddingTop: 10}}><ToggleButtonGroup
+          aria-label="x-ray Toggle"
+          id="Handwriting"
+          exclusive
+          >
+          <ToggleButton value="tran" selected={!self.state.hw} onClick={async function(event){
+            if(!self.state.hw){
+              return
+            }
+            await self.setState({hw: false})
+            self.switchXray()}}
+          >
+          Transcription
+        </ToggleButton>
+        <ToggleButton value="hand" selected={self.state.hw} onClick={async function(event){
+              if(self.state.hw){
+                return
+              }
+              await self.setState({hw: true})
+              await self.switchXray()}}
+          >
+            Handwriting
+        </ToggleButton>
+      </ToggleButtonGroup>
+      </div>
+    )
+  }
+
   parseDate = (audio_time) => {
     let audio_minute = audio_time.getMinutes()
     let audio_hours = audio_time.getHours()
@@ -545,6 +585,18 @@ async loadPublicNotes(class_name){
   this.setState({snapshot_index: is.length-1});
   }
 
+  async switchXray() {
+    if (this.state.hw) {
+      this.setState({displayXray: this.state.handwriting})
+      console.log("Should be displaying handwriting")
+    }
+    else {
+      this.setState({displayXray: this.state.transcript})
+      console.log("Should be displaying transcript")
+    }
+    
+  }
+
   async switchNote(index) {
     var object = this.state.items
     if(this.state.public){
@@ -660,15 +712,18 @@ async loadPublicNotes(class_name){
     <div style={divstyle}><p style={{flex: .5,
    fontSize: "30px",
    textAlign: "center",
-   lineHeight: "1.0"}}>Notebooks{'\n'}</p><div style={{flex: 6, overflow: 'auto'}}>{notelist}</div><this.NotebookToggle></this.NotebookToggle></div>
+   lineHeight: "1.0"}}>Notebooks{'\n'}</p><this.NotebookToggle></this.NotebookToggle><div style={{flex: 6, overflow: 'auto'}}>{notelist}</div></div>
         <div style={carstyle}>
           {this.state.loaded && this.state.images.length > 0 ? <Carousel id="carousel" useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
         </div>
         <div style={tandastyle}>
+
         <div style={transcriptStyle}>
-          <p style={headerstyle}>Transcript{'\n'}</p>
-          {this.state.loaded && this.state.transcript != "" ? <p>{this.state.transcript}</p> : <div>Page has no transcript</div>}
+          <p style={headerstyle}>X-Ray{'\n'}</p>
+          <this.XrayToggle></this.XrayToggle>
+          {this.state.loaded && this.state.displayXray != "" ? <p>{this.state.displayXray}</p> : <div>Page has no transcript</div>}
         </div>
+
           <div style={audiostyle}>
          {this.state.loaded && this.state.audio != undefined  ? this.state.audio.pk !== undefined ? <AudioPlayer parent={this} getAudioDuration={this.getAudioDuration} updateTime={this.updateAudioTime} syncToPage={this.syncToPage} audio_url={base_url+'audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div> : <div>Page has no audio</div>}
          <Button id="syncAudio" onClick={(event)=>this.syncToAudio()}>Sync page to audio</Button>
