@@ -29,7 +29,7 @@ var currentImage;
 
 const carstyle = {
   width: '50vw',
-  height: '88vh',
+  height: '90vh',
   float: 'left',
   overflow: 'auto',
   marginRight: "8px",
@@ -48,7 +48,7 @@ const formstyle= {
 
 const imagestyle = {
   width: "50vw",
-  height: "88vh"
+  height: "90vh"
 }
 
 const transcriptStyle = {
@@ -57,6 +57,7 @@ const transcriptStyle = {
   overflow: 'auto',
   paddingLeft: "0px",
   marginTop: "10px",
+  textAlign: "left",
   marginBottom: "10px",
   paddingBottom: "10px",
   paddingLeft: "10px",
@@ -72,7 +73,7 @@ const tandastyle = {
 }
 const audiostyle={
   width: "24vw",
-  height: "15vh",
+  height: "17vh",
   'box-shadow': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
   'border-radius': '0.5em',
   overflow: 'auto',
@@ -90,7 +91,7 @@ const divstyle = {
   paddingRight: '10px',
   paddingLeft: '10px',
   width: '20vw',
-  height: '88vh',
+  height: '90vh',
   float: 'left',
   marginTop: "10px",
   overflow: "auto",
@@ -252,13 +253,20 @@ async loadNotes()
       for(var i = 0; i<data[this.state.notebook].pages.length; i++){
           ps.push(data[this.state.notebook].pages[i]);
         }
-        console.log(res.data.data)
+        console.log(data[this.state.notebook].pages[this.state.page])
         this.setState({
           transcript: data[this.state.notebook].pages[this.state.page].transcript,
           handwriting: data[this.state.notebook].pages[this.state.page].handwriting,
-          displayXray: data[this.state.notebook].pages[this.state.page].transcript,
           saved_items: this.state.user.favoritedBooks,
         });
+
+        if(!this.state.hw){
+          this.setState({displayXray: data[this.state.notebook].pages[this.state.page].transcript});
+        }
+        else {
+          this.setState({displayXray: data[this.state.notebook].pages[this.state.page].handwriting});
+        }
+
         this.setState({
           audio: data[this.state.notebook].pages[this.state.page].audio
         });
@@ -571,8 +579,16 @@ async loadPublicNotes(class_name){
     this.setState({
       page:index,
       transcript: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].transcript: '',
+      handwriting: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].handwriting: '',
       audio: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].audio : {}
     });
+
+    if(!this.state.hw){
+      this.setState({displayXray: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].transcript: ''});
+    }
+    else {
+      this.setState({displayXray: object[this.state.notebook].pages[index] !== undefined ? object[this.state.notebook].pages[index].handwriting: ''});
+    }
     
     var is = [];
       if(object[this.state.notebook].pages[index] !== undefined && object[this.state.notebook].pages[index].snapshots.length !== 0){
@@ -588,11 +604,9 @@ async loadPublicNotes(class_name){
   async switchXray() {
     if (this.state.hw) {
       this.setState({displayXray: this.state.handwriting})
-      console.log("Should be displaying handwriting")
     }
     else {
       this.setState({displayXray: this.state.transcript})
-      console.log("Should be displaying transcript")
     }
     
   }
@@ -606,6 +620,7 @@ async loadPublicNotes(class_name){
       this.setState({
         pages: {},
         transcript: '',
+        handwriting: '',
         audio: {},
         images: [],
         pages: []
@@ -616,6 +631,7 @@ async loadPublicNotes(class_name){
       this.setState({
         pages: {},
         transcript: '',
+        handwriting: '',
         audio: {},
         images: [],
         pages: []
@@ -625,9 +641,24 @@ async loadPublicNotes(class_name){
     this.setState({
       notebook:index,
       page:0,
+      handwriting: object[index].pages[0] != {} && object[index].pages[0] != undefined  ? object[index].pages[0].handwriting: '',
       transcript: object[index].pages[0] != {} && object[index].pages[0] != undefined  ? object[index].pages[0].transcript: '',
       audio: object[index].pages[0] != {} && object[index].pages[0] != undefined ? object[index].pages[0].audio : undefined
     });
+
+    if(this.state.hw){
+      this.setState({
+        displayXray: object[index].pages[0] != {} && object[index].pages[0] != undefined  ? object[index].pages[0].handwriting: '',
+      });
+    }
+    else {
+      this.setState({
+        displayXray: object[index].pages[0] != {} && object[index].pages[0] != undefined  ? object[index].pages[0].transcript: '',
+      });
+    }
+
+
+
     var is = [];
     var ps = [];
     if(object[index].pages.length != 0){
@@ -705,23 +736,23 @@ async loadPublicNotes(class_name){
         }
 
     return (
-    <div> 
+    <div style={{'text-align': 'center'}}> 
       <MuiThemeProvider>
       <Navbar style={{'height': '2vh'}} username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
     <div style={divstyle}><p style={{flex: .5,
    fontSize: "30px",
    textAlign: "center",
-   lineHeight: "1.0"}}>Notebooks{'\n'}</p><this.NotebookToggle></this.NotebookToggle><div style={{flex: 6, overflow: 'auto'}}>{notelist}</div></div>
+   lineHeight: "1.0"}}>Notebooks{'\n'}</p><div style={{"textAlign": "center"}}><this.NotebookToggle></this.NotebookToggle></div><div style={{flex: 6, overflow: 'auto'}}>{notelist}</div></div>
         <div style={carstyle}>
-          {this.state.loaded && this.state.images.length > 0 ? <Carousel id="carousel" useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no images</div>}
+          {this.state.loaded && this.state.images.length > 0 ? <Carousel id="carousel" useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no snapshots</div>}
         </div>
         <div style={tandastyle}>
 
         <div style={transcriptStyle}>
           <p style={headerstyle}>X-Ray{'\n'}</p>
-          <this.XrayToggle></this.XrayToggle>
-          {this.state.loaded && this.state.displayXray != "" ? <p>{this.state.displayXray}</p> : <div>Page has no transcript</div>}
+          <div style={{"textAlign": "center"}}><this.XrayToggle></this.XrayToggle></div>
+          {this.state.loaded && this.state.displayXray != "" ? <p>{this.state.displayXray}</p> : <div>No X-Ray information available.</div>}
         </div>
 
           <div style={audiostyle}>
