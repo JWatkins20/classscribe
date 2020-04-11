@@ -186,13 +186,8 @@ export default class ImageCarousel extends Component {
       "image_pks": JSON.stringify(image_pks)
     }
     await axios.post(base_url + "notebooks/split/page/", data).then(async()=>{
-      if(this.state.public){
-        this.updateUser()
-      }
-      else{
         this.loadNotes()
-      }
-      this.setState({state: this.state})
+        this.setState({state: this.state})
     })
   }
 
@@ -771,7 +766,7 @@ async loadPublicNotes(class_name){
           <div style={audiostyle}>
          {this.state.loaded && this.state.audio != undefined  ? this.state.audio.pk !== undefined ? <AudioPlayer parent={this} getAudioDuration={this.getAudioDuration} updateTime={this.updateAudioTime} syncToPage={this.syncToPage} audio_url={base_url+'audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div> : <div>Page has no audio</div>}
          <Button id="syncAudio" onClick={(event)=>this.syncToAudio()}>Sync page to audio</Button>
-         <Button id="split" onClick={(event)=>this.split_page()}>Split into new page</Button>
+         {!this.state.public ? <Button id="split" onClick={(event)=>this.split_page()}>Split into new page</Button>: null }
          </div>
          </div>
       </div>
