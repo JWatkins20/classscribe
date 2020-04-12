@@ -748,27 +748,27 @@ async loadPublicNotes(class_name){
       <MuiThemeProvider>
       <Navbar style={{'height': '2vh'}} username={this.state.user && this.state.user.username}/>
       <div style={{"display": "inline-block"}}>
-    <div style={divstyle}><p style={{flex: .5,
-   fontSize: "30px",
-   textAlign: "center",
-   lineHeight: "1.0"}}>Notebooks{'\n'}</p><div style={{"textAlign": "center"}}><this.NotebookToggle></this.NotebookToggle></div><div style={{flex: 6, overflow: 'auto'}}>{notelist}</div></div>
+    <div style={divstyle}><p style={{headerstyle}}>{'\n'}</p><div style={{"textAlign": "center"}}><this.NotebookToggle></this.NotebookToggle></div><div style={{flex: 6, overflow: 'auto', paddingTop: '1vh'}}>{notelist}</div></div>
         <div style={carstyle}>
           {this.state.loaded && this.state.images.length > 0 ? <Carousel id="carousel" useKeyboardArrows selectedItem={this.state.snapshot_index} onChange={(event)=>{this.setState({snapshot_index: event})}} showThumbs={false}>{this.createCarousel()}</Carousel> : <div>Page has no snapshots</div>}
         </div>
         <div style={tandastyle}>
 
         <div style={transcriptStyle}>
-          <p style={headerstyle}>X-Ray{'\n'}</p>
+          <p style={headerstyle}>{'\n'}</p>
           <div style={{"textAlign": "center"}}><this.XrayToggle></this.XrayToggle></div>
-          {this.state.loaded && this.state.displayXray != "" ? <p>{this.state.displayXray}</p> : <div>No X-Ray information available.</div>}
+          {this.state.loaded && this.state.displayXray != "" ? <p>{this.state.displayXray}</p> : <p>No information available.</p>}
         </div>
 
           <div style={audiostyle}>
+            <p>
          {this.state.loaded && this.state.audio != undefined  ? this.state.audio.pk !== undefined ? <AudioPlayer parent={this} getAudioDuration={this.getAudioDuration} updateTime={this.updateAudioTime} syncToPage={this.syncToPage} audio_url={base_url+'audio/stream/'+this.state.audio.pk}></AudioPlayer> : <div>Page has no audio</div> : <div>Page has no audio</div>}
          <Button id="syncAudio" onClick={(event)=>this.syncToAudio()}>Sync page to audio</Button>
          {!this.state.public ? <Button id="split" onClick={(event)=>this.split_page()}>Split into new page</Button>: null }
+         </p>
          </div>
          </div>
+         
       </div>
       </MuiThemeProvider>
       </div>

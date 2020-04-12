@@ -79,9 +79,13 @@ class NotebookCreateView(APIView):
 				#send 200 code and key of created object
 				return Response({"key": notebook.pk}, status=status.HTTP_200_OK)
 			except ObjectDoesNotExist:
+
+
 				serializer.save() #save serialized request as notebook object
+
 				notebook = Notebook.objects.get(name=request.data["name"]) # query for created object
 				notebook.owner = User.objects.get(pk=request.data["pk"]) # query for user with owner primary key
+				notebook.course = Course.objects.get(name=request.data["class_name"])
 				notebook.save()
 				return Response({"key": notebook.pk}, status=status.HTTP_201_CREATED) # send 201
 		else:
