@@ -141,11 +141,11 @@ class NotebookCreationEndpointTest(APITestCase):
             semester="Fall 2019"
         )
     def testendpoint(self):
-        response = self.client.post(reverse('create'),{"Private": False, "class_name": 'CS 1111', "name": 'jw2vp CS 1111', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
+        response = self.client.post(reverse('create'),{"Private": False, "class_name": 'Capstone Practicum', "name": 'jw2vp CS 1111', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
         self.assertTrue(response.status_code==201, msg=response.data)
-        response = self.client.post(reverse('create'),{"Private": False, "class_name": 'CS 1111', "name": 'jw2vp CS 1111', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
+        response = self.client.post(reverse('create'),{"Private": False, "class_name": 'Capstone Practicum', "name": 'jw2vp CS 1111', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
         self.assertTrue(response.status_code==200, msg=response.data)
-        response2 = self.client.post(reverse('create'),{"Private": False, "class_name": 'CS 1112', "name": 'jw2vp CS 1112', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
+        response2 = self.client.post(reverse('create'),{"Private": False, "class_name": 'Capstone Practicum', "name": 'jw2vp CS 1112', "pk": User.objects.get(username='a.i@virginia.edu').pk,})
         self.assertTrue(response2.status_code==201, msg=response.data)
         self.assertTrue(response.data["key"] == response2.data["key"]-1)
     def testbadserializer(self):
@@ -175,6 +175,16 @@ class NotebookGetViewTests(APITestCase):
         audiofile1 = AudioFile.objects.create(file=SimpleUploadedFile("test.jpg", b"hello world"), remark="test1", class_name="Practicum", length="1")
         page1 = Page.objects.create(name="Page1 name") 
         
+        Course.objects.create(
+            room="Class1",
+            time="MWF 8:00-8:50",
+            name="Capstone Practicum",
+            building="testBuilding",
+            professorID="testProfessorID",
+            lamp_serial="testLamp_serial123",
+            semester="Fall 2019"
+        )
+
         page2 = Page.objects.create(name="Page2 name") 
         notebook1.owner = user1
         page1.notebook = notebook1
