@@ -24,12 +24,15 @@ class Navbar extends React.Component {
 
         let that = this;
         return (
-            <AppBar position="static">
+            <AppBar position="static" style={{'background-color': '#eb4034', 'border-color':'rgb(247,247,247)', 'box-shadow': '0 3px 6px rgba(0,0,0,0.10), 0 3px 6px rgba(0,0,0,0.13)'}}>
                 <Toolbar>
-                    <Typography variant="h6">Hello {this.state.username}</Typography>
+                    <Typography variant="h6" style={{'color': '#fff'}}><b>Hello {this.state.username}</b></Typography>&nbsp;&nbsp;&nbsp;&nbsp;
                     {/*<Button color="inherit" href={`${base_url}view-all-courses`}>Courses</Button>
                     <Button color="inherit" href={`${base_url}notebook-carousel`}>Notebooks</Button>*/}
-                    <LogoutButton style={{float:"right"}}/>
+
+<React.Fragment transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                    <LogoutButton/>
+                    </React.Fragment>
                 </Toolbar>
             </AppBar>
         );
