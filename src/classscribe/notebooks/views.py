@@ -21,6 +21,7 @@ import requests
 from django.core.exceptions import ObjectDoesNotExist
 import os
 from django.conf import settings
+from custom_admin.models import Course
 
 # Create your views here.
 
