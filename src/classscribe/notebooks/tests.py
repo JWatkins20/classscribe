@@ -155,6 +155,15 @@ class NotebookGetViewTests(APITestCase):
         user1 = User.objects.create(username='username134', password='pa$$word12466')
         user2 = User.objects.create(username='username124', password='pa$$word123')
         user3 = User.objects.create(username='username114', password='pa$$word323')
+        Course.objects.create(
+            room="Class1",
+            time="MWF 8:00-8:50",
+            name="testName",
+            building="testBuilding",
+            professorID="testProfessorID",
+            lamp_serial="testLamp_serial123",
+            semester="Fall 2019"
+        )
         notebook1 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes1", owner=user1)
         notebook2 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes2", owner=user1)
         notebook3 = Notebook.objects.create(Private=False, class_name="Class1", name="bfb3ab_notes3", owner=user3)
