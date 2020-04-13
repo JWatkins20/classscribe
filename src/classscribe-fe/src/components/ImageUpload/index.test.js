@@ -343,7 +343,7 @@ it('test audio and sync', async(done)=>{
   wrapper.instance().getAudioDuration({duration: 1653})
   expect(wrapper.update().state('duration')).toBe(1653)
   await wrapper.instance().syncToAudio().then(()=>{
-    expect(wrapper.update().state('page')).toBe(1) //60 seconds in syncs to page 1 in array
+    expect(wrapper.update().state('page')).toBe(2) //260 seconds in syncs to page 2 in array
   })
   wrapper.instance().updateAudioTime(60)
   expect(wrapper.update().state('time')).toBe(60) //audio time set in above line
