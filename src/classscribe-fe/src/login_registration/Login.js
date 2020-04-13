@@ -39,7 +39,7 @@ login = async () =>{
               history.pushState({}, "", "view-all-courses/");
             }
             if(user.type == "teacher"){
-              history.pushState({}, "", "dashboard/");
+              history.pushState({}, "", "notebook-carousel/");
             }
             window.location.reload(false);
             history.go(1);
