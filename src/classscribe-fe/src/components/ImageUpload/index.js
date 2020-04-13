@@ -187,7 +187,6 @@ export default class ImageCarousel extends Component {
     }
     await axios.post(base_url + "notebooks/split/page/", data).then(async()=>{
         this.loadNotes()
-        this.setState({state: this.state})
     })
   }
 
@@ -464,7 +463,8 @@ async loadNotes()
       })
     }
     let audio_duration = Math.floor(this.state.duration)
-    let start_time = this.subtractDuration(audio_time, audio_duration)
+    //let start_time = this.subtractDuration(audio_time, audio_duration)
+    let start_time = audio_time
     if(snap_times[this.state.snapshot_index].day === audio_time.day && snap_times[this.state.snapshot_index].month === audio_time.month && snap_times[this.state.snapshot_index].year === audio_time.year){
       return this.calculateOffsetSeconds(snap_times[this.state.snapshot_index], start_time)
     }
@@ -516,8 +516,8 @@ async loadNotes()
     let t = this
     let page_arr = this.findEligiblePages()
     let audio_duration = Math.floor(this.state.duration)
-    let start_time = this.subtractDuration(audio_time, audio_duration)
-
+    //let start_time = this.subtractDuration(audio_time, audio_duration)
+    let start_time = audio_time
     currentTime = this.addCurrentTime(start_time, currentTime)
     for(var i = page_arr.length-1; i >= 0; i-- ){
       if(page_arr[i].snapshots !== undefined){
@@ -776,4 +776,4 @@ async loadPublicNotes(class_name){
   }
 }
 
-
+//base_url+'audio/stream/'+this.state.audio.pk
