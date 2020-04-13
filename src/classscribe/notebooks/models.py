@@ -31,5 +31,5 @@ class Page(models.Model):
 
 class NotebookRating(models.Model):
     rating = models.IntegerField(blank=False)
-    notebook = models.ForeignKey(Notebook, on_delete=models.PROTECT, related_name='ratings', null=True)
-    user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, related_name="ratings")
+    notebook = models.ForeignKey(Notebook, on_delete=models.CASCADE, related_name='ratings', null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="ratings")
