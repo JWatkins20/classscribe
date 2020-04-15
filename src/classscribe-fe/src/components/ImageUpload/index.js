@@ -258,7 +258,6 @@ async loadNotes()
       for(var i = 0; i<data[this.state.notebook].pages.length; i++){
           ps.push(data[this.state.notebook].pages[i]);
         }
-        console.log(data[this.state.notebook].pages[this.state.page])
         this.setState({
           transcript: data[this.state.notebook].pages[this.state.page].transcript,
           handwriting: data[this.state.notebook].pages[this.state.page].handwriting,
