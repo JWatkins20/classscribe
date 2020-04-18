@@ -6,7 +6,7 @@ Prerequisite steps:
 	heroku cli: https://devcenter.heroku.com/articles/heroku-cli#download-and-install  
 	git: https://git-scm.com/downloads  
 	node: https://nodejs.org/en/download/
-2. download and unzip the codebase from the Class Scribe GitHub repo you should have been given access to:
+2. unzip the codebase that has been sent to you, you should have 2 folders now (Class-Scribe-master and Lamp). Until the instructions say otherwise, work exclusively in the Class-Scribe-master folder please.
 
 ![image](downloadcode.png)
 
@@ -65,7 +65,12 @@ In terminal, pointed to the root of the git repo you downloaded:
 5. git subtree split --prefix src/classscribe-fe master  
 (this command generates an alphanumeric string of characters you will use in the next step)
 6. git push heroku ABOVE_GENERATED_STRING_OF_CHARACTERS:refs/heads/master   
-7. Refresh the yourFrontEndAppName.herokuapp.com URL for the frontend should any errors occur initially when testing after successful deployment.
+7. Refresh the yourFrontEndAppName.herokuapp.com URL for the frontend should any errors occur initially when testing after successful deployment.  
+
+Now navigate to the folder "Lamp" that you unzipped in the beginning. In this folder you will find a collection of scripts. All you have to do is push these scripts to your Raspberry Pi (with a speaker, camera module, liquid crystal light valve panel, microphone, RFID scanner, and Arduino microcontroller attached to the /home/pi/ directory.  
+
+Enter the command "nano ~/. bashrc" and scroll down to the end of the file and input this command "python /home/pi/main.py". This will ensure on bootup that the Raspberry Pi will run our collection of scripts to make the lamp function as expected.  
+
 
 Happy Notetaking :)
 
