@@ -1,4 +1,4 @@
-#Info:
+# Info:
 This is a capstone project I worked on for two semesters my senior year of college with 3 other teammates, I worked on the backend, written in Django, frontend, written in React, and also the worked on enabling the lamp to be able to commmunicate with the backend.
 
 
