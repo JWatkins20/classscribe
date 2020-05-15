@@ -1,3 +1,8 @@
+#Info:
+This is a capstone project I worked on for two semesters my senior year of college with 3 other teammates, I worked on the backend, written in Django, frontend, written in React, and also the worked on enabling the lamp to be able to commmunicate with the backend.
+
+
+
 # Class-Scribe
 
 Travis CI status: [![Build Status](https://travis-ci.com/uva-cp-1920/Class-Scribe.svg?token=cGxp1gfy2o1s1zWvCFoZ&branch=master)](https://travis-ci.com/uva-cp-1920/Class-Scribe)
@@ -14,11 +19,3 @@ The web app will also sync up the audio from the lecture with their handwritten 
 
 We are looking for team members with experience in making a web front end (preferably the React framework) and back end (for storage of the document scans and audio in the database, and user account control). Experience with Python and the Raspberry Pi is also welcomed (as this will power the lamp). A sample requirements list is available here.
 
-
-### Contact Information
-
-Rahat Maini -- student in the same CS 4970/1 course sequence
-
-rm4mp@virginia.edu
-
-Note: Prof. Ibrahim will be act as the customer for this project (add requirements / approving features) as needed.
