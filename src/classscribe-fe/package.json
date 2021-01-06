@@ -10,7 +10,7 @@
     "@material-ui/lab": "^4.0.0-alpha.40",
     "@testing-library/jest-dom": "^5.1.1",
     "@testing-library/react": "^9.4.1",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "create-react-class": "^15.6.3",
     "enzyme-async-helpers": "^0.9.1",
     "expo": "^35.0.1",
